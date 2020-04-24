@@ -17,6 +17,7 @@
 		"./ts/interpreter.robotMbedBehaviour.ts",
 		"./ts/interpreter.robotWeDoBehaviour.ts",
 		"./ts/interpreter.robotWeDoBehaviourTest.ts",
+		"./ts/interpreter.robotOrbBehaviour.ts",
 		"./ts/interpreter.runStackMachineJson.ts",
 		"./ts/interpreter.state.ts",
 		"./ts/interpreter.util.ts",
