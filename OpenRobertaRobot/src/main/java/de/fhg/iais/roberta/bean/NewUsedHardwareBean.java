@@ -3,21 +3,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import de.fhg.iais.roberta.syntax.BlockType;
-import de.fhg.iais.roberta.util.Pair;
+import de.fhg.iais.roberta.components.UsedConfigurationComponent;
 
 public class NewUsedHardwareBean implements IProjectBean {
-    private final List<Pair<BlockType, String>> blockPortMappings = new ArrayList<>();
+    private final List<UsedConfigurationComponent> usedConfigurationComponents = new ArrayList<>();
 
-    public List<Pair<BlockType, String>> getBlockPortMappings() {
-        return Collections.unmodifiableList(blockPortMappings);
+    public List<UsedConfigurationComponent> getUsedConfigurationComponents() {
+        return Collections.unmodifiableList(usedConfigurationComponents);
     }
 
     public static class Builder implements IBuilder<NewUsedHardwareBean> {
         private final NewUsedHardwareBean usedHardwareBean = new NewUsedHardwareBean();
 
-        public NewUsedHardwareBean.Builder addBlockPortMapping(Pair<BlockType, String> blockPortMapping) {
-            this.usedHardwareBean.blockPortMappings.add(blockPortMapping);
+        public NewUsedHardwareBean.Builder addUsedConfigurationComponent(UsedConfigurationComponent actor) {
+            this.usedHardwareBean.usedConfigurationComponents.add(actor);
             return this;
         }
 
