@@ -1,65 +1,115 @@
-# Operating Instructions for the Test and Prod Server using DOCKER container (2019-07-16 17:00:00)
+# Operating Instructions for the Test and Prod Server using DOCKER container (2020-05-08)
 
 At least to read:
 
 * section "(re-)create base container": how to build the base image of everything else.
 * section "Operating Instructions for the Test and Prod Server", especially "Scripting": how to use docker to run the server(s)
 
+We generate docker images for different architectures. Currently we support
+
+* `x64` - the standard architecture. Our prod server, your laptop, ... use this architecture
+* `arm32v7` - the architecture used by Raspberry pi's 3 and 4, for example. These "small" devices can run a docker demon, a database container and a
+  jetty-based rest-server without performance problems. We support these devices to enable to run local servers: for privacy reasons, bad iternet connectivity,
+  rules that don't allow internet connections at a school, ... .
+  
+In the following the shell variable `ARCH` refers to either `x64` or `arm32v7`.
+
+There is no special documentation for `arm32v7` installations of `apache2` and `nginx`. To run a webserver as frontend is easy, but not needed and not supported by us.
+
+Once and only once docker must be installed. Google for it, usually the job is done by executing
+
+```bash
+curl -sSL get.docker.com | sh
+```
+
+## Can be ignored, to be integrated somewhere
+
+> Since the fix needed to compile c4ev3 programs on raspberry hasn't been published yet, the Dockerfile
+> contains 3 lines that references 3 folders/files that need to be in this folder before creating the image.
+> The files are:
+> - recent version of ora-cc-rsc
+> - recent version of RobotEV3.jar
+> - C4EV3.Toolchain-2019.08.0-rpi.tar.gz
+
 # (re-)create the base image (done from time to time)
 
 ## generate the "base" IMAGE. This image contains the crosscompiler and the crosscompiler resources (header files, ...).
 
-The docker image "base" is used as basis for further images. It contains all software needed by the crosscompilers, i.e.
+The docker "base" image is used as basis for further images. It contains all software needed by the lab to create binaries for all the robots, i.e.
 
-* the crosscompiler binaries itself. They are installed by calling `apt`
-* header etc. to use together with the cross compiler. They are copied from a clone of the git repository `ora-cc-rsc`.
-* openroberta helper libraries for lejos, nao and raspberryPi.
+* the crosscompiler binaries itself. They are installed by calling `apt`, `wget`, ... .
+* header etc. to be used together with the cross compiler. They are copied from our git repository `ora-cc-rsc`.
 
-_Note:_ If the git repository `ora-cc-rsc` is changed, the base image and all images built upon the base image must be rebuilt. This doesn't
-occur often. But better do not forget. The version of the base image (a simple number) should match a tag in the git repository `ora-cc-rsc`.
-This is to express, that the data from the tag is the data in the base image. The variable `BASE_VERSION` contains the number, which is both a tag name
+This done in two steps. Because the crosscompiler binaries dont't change often, an image `openroberta/ccbin-${ARCH}` is build first. From this image
+the `openroberta/base-${ARCH}` image is derived. This occurs much more often. Both images have an independant version numbering.
+
+_Note:_ If the git repository `ora-cc-rsc` is changed, the `openroberta/base-${ARCH}` image and all images built upon it must be rebuilt. This is fast,
+but better do not forget! The version of the `openroberta/base-${ARCH}` image (a simple number) should match a tag in the git repository `ora-cc-rsc`.
+This reminds you, that the data from that tag is the data stored in the base image. The variable `BASE_VERSION` contains this number, which is both a tag name
 in git and a version number in docker.
+
+### step 1: image with crosscompiler binaries (usually not needed, because the crosscompiler binaries are stable)
 
 ```bash
 BASE_DIR=/data/openroberta-lab
-BASE_VERSION=15
+ARCH=x64 # either x64 or arm32v7
+CCBIN_VERSION=1
+
+cd ${BASE_DIR}/conf/${ARCH}/docker-for-meta-1-cc-binaries
+docker build --no-cache -t openroberta/ccbin-${ARCH}:${CCBIN_VERSION} .
+docker push openroberta/ccbin-${ARCH}:${CCBIN_VERSION}
+```
+
+_NOTE:_ If `openroberta/ccbin-${ARCH}` is rebuild with new or updated crosscompiler binaries, its version number `CCBIN_VERSION` has to be increased.
+Do _not_ forget, to increase the version numer in the next section, too.
+
+### step 2: image with crosscompiler resources (more often needed, because our add-ons, e.g. header files, libs, ... change more frequently)
+
+```bash
+BASE_DIR=/data/openroberta-lab
+ARCH=x64 # either x64 or arm32v7
+CCBIN_VERSION=1 # this is needed in the dockerfile!
+BASE_VERSION=16
 CC_RESOURCES=/data/openroberta-lab/git/ora-cc-rsc
 cd $CC_RESOURCES
 
 git checkout develop; git pull; git checkout master; git pull
-git checkout tags/$BASE_VERSION
+git checkout tags/${BASE_VERSION}
 
 mvn clean install # necessary to create the update resources for ev3- and arduino-based systems
-docker build --no-cache -t openroberta/base:$BASE_VERSION -f $BASE_DIR/conf/docker-for-meta/DockerfileBase_ubuntu_18_04 .
-docker push openroberta/base:$BASE_VERSION
+docker build --no-cache -t openroberta/base-${ARCH}:${BASE_VERSION} \
+       --build-arg CCBIN_VERSION=${CCBIN_VERSION} \
+       -f $BASE_DIR/conf/${ARCH}/docker-for-meta-2-cc-resources/Dockerfile .
+docker push openroberta/base-${ARCH}:${BASE_VERSION}
 ```
 
-## generate the image for INTEGRATION TEST.
+### step 3 image for the integration tests (x64 only)
 
-Using the configuration file DockerfileIT_* you create an image, built upon the "base" image, that has executed a git clone of the
+It would be easy to build this image for the `arm32v7` architecture. But our `bamboo` server used for automated integration tests run on `x64` machines.
+Thus there is no need for this image. This may change in the future.
+
+This step creates an image, built upon the "base" image, that has executed a git clone of the
 main git repository `openroberta-lab` and has executed a `mvn clean install`. This is done to fill the
 (mvn) cache and speeds up later builds considerably. The entry point is defined as the bash script "runIT.sh".
-If called, it will checkout a branch and runs both the tests and the integration tests.
+If called, it will checkout a branch given as parameter and runs both the tests and the integration tests.
 
 ```bash
 BASE_DIR=/data/openroberta-lab
-BASE_VERSION=15
+ARCH=x64
+BASE_VERSION=16
 BRANCH=develop
-cd $BASE_DIR/conf/docker-for-test
-docker build --no-cache --build-arg BASE_VERSION=$BASE_VERSION --build-arg BRANCH=$BRANCH \
-       -t openroberta/it:$BASE_VERSION -f DockerfileIT_ubuntu_18_04 .
-docker push openroberta/it:$BASE_VERSION
+cd ${BASE_DIR}/conf/${ARCH}/docker-for-test
+docker build --no-cache --build-arg BASE_VERSION=${BASE_VERSION} --build-arg BRANCH=${BRANCH} \
+       -t openroberta/it-${ARCH}:${BASE_VERSION} .
+docker push openroberta/it-${ARCH}:${BASE_VERSION}
 ```
-## Run the integration tests
 
-The integration test container (generated by the instructions above) clones a branch, executes all tests, including the integration tests and
-in case of success it returns 0, in case of errors/failures it returns 16. This takes about 15 minutes and should be executed w.t.h. of a
-CI system (jenkins, travis, gitlab, bamboo, ...). To run it, execute:
+To run the integration tests on your local machine (usually a build server as `bamboo` will do this, execute:
 
 ```bash
-BASE_VERSION=15
+BASE_VERSION=16
 export BRANCH='develop'
-docker run openroberta/it:$BASE_VERSION $BRANCH x.x.x # x.x.x is the db version and unused for tests
+docker run openroberta/it-${ARCH}:${BASE_VERSION} ${BRANCH} x.x.x # x.x.x is the db version and unused for tests
 ```
 
 # Operating Instructions for the Test and Prod Server
