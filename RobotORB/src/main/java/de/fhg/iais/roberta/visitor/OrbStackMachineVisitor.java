@@ -1,8 +1,8 @@
 package de.fhg.iais.roberta.visitor;
 
-import org.json.JSONObject;
+import java.util.List;
 
-import java.util.ArrayList;
+import org.json.JSONObject;
 
 import de.fhg.iais.roberta.components.ConfigurationAst;
 import de.fhg.iais.roberta.components.ConfigurationComponent;
@@ -30,7 +30,7 @@ import de.fhg.iais.roberta.visitor.lang.codegen.AbstractStackMachineVisitor;
 
 public class OrbStackMachineVisitor<V> extends AbstractStackMachineVisitor<V> implements IOrbVisitor<V> {
 
-    public OrbStackMachineVisitor(ConfigurationAst configuration, ArrayList<ArrayList<Phrase<Void>>> phrases, ILanguage language) {
+    public OrbStackMachineVisitor(ConfigurationAst configuration, List<List<Phrase<Void>>> phrases, ILanguage language) {
         super(configuration);
         Assert.isTrue(!phrases.isEmpty());
 
