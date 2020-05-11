@@ -247,8 +247,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         scene.drawRuler();
         scene.drawObjects();
     }
-    exports.resetPose = resetPose;
-
+ree
     function stopProgram() {
         setPause(true);
         for (var i = 0; i < numRobots; i++) {
