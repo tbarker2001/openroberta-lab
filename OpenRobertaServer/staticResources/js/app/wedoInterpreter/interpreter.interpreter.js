@@ -21,6 +21,7 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             stop[C.OPCODE] = "stop";
             stmts.push(stop);
             this.s = new interpreter_state_1.State(stmts, functions);
+
         }
         /**
          * run the operations.
@@ -89,6 +90,9 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
                 s.opLog('actual ops: ');
                 var stmt = s.getOp();
+                if (stmt.hasOwnProperty("Block Id")) {
+                    Blockly.getMainWorkspace().getBlockById(stmt["Block Id"]).select();
+                }
                 if (stmt === undefined) {
                     U.debug('PROGRAM TERMINATED. No ops remaining');
                     this.terminated = true;
@@ -450,6 +454,9 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             var _a;
             var kind = expr[C.EXPR];
             var s = this.s;
+            if (expr.hasOwnProperty("Block Id")) {
+                Blockly.getMainWorkspace().getBlockById(expr["Block Id"]).select();
+            }
             switch (kind) {
                 case C.VAR:
                     s.push(s.getVar(expr[C.NAME]));
