@@ -782,7 +782,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
     }
 
     protected JSONObject mk(String opCode,Phrase<V> phrase) {
-        return new JSONObject().put(C.OPCODE, opCode).put("Block Id",phrase.getProperty().getBlocklyId());
+        return new JSONObject().put(C.OPCODE, opCode).put(C.BLOCK_ID,phrase.getProperty().getBlocklyId());
     }
 
     protected V app(JSONObject o) {
@@ -808,14 +808,14 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
         ((Binary<Void>) assertStmt.getAssert()).getLeft().accept((IVisitor<Void>) this);
         ((Binary<Void>) assertStmt.getAssert()).getRight().accept((IVisitor<Void>) this);
         String op = ((Binary<Void>) assertStmt.getAssert()).getOp().toString();
-        JSONObject o = mk(C.ASSERT_ACTION).put(C.MSG, assertStmt.getMsg()).put(C.OP, op);
+        JSONObject o = mk(C.ASSERT_ACTION,assertStmt).put(C.MSG, assertStmt.getMsg()).put(C.OP, op);
         return app(o);
     }
 
     @Override
     public V visitDebugAction(DebugAction<V> debugAction) {
         debugAction.getValue().accept(this);
-        JSONObject o = mk(C.DEBUG_ACTION);
+        JSONObject o = mk(C.DEBUG_ACTION,debugAction);
         return app(o);
     }
 
