@@ -780,6 +780,9 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
     protected JSONObject mk(String opCode) {
         return new JSONObject().put(C.OPCODE, opCode);
     }
+    protected JSONObject mk(String opCode,Phrase<V> phrase) {
+        return new JSONObject().put(C.OPCODE, opCode).put("Block Id",phrase.getProperty().getBlocklyId());
+    }
 
     protected JSONObject mk(String opCode,Phrase<V> phrase) {
         return new JSONObject().put(C.OPCODE, opCode).put(C.BLOCK_ID,phrase.getProperty().getBlocklyId());
