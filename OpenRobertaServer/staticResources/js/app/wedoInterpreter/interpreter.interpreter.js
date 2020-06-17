@@ -90,8 +90,8 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
                 s.opLog('actual ops: ');
                 var stmt = s.getOp();
-                if (stmt.hasOwnProperty("Block Id")) {
-                    Blockly.getMainWorkspace().getBlockById(stmt["Block Id"]).select();
+                if (stmt.hasOwnProperty(C.BLOCK_ID)) {
+                    Blockly.getMainWorkspace().getBlockById(stmt[C.BLOCK_ID]).select();
                 }
                 if (stmt === undefined) {
                     U.debug('PROGRAM TERMINATED. No ops remaining');
@@ -454,8 +454,8 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             var _a;
             var kind = expr[C.EXPR];
             var s = this.s;
-            if (expr.hasOwnProperty("Block Id")) {
-                Blockly.getMainWorkspace().getBlockById(expr["Block Id"]).select();
+            if (expr.hasOwnProperty(C.BLOCK_ID)) {
+                Blockly.getMainWorkspace().getBlockById(expr[C.BLOCK_ID]).select();
             }
             switch (kind) {
                 case C.VAR:

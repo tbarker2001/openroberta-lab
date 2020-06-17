@@ -19,6 +19,7 @@ public class C {
     public static final String BACKWARD = "backward";
     public static final String BACK = "back";
     public static final String BINARY = "Binary";
+    public static final String BLOCK_ID = "BLOCK_ID";
     public static final String BOOLEAN = "BOOLEAN";
     public static final String BOOL_CONST = "BOOL_CONST";
     public static final String BREAK = "break";
