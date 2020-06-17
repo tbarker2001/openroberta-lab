@@ -21,6 +21,7 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             stop[C.OPCODE] = "stop";
             stmts.push(stop);
             this.s = new interpreter_state_1.State(stmts, functions);
+
         }
         /**
          * run the operations.
