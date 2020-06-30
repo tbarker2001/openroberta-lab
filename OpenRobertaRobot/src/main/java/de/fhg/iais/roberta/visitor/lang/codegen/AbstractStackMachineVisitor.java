@@ -101,32 +101,32 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
 
     @Override
     public V visitNumConst(NumConst<V> numConst) {
-        JSONObject o = mk(C.EXPR).put(C.EXPR, numConst.getKind().getName()).put(C.VALUE, numConst.getValue());
+        JSONObject o = mk(C.EXPR,numConst).put(C.EXPR, numConst.getKind().getName()).put(C.VALUE, numConst.getValue());
         return app(o);
     }
 
     @Override
     public V visitMathConst(MathConst<V> mathConst) {
-        JSONObject o = mk(C.EXPR).put(C.EXPR, C.MATH_CONST).put(C.VALUE, mathConst.getMathConst());
+        JSONObject o = mk(C.EXPR,mathConst).put(C.EXPR, C.MATH_CONST).put(C.VALUE, mathConst.getMathConst());
         return app(o);
     }
 
     @Override
     public V visitBoolConst(BoolConst<V> boolConst) {
-        JSONObject o = mk(C.EXPR).put(C.EXPR, boolConst.getKind().getName()).put(C.VALUE, boolConst.getValue());
+        JSONObject o = mk(C.EXPR,boolConst).put(C.EXPR, boolConst.getKind().getName()).put(C.VALUE, boolConst.getValue());
         return app(o);
     }
 
     @Override
     public V visitStringConst(StringConst<V> stringConst) {
-        JSONObject o = mk(C.EXPR).put(C.EXPR, stringConst.getKind().getName());
+        JSONObject o = mk(C.EXPR,stringConst).put(C.EXPR, stringConst.getKind().getName());
         o.put(C.VALUE, stringConst.getValue().replaceAll("[<>\\$]", ""));
         return app(o);
     }
 
     @Override
     public V visitNullConst(NullConst<V> nullConst) {
-        JSONObject o = mk(C.EXPR).put(C.EXPR, "C." + nullConst.getKind().getName());
+        JSONObject o = mk(C.EXPR,nullConst).put(C.EXPR, "C." + nullConst.getKind().getName());
         return app(o);
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
                 colorConst.addInfo(NepoInfo.error("SIM_BLOCK_NOT_SUPPORTED"));
                 throw new DbcException("Invalid color constant: " + colorConst.getHexIntAsString());
         }
-        JSONObject o = mk(C.EXPR).put(C.EXPR, C.COLOR_CONST).put(C.VALUE, colorId);
+        JSONObject o = mk(C.EXPR,colorConst).put(C.EXPR, C.COLOR_CONST).put(C.VALUE, colorId);
         return app(o);
     }
 
@@ -178,7 +178,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
         rgbColor.getR().accept(this);
         rgbColor.getG().accept(this);
         rgbColor.getB().accept(this);
-        JSONObject o = mk(C.EXPR).put(C.EXPR, C.RGB_COLOR_CONST);
+        JSONObject o = mk(C.EXPR,rgbColor).put(C.EXPR, C.RGB_COLOR_CONST);
         return app(o);
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
 
     @Override
     public V visitVar(Var<V> var) {
-        JSONObject o = mk(C.EXPR).put(C.EXPR, C.VAR).put(C.NAME, var.getValue());
+        JSONObject o = mk(C.EXPR,var).put(C.EXPR, C.VAR).put(C.NAME, var.getValue());
         return app(o);
     }
 
@@ -210,14 +210,14 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
         } else {
             var.getValue().accept(this);
         }
-        JSONObject o = mk(C.VAR_DECLARATION).put(C.TYPE, var.getTypeVar()).put(C.NAME, var.getName());
+        JSONObject o = mk(C.VAR_DECLARATION,var).put(C.TYPE, var.getTypeVar()).put(C.NAME, var.getName());
         return app(o);
     }
 
     @Override
     public V visitUnary(Unary<V> unary) {
         unary.getExpr().accept(this);
-        JSONObject o = mk(C.EXPR).put(C.EXPR, C.UNARY).put(C.OP, unary.getOp());
+        JSONObject o = mk(C.EXPR,unary).put(C.EXPR, C.UNARY).put(C.OP, unary.getOp());
         return app(o);
     }
 
