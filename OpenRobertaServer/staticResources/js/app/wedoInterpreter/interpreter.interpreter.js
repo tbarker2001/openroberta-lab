@@ -1,3 +1,4 @@
+
 define(["require", "exports", "interpreter.state", "interpreter.constants", "interpreter.util"], function (require, exports, interpreter_state_1, C, U) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -14,6 +15,8 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             this.callbackOnTermination = undefined;
             this.terminated = false;
             this.callbackOnTermination = cbOnTermination;
+            this.currentBlocks = [];
+            this.highlightMode = true;
             var stmts = generatedCode[C.OPS];
             var functions = generatedCode[C.FUNCTION_DECLARATION];
             this.r = r;
@@ -48,6 +51,18 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
         Interpreter.prototype.getRobotBehaviour = function () {
             return this.r;
         };
+        Interpreter.prototype.highlightBlock = function(stmt) {
+            if (stmt.hasOwnProperty(C.BLOCK_ID)) {
+                var block = Blockly.getMainWorkspace().getBlockById(stmt[C.BLOCK_ID]);
+                if (!this.currentBlocks.includes(block)){
+                    if (this.currentBlocks.length > 0) {
+                        this.currentBlocks.pop().svgPath_.classList.remove("highlight");
+                    }
+                    block.svgPath_.classList.add("highlight");
+                    this.currentBlocks.push(block);
+                }
+            }
+        }
         /**
          * the central interpreter. It is a stack machine interpreting operations given as JSON objects. The operations are all IMMUTABLE. It
          * - uses the S (state) component to store the state of the interpretation.
@@ -90,8 +105,8 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
                 s.opLog('actual ops: ');
                 var stmt = s.getOp();
-                if (stmt.hasOwnProperty(C.BLOCK_ID)) {
-                    Blockly.getMainWorkspace().getBlockById(stmt[C.BLOCK_ID]).select();
+                if (this.highlightMode){
+                    this.highlightBlock(stmt);
                 }
                 if (stmt === undefined) {
                     U.debug('PROGRAM TERMINATED. No ops remaining');
@@ -435,6 +450,9 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
                         default:
                             U.dbcException("invalid stmt op: " + opCode);
                     }
+                    if (this.highlightMode){
+                        return 0;}
+
                 }
                 if (this.terminated) {
                     // termination either requested by the client or by executing 'stop' or after last statement
