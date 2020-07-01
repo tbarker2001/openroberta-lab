@@ -3010,3 +3010,14 @@ pre code {
         color: #fff;
     }
 }
+
+path.blocklyPath {
+    stroke: blue;
+    stroke-width: 4px;
+    stroke-opacity: 0;
+    transition: stroke-opacity 0.75s linear;
+}
+path.blocklyPath.highlight {
+    stroke-opacity: 1;
+    transition: none;
+}
