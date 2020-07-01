@@ -20,7 +20,7 @@
          * . @param r implementation of the ARobotBehaviour class
          * . @param cbOnTermination is called when the program has terminated
         */
-        function Interpreter(generatedCode, r, cbOnTermination, breakpoints) {
+        function Interpreter(generatedCode, r, cbOnTermination, simBreakpoints) {
             this.terminated = false;
             this.callbackOnTermination = undefined;
             this.terminated = false;
@@ -28,7 +28,7 @@
             var stmts = generatedCode[C.OPS];
             var functions = generatedCode[C.FUNCTION_DECLARATION];
             this.r = r;
-            this.breakPoints = breakpoints;
+            this.breakpoints = simBreakpoints;
             this.events = {};
             this.events[C.DEBUG_STEP_INTO] = false;
             this.events[C.DEBUG_BREAKPOINT] = false;
@@ -80,10 +80,10 @@
             s.setDebugMode(mode);
             if (mode) {
                 stackmachineJsHelper.getJqueryObject("#blockly").addClass("debug");
-                s.addHighlights(this.breakPoints);
+                s.addHighlights(this.breakpoints);
             }
             else {
-                s.removeHighlights(this.breakPoints);
+                s.removeHighlights(this.breakpoints);
                 stackmachineJsHelper.getJqueryObject("#blockly").removeClass("debug");
             }
         };
@@ -94,73 +94,6 @@
         /** sets relevant event value to false */
         Interpreter.prototype.removeEvent = function (mode) {
             this.events[mode] = false;
-        };
-        /** Returns true if the operation is a possible breakpoint*/
-        Interpreter.prototype.isPossibleBreakPoint = function (op) {
-            if (op.hasOwnProperty(C.BLOCK_ID)) {
-                if (op[C.BLOCK_ID] !== this.previousBlockId) {
-                    switch (op[C.OPCODE]) {
-                        case C.INITIATE_BLOCK:
-                        case C.REPEAT_STMT_CONTINUATION:
-                        case C.REPEAT_STMT:
-                        case C.METHOD_CALL_VOID:
-                        case C.METHOD_CALL_RETURN:
-                            return true;
-                        default:
-                            return false;
-                    }
-                }
-            }
-            return false;
-        };
-        /** Returns true if the operation is a possible block where stepInto should stop*/
-        Interpreter.prototype.isPossibleStepInto = function (op) {
-            if (op.hasOwnProperty(C.BLOCK_ID)) {
-                if (this.previousBlockId == null || op[C.BLOCK_ID] !== this.previousBlockId) {
-                    switch (op[C.OPCODE]) {
-                        case C.INITIATE_BLOCK: {
-                            switch (op[C.OP]) {
-                                case C.EXPR:
-                                case C.GET_SAMPLE:
-                                case C.VAR_DECLARATION:
-                                    return false;
-                            }
-                            return true;
-                        }
-                        case C.REPEAT_STMT:
-                        case C.REPEAT_STMT_CONTINUATION:
-                        case C.METHOD_CALL_VOID:
-                        case C.METHOD_CALL_RETURN:
-                            return true;
-                        default: {
-                            return false;
-                        }
-                    }
-                }
-                return false;
-            }
-        };
-        /** Returns true if the operation is a possible block where stepOver should stop*/
-        Interpreter.prototype.isPossibleStepOver = function (op) {
-            if (op.hasOwnProperty(C.BLOCK_ID)) {
-                switch (op[C.OPCODE]) {
-                    case C.METHOD_CALL_VOID:
-                    case C.METHOD_CALL_RETURN:
-                        return true;
-                    case C.INITIATE_BLOCK: {
-                        switch (op[C.OP]) {
-                            case C.METHOD_CALL_VOID:
-                            case C.METHOD_CALL_RETURN:
-                                return true;
-                        }
-                        return false;
-                    }
-                    default: {
-                        return false;
-                    }
-                }
-            }
-            return false;
         };
         /**
          * the central interpreter. It is a stack machine interpreting operations given as JSON objects. The operations are all IMMUTABLE. It
@@ -217,8 +150,8 @@
                 if (s.getDebugMode()) {
                     if (this.events[C.DEBUG_BREAKPOINT]) {
                         if (this.isPossibleBreakPoint(op)) {
-                            for (var i = 0; i < this.breakPoints.length; i++) {
-                                if (op[C.BLOCK_ID] === this.breakPoints[i]) {
+                            for (var i = 0; i < this.breakpoints.length; i++) {
+                                if (op[C.BLOCK_ID] === this.breakpoints[i]) {
                                     stackmachineJsHelper.setSimBreak();
                                     this.previousBlockId = op[C.BLOCK_ID];
                                     this.events[C.DEBUG_BREAKPOINT] = false;
@@ -273,6 +206,7 @@
          * @param s the S (state) component to store the state of the interpretation.
          * @param n the R (robotBehaviour) component for accessing hardware sensors and actors
          * @param stmt the operation to be evaluated
+         * @returns [result,stop] result will be time required till next instruction and stop indicates if evalOperation should return result or not.
          */
         Interpreter.prototype.evalSingleOperation = function (s, n, stmt) {
             s.opLog('actual ops: ');
@@ -1015,20 +949,34 @@
             }
             else {
                 switch (subOp) {
-                    case C.EQ: return left == right;
-                    case C.NEQ: return left !== right;
-                    case C.LT: return left < right;
-                    case C.LTE: return left <= right;
-                    case C.GT: return left > right;
-                    case C.GTE: return left >= right;
-                    case C.AND: return left && right;
-                    case C.OR: return left || right;
-                    case C.ADD: return 0 + left + right;
-                    case C.MINUS: return 0 + left - right;
-                    case C.MULTIPLY: return 0 + left * right;
-                    case C.DIVIDE: return 0 + left / right;
-                    case C.POWER: return Math.pow(left, right);
-                    case C.MOD: return left % right;
+                    case C.EQ:
+                        return left == right;
+                    case C.NEQ:
+                        return left !== right;
+                    case C.LT:
+                        return left < right;
+                    case C.LTE:
+                        return left <= right;
+                    case C.GT:
+                        return left > right;
+                    case C.GTE:
+                        return left >= right;
+                    case C.AND:
+                        return left && right;
+                    case C.OR:
+                        return left || right;
+                    case C.ADD:
+                        return 0 + left + right;
+                    case C.MINUS:
+                        return 0 + left - right;
+                    case C.MULTIPLY:
+                        return 0 + left * right;
+                    case C.DIVIDE:
+                        return 0 + left / right;
+                    case C.POWER:
+                        return Math.pow(left, right);
+                    case C.MOD:
+                        return left % right;
                     default:
                         U.dbcException("invalid binary expr supOp: " + subOp);
                 }
@@ -1240,6 +1188,73 @@
                 shift[direction]();
             }
             return image;
+        };
+        /** Returns true if the operation is a possible breakpoint*/
+        Interpreter.prototype.isPossibleBreakPoint = function (op) {
+            if (op.hasOwnProperty(C.BLOCK_ID)) {
+                if (op[C.BLOCK_ID] !== this.previousBlockId) {
+                    switch (op[C.OPCODE]) {
+                        case C.INITIATE_BLOCK:
+                        case C.REPEAT_STMT_CONTINUATION:
+                        case C.REPEAT_STMT:
+                        case C.METHOD_CALL_VOID:
+                        case C.METHOD_CALL_RETURN:
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+            }
+            return false;
+        };
+        /** Returns true if the operation is a possible block where stepInto should stop*/
+        Interpreter.prototype.isPossibleStepInto = function (op) {
+            if (op.hasOwnProperty(C.BLOCK_ID)) {
+                if (this.previousBlockId == null || op[C.BLOCK_ID] !== this.previousBlockId) {
+                    switch (op[C.OPCODE]) {
+                        case C.INITIATE_BLOCK: {
+                            switch (op[C.OP]) {
+                                case C.EXPR:
+                                case C.GET_SAMPLE:
+                                case C.VAR_DECLARATION:
+                                    return false;
+                            }
+                            return true;
+                        }
+                        case C.REPEAT_STMT:
+                        case C.REPEAT_STMT_CONTINUATION:
+                        case C.METHOD_CALL_VOID:
+                        case C.METHOD_CALL_RETURN:
+                            return true;
+                        default: {
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            }
+        };
+        /** Returns true if the operation is a possible block where stepOver should stop*/
+        Interpreter.prototype.isPossibleStepOver = function (op) {
+            if (op.hasOwnProperty(C.BLOCK_ID)) {
+                switch (op[C.OPCODE]) {
+                    case C.METHOD_CALL_VOID:
+                    case C.METHOD_CALL_RETURN:
+                        return true;
+                    case C.INITIATE_BLOCK: {
+                        switch (op[C.OP]) {
+                            case C.METHOD_CALL_VOID:
+                            case C.METHOD_CALL_RETURN:
+                                return true;
+                        }
+                        return false;
+                    }
+                    default: {
+                        return false;
+                    }
+                }
+            }
+            return false;
         };
         return Interpreter;
     }());
