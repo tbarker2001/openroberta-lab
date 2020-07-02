@@ -1,7 +1,17 @@
-define(["require", "exports", "interpreter.constants", "interpreter.util"], function (require, exports, C, U) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "interpreter.constants", "interpreter.util"], factory);
+    }
+})(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.State = void 0;
+    var C = require("interpreter.constants");
+    var U = require("interpreter.util");
     var State = /** @class */ (function () {
         /**
          * initialization of the state.
@@ -237,26 +247,27 @@ define(["require", "exports", "interpreter.constants", "interpreter.util"], func
             }
         };
         /** Cleans up blocks to be terminated and highlights statements block if necessary*/
-        State.prototype.highlightBlock = function(stmt) {
-            for (var block_ID in this.currentBlocks){
-                if (this.currentBlocks[block_ID].terminate){
+        State.prototype.highlightBlock = function (stmt) {
+            for (var block_ID in this.currentBlocks) {
+                if (this.currentBlocks[block_ID].terminate) {
                     this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
                     delete this.currentBlocks[block_ID];
                 }
             }
             if (stmt.hasOwnProperty(C.BLOCK_ID)) {
+                // @ts-ignore
                 var block = Blockly.getMainWorkspace().getBlockById(stmt[C.BLOCK_ID]);
-                if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])){
+                if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])) {
                     block.svgPath_.classList.add("highlight");
-                    this.currentBlocks[stmt[C.BLOCK_ID]] = {"block": block,"terminate": false};
+                    this.currentBlocks[stmt[C.BLOCK_ID]] = { "block": block, "terminate": false };
                 }
             }
         };
         /** Marks a block to be terminated in the next iteration of the interpreter **/
-        State.prototype.terminateBlock = function(stmt) {
+        State.prototype.terminateBlock = function (stmt) {
             if (stmt.hasOwnProperty(C.BLOCK_ID)) {
                 var block_id = stmt[C.BLOCK_ID];
-                if (block_id in this.currentBlocks){
+                if (block_id in this.currentBlocks) {
                     this.currentBlocks[block_id].terminate = true;
                 }
             }

@@ -7,6 +7,7 @@ export class Interpreter {
 
 	private terminated = false;
 	private callbackOnTermination = undefined;
+    private highlightMode = true;
 
 	private r: ARobotBehaviour;
 	private s: State; // the state of the interpreter (ops, pc, bindings, stack, ...)
@@ -96,66 +97,79 @@ export class Interpreter {
      * - push and pop values to the stack (expressions)
      * - push and pop to the stack of operations-arrays
      */
-	private evalOperation(maxRunTime: number) {
-		const s = this.s;
-		const n = this.r;
-		while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
-			s.opLog('actual ops: ');
-			let stmt = s.getOp();
-			if (stmt === undefined) {
-				U.debug('PROGRAM TERMINATED. No ops remaining');
-				this.terminated = true;
-			} else {
-				const opCode = stmt[C.OPCODE];
-				switch (opCode) {
-					case C.ASSIGN_STMT: {
-						const name = stmt[C.NAME];
-						s.setVar(name, s.pop());
-						break;
-					}
-					case C.CLEAR_DISPLAY_ACTION: {
-						n.clearDisplay();
-						return 0;
-					}
-					case C.CREATE_DEBUG_ACTION: {
-						U.debug('NYI');
+    private evalOperation( maxRunTime: number ) {
+        const s = this.s;
+        const n = this.r;
+        while ( maxRunTime >= new Date().getTime() && !n.getBlocking() ) {
+            s.opLog( 'actual ops: ' );
+            let stmt = s.getOp();
+            if (this.highlightMode){
+                s.highlightBlock(stmt);
+            }
+            if ( stmt === undefined ) {
+                U.debug( 'PROGRAM TERMINATED. No ops remaining' );
+                this.terminated = true;
+            } else {
+                const opCode = stmt[C.OPCODE];
+                switch ( opCode ) {
+                    case C.ASSIGN_STMT: {
+                        const name = stmt[C.NAME];
+                        s.setVar( name, s.pop() );
+                        s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.CLEAR_DISPLAY_ACTION: {
+                        n.clearDisplay();
+                        s.terminateBlock(stmt);
+                        return 0;
+                    }
+                    case C.CREATE_DEBUG_ACTION: {
+                        U.debug( 'NYI' );
+                        s.terminateBlock(stmt);
 						break;
 					}
 					case C.EXPR:
 						this.evalExpr(stmt);
-						break;
-					case C.FLOW_CONTROL: {
-						const conditional = stmt[C.CONDITIONAL];
-						const activatedBy: boolean = stmt[C.BOOLEAN] === undefined ? true : stmt[C.BOOLEAN];
-						const doIt: boolean = conditional ? (s.pop() === activatedBy) : true;
-						if (doIt) {
-							s.popOpsUntil(stmt[C.KIND]);
-							if (stmt[C.BREAK]) {
-								s.getOp();
-							}
-						}
-						break;
-					}
-					case C.GET_SAMPLE: {
-						n.getSample(s, stmt[C.NAME], stmt[C.GET_SAMPLE], stmt[C.PORT], stmt[C.MODE])
-						break;
-					}
-					case C.IF_STMT:
-						s.pushOps(stmt[C.STMT_LIST])
-						break;
-					case C.IF_TRUE_STMT:
-						if (s.pop()) {
-							s.pushOps(stmt[C.STMT_LIST])
-						}
+						s.terminateBlock(stmt);
+                        break;
+                    case C.FLOW_CONTROL: {
+                        const conditional = stmt[C.CONDITIONAL];
+                        const activatedBy: boolean = stmt[C.BOOLEAN] === undefined ? true : stmt[C.BOOLEAN];
+                        const doIt: boolean = conditional ? ( s.pop() === activatedBy ) : true;
+                        if ( doIt ) {
+                            s.popOpsUntil( stmt[C.KIND] );
+                            if ( stmt[C.BREAK] ) {
+                                s.getOp();
+                            }
+                            s.terminateBlock(stmt);
+                        }
+                        break;
+                    }
+                    case C.GET_SAMPLE: {
+                        n.getSample( s, stmt[C.NAME], stmt[C.GET_SAMPLE], stmt[C.PORT], stmt[C.MODE] )
+                        s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.IF_STMT:
+                        s.pushOps( stmt[C.STMT_LIST] )
+                        s.terminateBlock(stmt);
+                        break;
+                    case C.IF_TRUE_STMT:
+                        if ( s.pop() ) {
+                            s.pushOps( stmt[C.STMT_LIST] )
+                        }
+                        s.terminateBlock(stmt);
 						break;
 					case C.IF_RETURN:
 						if (s.pop()) {
 							s.pushOps(stmt[C.STMT_LIST])
 						}
-						break;
-					case C.LED_ON_ACTION: {
-						const color = s.pop();
-						n.ledOnAction(stmt[C.NAME], stmt[C.PORT], color)
+						s.terminateBlock(stmt);
+                        break;
+                    case C.LED_ON_ACTION: {
+                        const color = s.pop();
+                        n.ledOnAction( stmt[C.NAME], stmt[C.PORT], color )
+                        s.terminateBlock(stmt);
 						break;
 					}
 					case C.METHOD_CALL_VOID:
@@ -165,42 +179,45 @@ export class Interpreter {
 						}
 						const body = s.getFunction(stmt[C.NAME])[C.STATEMENTS];
 						s.pushOps(body);
-						break;
-					}
-					case C.MOTOR_ON_ACTION: {
-						const speedOnly = stmt[C.SPEED_ONLY];
-						let duration = speedOnly ? undefined : s.pop();
-						const speed = s.pop();
-						const name = stmt[C.NAME];
-						const port = stmt[C.PORT];
-						const durationType = stmt[C.MOTOR_DURATION];
-						if (durationType === C.DEGREE || durationType === C.DISTANCE || durationType === C.ROTATIONS) {
-							// if durationType is defined, then duration must be defined, too. Thus, it is never 'undefined' :-)
-							let rotationPerSecond = C.MAX_ROTATION * Math.abs(speed) / 100.0;
-							duration = duration / rotationPerSecond * 1000;
-							if (durationType === C.DEGREE) {
-								duration /= 360.0;
-							}
-						}
-						n.motorOnAction(name, port, duration, speed);
-						return duration ? duration : 0;
-					}
-					case C.DRIVE_ACTION: {
-						const speedOnly = stmt[C.SPEED_ONLY];
-						const distance = speedOnly ? undefined : s.pop();
-						const speed = s.pop();
-						const name = stmt[C.NAME];
-						const direction = stmt[C.DRIVE_DIRECTION];
-						const duration = n.driveAction(name, direction, speed, distance);
-						return duration;
-					}
-					case C.TURN_ACTION: {
-						const speedOnly = stmt[C.SPEED_ONLY];
-						const angle = speedOnly ? undefined : s.pop();
-						const speed = s.pop();
-						const name = stmt[C.NAME];
-						const direction = stmt[C.TURN_DIRECTION];
-						const duration = n.turnAction(name, direction, speed, angle);
+						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.MOTOR_ON_ACTION: {
+                        const speedOnly = stmt[C.SPEED_ONLY];
+                        let duration = speedOnly ? undefined : s.pop();
+                        const speed = s.pop();
+                        const name = stmt[C.NAME];
+                        const port = stmt[C.PORT];
+                        const durationType = stmt[C.MOTOR_DURATION];
+                        if ( durationType === C.DEGREE || durationType === C.DISTANCE || durationType === C.ROTATIONS ) {
+                            // if durationType is defined, then duration must be defined, too. Thus, it is never 'undefined' :-)
+                            let rotationPerSecond = C.MAX_ROTATION * Math.abs( speed ) / 100.0;
+                            duration = duration / rotationPerSecond * 1000;
+                            if ( durationType === C.DEGREE ) {
+                                duration /= 360.0;
+                            }
+                        }
+                        n.motorOnAction( name, port, duration, speed );
+                        return duration ? duration : 0;
+                    }
+                    case C.DRIVE_ACTION: {
+                        const speedOnly = stmt[C.SPEED_ONLY];
+                        const distance = speedOnly ? undefined : s.pop();
+                        const speed = s.pop();
+                        const name = stmt[C.NAME];
+                        const direction = stmt[C.DRIVE_DIRECTION];
+                        const duration = n.driveAction( name, direction, speed, distance );
+                        s.terminateBlock(stmt);
+                        return duration;
+                    }
+                    case C.TURN_ACTION: {
+                        const speedOnly = stmt[C.SPEED_ONLY];
+                        const angle = speedOnly ? undefined : s.pop();
+                        const speed = s.pop();
+                        const name = stmt[C.NAME];
+                        const direction = stmt[C.TURN_DIRECTION];
+                        const duration = n.turnAction( name, direction, speed, angle );
+                        s.terminateBlock(stmt);
 						return duration;
 					}
 					case C.CURVE_ACTION: {
@@ -211,24 +228,28 @@ export class Interpreter {
 						const name = stmt[C.NAME];
 						const direction = stmt[C.DRIVE_DIRECTION];
 						const duration = n.curveAction(name, direction, speedL, speedR, distance);
-						return duration;
-					}
-					case C.STOP_DRIVE:
-						const name = stmt[C.NAME];
-						n.driveStop(name);
-						return 0;
-					case C.BOTH_MOTORS_ON_ACTION: {
-						const duration = s.pop();
-						const speedB = s.pop();
-						const speedA = s.pop();
-						const portA = stmt[C.PORT_A];
-						const portB = stmt[C.PORT_B];
-						n.motorOnAction(portA, portA, duration, speedA);
-						n.motorOnAction(portB, portB, duration, speedB);
-						return duration;
-					}
-					case C.MOTOR_STOP: {
-						n.motorStopAction(stmt[C.NAME], stmt[C.PORT]);
+						s.terminateBlock(stmt);
+                        return duration;
+                    }
+                    case C.STOP_DRIVE:
+                        const name = stmt[C.NAME];
+                        n.driveStop( name );
+                        s.terminateBlock(stmt);
+                        return 0;
+                    case C.BOTH_MOTORS_ON_ACTION: {
+                        const duration = s.pop();
+                        const speedB = s.pop();
+                        const speedA = s.pop();
+                        const portA = stmt[C.PORT_A];
+                        const portB = stmt[C.PORT_B];
+                        n.motorOnAction( portA, portA, duration, speedA );
+                        n.motorOnAction( portB, portB, duration, speedB );
+                        s.terminateBlock(stmt);
+                        return duration;
+                    }
+                    case C.MOTOR_STOP: {
+                        n.motorStopAction( stmt[C.NAME], stmt[C.PORT] );
+                        s.terminateBlock(stmt);
 						return 0;
 					}
 					case C.MOTOR_SET_POWER: {
@@ -236,69 +257,77 @@ export class Interpreter {
 						const name = stmt[C.NAME];
 						const port = stmt[C.PORT];
 						n.setMotorSpeed(name, port, speed);
-						return 0;
-					}
-					case C.MOTOR_GET_POWER: {
-						const port = stmt[C.PORT];
-						n.getMotorSpeed(s, name, port);
-						break;
-					}
-					case C.REPEAT_STMT:
-						this.evalRepeat(stmt);
-						break;
-					case C.REPEAT_STMT_CONTINUATION:
-						if (stmt[C.MODE] === C.FOR || stmt[C.MODE] === C.TIMES) {
-							const runVariableName = stmt[C.NAME];
-							const end = s.get1();
-							const incr = s.get0();
-							const value = s.getVar(runVariableName) + incr;
-							if (+value >= +end) {
-								s.popOpsUntil(C.REPEAT_STMT);
-								s.getOp(); // the repeat has terminated
-							} else {
-								s.setVar(runVariableName, value);
-								s.pushOps(stmt[C.STMT_LIST]);
-							}
-						} else if (stmt[C.MODE] === C.FOR_EACH) {
-							const runVariableName = stmt[C.EACH_COUNTER];
-							const varName = stmt[C.NAME];
-							const listName = stmt[C.LIST];
-							const list = s.getVar(listName);
-							const end = list.length;
-							const incr = s.get0();
-							const value = s.getVar(runVariableName) + incr;
-							if (+value >= +end) {
-								s.popOpsUntil(C.REPEAT_STMT);
-								s.getOp(); // the repeat has terminated
-							} else {
-								s.setVar(runVariableName, value);
-								s.bindVar(varName, list[value]);
-								s.pushOps(stmt[C.STMT_LIST]);
-							}
-						}
-						break;
-					case C.SHOW_TEXT_ACTION: {
-						const text = s.pop();
-						const name = stmt[C.NAME];
-						if (name === "ev3") {
-							const x = s.pop();
-							const y = s.pop();
-							n.showTextActionPosition(text, x, y);
+						s.terminateBlock(stmt);
+                        return 0;
+                    }
+                    case C.MOTOR_GET_POWER: {
+                        const port = stmt[C.PORT];
+                        n.getMotorSpeed( s, name, port );
+                        s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.REPEAT_STMT:
+                        this.evalRepeat( stmt );
+                        break;
+                    case C.REPEAT_STMT_CONTINUATION:
+                        if ( stmt[C.MODE] === C.FOR || stmt[C.MODE] === C.TIMES ) {
+                            const runVariableName = stmt[C.NAME];
+                            const end = s.get1();
+                            const incr = s.get0();
+                            const value = s.getVar( runVariableName ) + incr;
+                            if ( +value >= +end ) {
+                                s.popOpsUntil( C.REPEAT_STMT );
+                                s.getOp(); // the repeat has terminated
+                                s.terminateBlock(stmt);
+                            } else {
+                                s.setVar( runVariableName, value );
+                                s.pushOps( stmt[C.STMT_LIST] );
+                            }
+                        } else if ( stmt[C.MODE] === C.FOR_EACH ) {
+                            const runVariableName = stmt[C.EACH_COUNTER];
+                            const varName = stmt[C.NAME];
+                            const listName = stmt[C.LIST];
+                            const list = s.getVar( listName );
+                            const end = list.length;
+                            const incr = s.get0();
+                            const value = s.getVar( runVariableName ) + incr;
+                            if ( +value >= +end ) {
+                                s.popOpsUntil( C.REPEAT_STMT );
+                                s.getOp(); // the repeat has terminated
+                                s.terminateBlock(stmt);
+                            } else {
+                                s.setVar( runVariableName, value );
+                                s.bindVar( varName, list[value] );
+                                s.pushOps( stmt[C.STMT_LIST] );
+                            }
+                        }
+                        break;
+                    case C.SHOW_TEXT_ACTION: {
+                        const text = s.pop();
+                        const name = stmt[C.NAME];
+                        if ( name === "ev3" ) {
+                            const x = s.pop();
+                            const y = s.pop();
+                            n.showTextActionPosition( text, x, y );
+                            s.terminateBlock(stmt);
 							return 0;
 						}
-						return n.showTextAction(text, stmt[C.MODE]);
-					}
-					case C.SHOW_IMAGE_ACTION: {
-						let image;
-						if (stmt[C.NAME] == "ev3") {
-							image = stmt[C.IMAGE];
-						} else {
-							image = s.pop();
-						}
-						return n.showImageAction(image, stmt[C.MODE]);
-					}
-					case C.DISPLAY_SET_BRIGHTNESS_ACTION: {
-						const b = s.pop();
+						s.terminateBlock(stmt);
+                        return n.showTextAction( text, stmt[C.MODE] );
+                    }
+                    case C.SHOW_IMAGE_ACTION: {
+                        let image;
+                        if ( stmt[C.NAME] == "ev3" ) {
+                            image = stmt[C.IMAGE];
+                        } else {
+                            image = s.pop();
+                        }
+                        s.terminateBlock(stmt);
+                        return n.showImageAction( image, stmt[C.MODE] );
+                    }
+                    case C.DISPLAY_SET_BRIGHTNESS_ACTION: {
+                        const b = s.pop();
+                        s.terminateBlock(stmt);
 						return n.displaySetBrightnessAction(b);
 					}
 
@@ -306,30 +335,36 @@ export class Interpreter {
 						const nShift = s.pop();
 						const image = s.pop();
 						s.push(this.shiftImageAction(image, stmt[C.DIRECTION], nShift));
-						break;
-					}
+						s.terminateBlock(stmt);
+                        break;
+                    }
 
 					case C.DISPLAY_SET_PIXEL_BRIGHTNESS_ACTION: {
 						const b = s.pop();
 						const y = s.pop();
 						const x = s.pop();
-						return n.displaySetPixelBrightnessAction(x, y, b);
-					}
-					case C.DISPLAY_GET_PIXEL_BRIGHTNESS_ACTION: {
-						const y = s.pop();
-						const x = s.pop();
-						n.displayGetPixelBrightnessAction(s, x, y);
+						s.terminateBlock(stmt);
+                        return n.displaySetPixelBrightnessAction( x, y, b );
+                    }
+                    case C.DISPLAY_GET_PIXEL_BRIGHTNESS_ACTION: {
+                        const y = s.pop();
+                        const x = s.pop();
+                        n.displayGetPixelBrightnessAction( s, x, y );
+                        s.terminateBlock(stmt);
 						break;
 					}
 					case C.LIGHT_ACTION:
 						n.lightAction(stmt[C.MODE], stmt[C.COLOR]);
-						return 0;
-					case C.STATUS_LIGHT_ACTION:
-						n.statusLightOffAction(stmt[C.NAME], stmt[C.PORT])
-						return 0;
-					case C.STOP:
-						U.debug("PROGRAM TERMINATED. stop op");
-						this.terminated = true;
+						s.terminateBlock(stmt);
+                        return 0;
+                    case C.STATUS_LIGHT_ACTION:
+                        n.statusLightOffAction( stmt[C.NAME], stmt[C.PORT] )
+                        s.terminateBlock(stmt);
+                        return 0;
+                    case C.STOP:
+                        U.debug( "PROGRAM TERMINATED. stop op" );
+                        this.terminated = true;
+                        s.terminateBlock(stmt);
 						break;
 					case C.TEXT_JOIN: {
 						const n = stmt[C.NUMBER];
@@ -339,80 +374,94 @@ export class Interpreter {
 							result[n - i - 1] = e;
 						}
 						s.push(result.join(""));
-						break;
-					}
-					case C.TIMER_SENSOR_RESET:
-						n.timerReset(stmt[C.PORT]);
+						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.TIMER_SENSOR_RESET:
+                        n.timerReset( stmt[C.PORT] );
+                        s.terminateBlock(stmt);
 						break;
 					case C.ENCODER_SENSOR_RESET:
 						n.encoderReset(stmt[C.PORT]);
-						return 0;
-					case C.GYRO_SENSOR_RESET:
-						n.gyroReset(stmt[C.PORT]);
-						return 0;
-					case C.TONE_ACTION: {
-						const duration = s.pop();
-						const frequency = s.pop();
+						s.terminateBlock(stmt);
+                        return 0;
+                    case C.GYRO_SENSOR_RESET:
+                        n.gyroReset( stmt[C.PORT] );
+                        s.terminateBlock(stmt);
+                        return 0;
+                    case C.TONE_ACTION: {
+                        const duration = s.pop();
+                        const frequency = s.pop();
+                        s.terminateBlock(stmt);
 						return n.toneAction(stmt[C.NAME], frequency, duration);
 					}
 					case C.PLAY_FILE_ACTION:
-						return n.playFileAction(stmt[C.FILE]);
-					case C.SET_VOLUME_ACTION:
-						n.setVolumeAction(s.pop());
+						s.terminateBlock(stmt);
+                        return n.playFileAction( stmt[C.FILE] );
+                    case C.SET_VOLUME_ACTION:
+                        n.setVolumeAction( s.pop() );
+                        s.terminateBlock(stmt);
 						return 0;
 					case C.GET_VOLUME:
 						n.getVolumeAction(s);
-						break;
-					case C.SET_LANGUAGE_ACTION:
-						n.setLanguage(stmt[C.LANGUAGE]);
-						break;
-					case C.SAY_TEXT_ACTION: {
-						const pitch = s.pop();
-						const speed = s.pop();
-						const text = s.pop();
+						s.terminateBlock(stmt);
+                        break;
+                    case C.SET_LANGUAGE_ACTION:
+                        n.setLanguage( stmt[C.LANGUAGE] );
+                        s.terminateBlock(stmt);
+                        break;
+                    case C.SAY_TEXT_ACTION: {
+                        const pitch = s.pop();
+                        const speed = s.pop();
+                        const text = s.pop();
+                        s.terminateBlock(stmt);
 						return n.sayTextAction(text, speed, pitch)
 					}
 					case C.VAR_DECLARATION: {
 						const name = stmt[C.NAME];
 						s.bindVar(name, s.pop());
-						break;
-					}
-					case C.WAIT_STMT: {
-						U.debug('waitstmt started');
-						s.pushOps(stmt[C.STMT_LIST]);
+						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.WAIT_STMT: {
+                        U.debug( 'waitstmt started' );
+                        s.pushOps( stmt[C.STMT_LIST] );
+                        s.terminateBlock(stmt);
 						break;
 					}
 					case C.WAIT_TIME_STMT: {
 						const time = s.pop();
-						return time; // wait for handler being called
-					}
-					case C.WRITE_PIN_ACTION: {
-						const value = s.pop();
-						const mode = stmt[C.MODE];
-						const pin = stmt[C.PIN];
-
-						n.writePinAction(pin, mode, value);
-						return 0;
-					}
-					case C.LIST_OPERATION: {
-						const op = stmt[C.OP];
-						const loc = stmt[C.POSITION];
-						let ix = 0;
-						if (loc != C.LAST && loc != C.FIRST) {
-							ix = s.pop();
-						}
-						const value = s.pop();
-						let list = s.pop();
-						ix = this.getIndex(list, loc, ix)
-						if (op == C.SET) {
-							list[ix] = value;
-						} else if (op == C.INSERT) {
-							if (loc === C.LAST) {
-								list.splice(ix + 1, 0, value);
-							} else {
-								list.splice(ix, 0, value);
-							}
-						}
+						s.terminateBlock(stmt);
+                        return time; // wait for handler being called
+                    }
+                    case C.WRITE_PIN_ACTION: {
+                        const value = s.pop();
+                        const mode = stmt[C.MODE];
+                        const pin = stmt[C.PIN];
+                        n.writePinAction( pin, mode, value );
+                        s.terminateBlock(stmt);
+                        return 0;
+                    }
+                    case C.LIST_OPERATION: {
+                        const op = stmt[C.OP];
+                        const loc = stmt[C.POSITION];
+                        let ix = 0;
+                        if ( loc != C.LAST && loc != C.FIRST ) {
+                            ix = s.pop();
+                        }
+                        const value = s.pop();
+                        let list = s.pop();
+                        ix = this.getIndex( list, loc, ix )
+                        if ( op == C.SET ) {
+                            list[ix] = value;
+                        } else if ( op == C.INSERT ) {
+                            if ( loc === C.LAST ) {
+                                list.splice( ix + 1, 0, value );
+                            } else {
+                                list.splice( ix, 0, value );
+                            }
+                        }
+                        s.terminateBlock(stmt);
 						break;
 					}
 					case C.TEXT_APPEND:
@@ -420,24 +469,31 @@ export class Interpreter {
 						const value = s.pop();
 						const name = stmt[C.NAME];
 						s.bindVar(name, s.pop() + value);
-						break;
-					}
-					case C.DEBUG_ACTION: {
-						const value = s.pop();
-						n.debugAction(value);
-						break;
-					}
-					case C.ASSERT_ACTION: {
-						const right = s.pop();
-						const left = s.pop();
-						const value = s.pop();
-						n.assertAction(stmt[C.MSG], left, stmt[C.OP], right, value);
+						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.DEBUG_ACTION: {
+                        const value = s.pop();
+                        n.debugAction( value );
+                        s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.ASSERT_ACTION: {
+                        const right = s.pop();
+                        const left = s.pop();
+                        const value = s.pop();
+                        n.assertAction( stmt[C.MSG], left, stmt[C.OP], right, value );
+                        s.terminateBlock(stmt);
 						break;
 					}
 					case C.COMMENT:
-						break;
-					default:
-						U.dbcException("invalid stmt op: " + opCode);
+						s.terminateBlock(stmt);
+                        break;
+                    default:
+                        U.dbcException( "invalid stmt op: " + opCode );
+                }
+                if (this.highlightMode) {
+                    return 0;
 				}
 			}
 			if (this.terminated) {

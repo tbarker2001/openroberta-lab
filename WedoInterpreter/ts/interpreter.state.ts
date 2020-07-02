@@ -17,6 +17,7 @@ export class State {
     private functions: any; // the hash map of function definitions
     private bindings; // the binding of values to names (the 'environment')
     private stack: any[]; // the stack of values
+    private currentBlocks: any; //hash map current blocks being executed
 
     /**
      * initialization of the state.
@@ -32,6 +33,7 @@ export class State {
         this.operationsStack = [];
         this.bindings = {};
         this.stack = [];
+        this.currentBlocks = {};
         // p( 'storeCode with state reset' );
     }
 
@@ -260,6 +262,32 @@ export class State {
     private checkValidValue( value ) {
         if ( value === undefined || value === null ) {
             U.dbcException( 'bindVar value invalid' );
+        }
+    }
+    /** Cleans up blocks to be terminated and highlights statements block if necessary*/
+    public highlightBlock (stmt){
+        for (var block_ID in this.currentBlocks){
+            if (this.currentBlocks[block_ID].terminate){
+                this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
+                delete this.currentBlocks[block_ID];
+            }
+        }
+        if (stmt.hasOwnProperty(C.BLOCK_ID)) {
+            // @ts-ignore
+            let block = Blockly.getMainWorkspace().getBlockById(stmt[C.BLOCK_ID]);
+            if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])){
+                block.svgPath_.classList.add("highlight");
+                this.currentBlocks[stmt[C.BLOCK_ID]] = {"block": block,"terminate": false};
+            }
+        }
+    }
+    /** Marks a block to be terminated in the next iteration of the interpreter **/
+    public terminateBlock (stmt) {
+        if (stmt.hasOwnProperty(C.BLOCK_ID)) {
+            const block_id = stmt[C.BLOCK_ID];
+            if (block_id in this.currentBlocks){
+                this.currentBlocks[block_id].terminate = true;
+            }
         }
     }
 }

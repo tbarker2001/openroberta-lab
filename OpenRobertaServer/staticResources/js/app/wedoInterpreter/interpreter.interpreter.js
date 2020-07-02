@@ -1,8 +1,18 @@
-
-define(["require", "exports", "interpreter.state", "interpreter.constants", "interpreter.util"], function (require, exports, interpreter_state_1, C, U) {
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "interpreter.state", "interpreter.constants", "interpreter.util"], factory);
+    }
+})(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.Interpreter = void 0;
+    var interpreter_state_1 = require("interpreter.state");
+    var C = require("interpreter.constants");
+    var U = require("interpreter.util");
     var Interpreter = /** @class */ (function () {
         /*
          *
@@ -13,9 +23,9 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
         function Interpreter(generatedCode, r, cbOnTermination) {
             this.terminated = false;
             this.callbackOnTermination = undefined;
+            this.highlightMode = true;
             this.terminated = false;
             this.callbackOnTermination = cbOnTermination;
-            this.highlightMode = true;
             var stmts = generatedCode[C.OPS];
             var functions = generatedCode[C.FUNCTION_DECLARATION];
             this.r = r;
@@ -23,7 +33,6 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             stop[C.OPCODE] = "stop";
             stmts.push(stop);
             this.s = new interpreter_state_1.State(stmts, functions);
-
         }
         /**
          * run the operations.
@@ -92,7 +101,7 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
             while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
                 s.opLog('actual ops: ');
                 var stmt = s.getOp();
-                if (this.highlightMode){
+                if (this.highlightMode) {
                     s.highlightBlock(stmt);
                 }
                 if (stmt === undefined) {
@@ -487,9 +496,9 @@ define(["require", "exports", "interpreter.state", "interpreter.constants", "int
                         default:
                             U.dbcException("invalid stmt op: " + opCode);
                     }
-                    if (this.highlightMode){
-                        return 0;}
-
+                    if (this.highlightMode) {
+                        return 0;
+                    }
                 }
                 if (this.terminated) {
                     // termination either requested by the client or by executing 'stop' or after last statement

@@ -17,6 +17,7 @@ export const AVERAGE: string = "average";
 export const BACKWARD: string = "backward";
 export const BACK: string = "back";
 export const BINARY: string = "Binary";
+export const BLOCK_ID: string = "BLOCK_ID";
 export const BOOLEAN: string = "BOOLEAN";
 export const BOOL_CONST: string = "BOOL_CONST";
 export const BREAK: string = "break";
