@@ -1,199 +1,239 @@
 {
 	"ops": [
 		{
-			"GetSample": "buttons",
-			"mode": "A",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"buttons",
+			"mode":"A",
+			"opc":"GetSample",
+			"BLOCK_ID":"rkY_.`jFpk}p!_C,lHh}",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"wA{t#~1hTWdk9Jc|PHa{"
 		},
 		{
-			"GetSample": "buttons",
-			"mode": "B",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"buttons",
+			"mode":"B",
+			"opc":"GetSample",
+			"BLOCK_ID":"#[v9iAol6/{q^Fzz]#We",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"|BmQA.!S,a^/*IB3o`:("
 		},
 		{
-			"GetSample": "pin0",
-			"mode": "pressed",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"pin0",
+			"mode":"pressed",
+			"opc":"GetSample",
+			"BLOCK_ID":"ZC)U?lb5O{*IYnO]@[(=",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"jBa5]CT#sV%4AwZ8NL;U"
 		},
 		{
-			"GetSample": "pin1",
-			"mode": "pressed",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"pin1",
+			"mode":"pressed",
+			"opc":"GetSample",
+			"BLOCK_ID":"YT!GB`yb)1rYL%[%s~HI",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"dD}=q50IWJ.MQAar_Sy*"
 		},
 		{
-			"GetSample": "pin2",
-			"mode": "pressed",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"pin2",
+			"mode":"pressed",
+			"opc":"GetSample",
+			"BLOCK_ID":"vsSv9BXb5so?q@7X9zGl",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"Be;FTfO)*Im/2hyKrP5]"
 		},
 		{
-			"GetSample": "pin3",
-			"mode": "pressed",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"pin3",
+			"mode":"pressed",
+			"opc":"GetSample",
+			"BLOCK_ID":"3!26o.{K0Lh.t_/%N(Nl",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"*4O7K6Kwo;k]d6:1W[e@"
 		},
 		{
-			"GetSample": "gesture",
-			"mode": "up",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"gesture",
+			"mode":"up",
+			"opc":"GetSample",
+			"BLOCK_ID":"cA#_80rl#6?Pj:zRD/9/",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"%k!T~4qV0GFp`1GQE-=9"
 		},
 		{
-			"GetSample": "gesture",
-			"mode": "down",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"gesture",
+			"mode":"down",
+			"opc":"GetSample",
+			"BLOCK_ID":"Q:nibt3,_FcAv[J!ih^w",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"cHvJ:BI_7QU2NE|Wvd!["
 		},
 		{
-			"GetSample": "gesture",
-			"mode": "face_down",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"gesture",
+			"mode":"face_down",
+			"opc":"GetSample",
+			"BLOCK_ID":"A/gRh*XZI^X6H?sTT,|_",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"^[41aqjO{V.8n}r29351"
 		},
 		{
-			"GetSample": "gesture",
-			"mode": "face_up",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"gesture",
+			"mode":"face_up",
+			"opc":"GetSample",
+			"BLOCK_ID":"LlsSIwhRd.6D#gV?oD8N",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"VT96gh;[IZghf~NY4w2t"
 		},
 		{
-			"GetSample": "gesture",
-			"mode": "shake",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"gesture",
+			"mode":"shake",
+			"opc":"GetSample",
+			"BLOCK_ID":")NTO6F[EI?JUWS|qMPr;",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"rY3~}Wp;]2kbXTE1Mc[g"
 		},
 		{
-			"GetSample": "gesture",
-			"mode": "freefall",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"gesture",
+			"mode":"freefall",
+			"opc":"GetSample",
+			"BLOCK_ID":"Pq83kTjQl@ZpYFDP9^1|",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"M;OV2Ls]I^Ekl9G-wl]7"
 		},
 		{
-			"GetSample": "sound",
-			"mode": "volume",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"sound",
+			"mode":"volume",
+			"opc":"GetSample",
+			"BLOCK_ID":"x4kn{@Fa?]#4Z_FP)[Q_",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"4Uf8=:U^[SnLwuc8PBvJ"
 		},
 		{
-			"GetSample": "compass",
-			"mode": "angle",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"compass",
+			"mode":"angle",
+			"opc":"GetSample",
+			"BLOCK_ID":"T:yVBJ|j(X}RZ.||]`AA",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"gu-c[LjboE4+/a,G*#{g"
 		},
 		{
-			"GetSample": "timer",
-			"opc": "GetSample",
-			"port": "1",
-			"name": "calliope"
+			"GetSample":"timer",
+			"opc":"GetSample",
+			"BLOCK_ID":"ci-PF7wmG{F6jiW7Z.gi",
+			"port":"1",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"ZuxTZ[XlF,hxF~H`c]Za"
 		},
 		{
-			"opc": "createResetTimer",
-			"port": "1",
-			"name": "calliope"
+			"opc":"createResetTimer",
+			"BLOCK_ID":"}n0.3?7fZF/y~lhgJncg",
+			"port":"1",
+			"name":"calliope"
 		},
 		{
-			"GetSample": "temperature",
-			"mode": "value",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"temperature",
+			"mode":"value",
+			"opc":"GetSample",
+			"BLOCK_ID":"MaZ_u[9Mm`k=.`*|I7U]",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"K^yl168R,@?LZKWau(GA"
 		},
 		{
-			"GetSample": "light",
-			"mode": "ambientlight",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"light",
+			"mode":"ambientlight",
+			"opc":"GetSample",
+			"BLOCK_ID":"v]%AaB=50O0had?{[8iU",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"~1`4Wcq86s(8Y8ph-yo%"
+
 		},
 		{
-			"GetSample": "pin1",
-			"mode": "analog",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"pin1",
+			"mode":"analog",
+			"opc":"GetSample",
+			"BLOCK_ID":"]CoNoSQ5-HCa:B3rcE10",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"Bi2SXh=#cZ-gLF_b/H]l"
 		},
 		{
-			"GetSample": "pin0",
-			"mode": "digital",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"pin0",
+			"mode":"digital",
+			"opc":"GetSample",
+			"BLOCK_ID":"ZV4jK8ETc^!nbEcWs=.D",
+			"name":"calliope"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"J:P4#!7Of7Gy4;c}Bv6P"
 		}
 	],
 	"functionDeclaration": {

@@ -1,82 +1,90 @@
 {
 	"ops": [
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "300"
+			"opc":"expr",
+			"BLOCK_ID":"v3/rd]{Goeu}9(Cs*No7",
+			"expr":"NUM_CONST",
+			"value":"300"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "100"
+			"opc":"expr",
+			"BLOCK_ID":"*m9D{z9sjsGKKPbY-3t7",
+			"expr":"NUM_CONST",
+			"value":"100"
 		},
 		{
-			"opc": "ToneAction"
+			"opc":"ToneAction",
+			"BLOCK_ID":"f[p,XI]V`,gR1kyo?eXg"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "261.626"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"261.626"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "2000"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"2000"
 		},
 		{
-			"opc": "ToneAction"
+			"opc":"ToneAction",
+			"BLOCK_ID":"#Qef|+e=Q6j[gt{{i0{+"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "261.626"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"261.626"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "1000"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"1000"
 		},
 		{
-			"opc": "ToneAction"
+			"opc":"ToneAction",
+			"BLOCK_ID":"[weC8tcKn[ZaovaQl{bk"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "261.626"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"261.626"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "500"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"500"
 		},
 		{
-			"opc": "ToneAction"
+			"opc":"ToneAction",
+			"BLOCK_ID":"*6p,_?Ii4s(vC!?r09z|"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "261.626"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"261.626"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "250"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"250"
 		},
 		{
-			"opc": "ToneAction"
+			"opc":"ToneAction",
+			"BLOCK_ID":"B2f_=`lCUvn-HD_[,R-i"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "261.626"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"261.626"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "125"
+			"opc":"expr",
+			"expr":"NUM_CONST",
+			"value":"125"
 		},
 		{
-			"opc": "ToneAction"
+			"opc":"ToneAction",
+			"BLOCK_ID":"s]nVg:U8b~|GxdlHYKZ|"
 		}
 	],
 	"functionDeclaration": {

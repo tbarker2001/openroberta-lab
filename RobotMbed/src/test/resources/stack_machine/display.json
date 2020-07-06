@@ -1,33 +1,45 @@
 {
 	"ops": [
 		{
-			"opc": "expr",
-			"expr": "STRING_CONST",
-			"value": "Hallo"
+			"opc":"expr",
+			"BLOCK_ID":"IkA%-Fgyp:F1jBYj0G|I",
+			"expr":"STRING_CONST",
+			"value":"Hallo"
 		},
 		{
-			"mode": "text",
-			"opc": "ShowTextAction"
+			"mode":"text",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":"0^:kDm4(0UK.pX5KEyO`"
 		},
 		{
-			"opc": "expr",
-			"expr": "STRING_CONST",
-			"value": "Hallo"
+			"opc":"expr",
+			"BLOCK_ID":"wp`H?Ek#6PM]Uh:Bg(Wv",
+			"expr":"STRING_CONST",
+			"value":"Hallo"
 		},
 		{
-			"mode": "character",
-			"opc": "ShowTextAction"
+			"mode":"character",
+			"opc":"ShowTextAction",
+			"BLOCK_ID":":~%d5uXZpcXV{6{a)o?@"
 		},
-		{
-			"opc": "expr",
-			"expr": "image",
-			"value": [
+		{    "opc":"expr",
+			"BLOCK_ID":"JuUbA%_2}OOV:eFN^psD",
+			"expr":"image",
+			"value":[        [
+				0,
+				0,
+				0,
+				0,
+				0
+
+			],
 				[
 					0,
 					0,
 					0,
 					0,
 					0
+
 				],
 				[
 					0,
@@ -35,6 +47,7 @@
 					0,
 					0,
 					0
+
 				],
 				[
 					0,
@@ -42,6 +55,7 @@
 					0,
 					0,
 					0
+
 				],
 				[
 					0,
@@ -49,30 +63,34 @@
 					0,
 					0,
 					0
-				],
-				[
-					0,
-					0,
-					0,
-					0,
-					0
+
 				]
+
 			]
 		},
 		{
-			"mode": "image",
-			"opc": "ShowImageAction"
+			"mode":"image",
+			"opc":"ShowImageAction",
+			"BLOCK_ID":"K^-}wvyzL.=og4z`?h/o"
 		},
-		{
-			"opc": "expr",
-			"expr": "image",
-			"value": [
+		{    "opc":"expr",
+			"BLOCK_ID":"a1BwzyJMka.vBp`G?GQ7",
+			"expr":"image",
+			"value":[        [
+				0,
+				255,
+				0,
+				255,
+				0
+
+			],
 				[
-					0,
 					255,
-					0,
 					255,
-					0
+					255,
+					255,
+					255
+
 				],
 				[
 					255,
@@ -80,13 +98,7 @@
 					255,
 					255,
 					255
-				],
-				[
-					255,
-					255,
-					255,
-					255,
-					255
+
 				],
 				[
 					0,
@@ -94,6 +106,7 @@
 					255,
 					255,
 					0
+
 				],
 				[
 					0,
@@ -101,84 +114,104 @@
 					255,
 					0,
 					0
+
 				]
+
 			]
 		},
 		{
-			"mode": "image",
-			"opc": "ShowImageAction"
+			"mode":"image",
+			"opc":"ShowImageAction",
+			"BLOCK_ID":"%A?tE5;MSXNV`A0OiFP!"
 		},
 		{
-			"opc": "ClearDisplay"
+			"opc":"ClearDisplay",
+			"BLOCK_ID":"-Oc6Lzs6e1n/1||]%[L3"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "5"
+			"opc":"expr",
+			"BLOCK_ID":"nGdcSE(^F08n]UDJy;Mg",
+			"expr":"NUM_CONST",
+			"value":"5"
 		},
 		{
-			"opc": "displaySetBrightnessAction"
+			"opc":"displaySetBrightnessAction",
+			"BLOCK_ID":"E]kmCuRAqhf2nk3p(JTz"
 		},
 		{
-			"GetSample": "display",
-			"mode": "brightness",
-			"opc": "GetSample",
-			"name": "calliope"
+			"GetSample":"display",
+			"mode":"brightness",
+			"opc":"GetSample",
+			"BLOCK_ID":"=w.f{W5_lE@`i(qyJvvt",
+			"name":"calliope"
 		},
 		{
-			"opc": "displaySetBrightnessAction"
+			"opc":"displaySetBrightnessAction",
+			"BLOCK_ID":"GQ3F-}`39pa!t!HwNTvm"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "0"
+			"opc":"expr",
+			"BLOCK_ID":"3RC).}3*aO`FAT,7)A;*",
+			"expr":"NUM_CONST",
+			"value":"0"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "0"
+			"opc":"expr",
+			"BLOCK_ID":"wM)d=v-b_AB_ga=^L%]*",
+			"expr":"NUM_CONST",
+			"value":"0"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "5"
+			"opc":"expr",
+			"BLOCK_ID":"~%|!2-G2-0;4jURr9Hs?",
+			"expr":"NUM_CONST",
+			"value":"5"
 		},
 		{
-			"opc": "displaySetPixelBrightnessAction"
+			"opc":"displaySetPixelBrightnessAction",
+			"BLOCK_ID":"ef8sSzG26W[^,|SmW.`b"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "0"
+			"opc":"expr",
+			"BLOCK_ID":"M/Z:wn(g1=ga=E?ygyvg",
+			"expr":"NUM_CONST",
+			"value":"0"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "0"
+			"opc":"expr",
+			"BLOCK_ID":"RN#!|duf_f;#M6UV`rLx",
+			"expr":"NUM_CONST",
+			"value":"0"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "0"
+			"opc":"expr",
+			"BLOCK_ID":"K-;s!TCh%3Z9/_J(({[#",
+			"expr":"NUM_CONST",
+			"value":"0"
 		},
 		{
-			"opc": "expr",
-			"expr": "NUM_CONST",
-			"value": "0"
+			"opc":"expr",
+			"BLOCK_ID":"[_:j1UR3}T5!FL-jVUl;",
+			"expr":"NUM_CONST",
+			"value":"0"
 		},
 		{
-			"opc": "displayGetPixelBrightnessAction"
+			"opc":"displayGetPixelBrightnessAction",
+			"BLOCK_ID":"sgjFKF*J(lK]zLF^kugw"
 		},
 		{
-			"opc": "displaySetPixelBrightnessAction"
+			"opc":"displaySetPixelBrightnessAction",
+			"BLOCK_ID":":ZyqaELvj}ejiMGBA-Q."
 		},
 		{
-			"opc": "expr",
-			"expr": "STRING_CONST",
-			"value": "Hallo"
+			"opc":"expr",
+			"BLOCK_ID":")(d9`XxtLg_xYS{e5N@|",
+			"expr":"STRING_CONST",
+			"value":"Hallo"
 		},
 		{
-			"opc": "serialWriteAction"
+			"opc":"serialWriteAction",
+			"BLOCK_ID":"v5:BS!4Sn@9SsY*/HlBC"
 		}
 	],
 	"functionDeclaration": {

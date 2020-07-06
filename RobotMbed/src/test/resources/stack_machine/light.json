@@ -2,6 +2,7 @@
 	"ops": [
 		{
 			"opc": "expr",
+			"BLOCK_ID":"mdSVJclsydU}L@Rrf=m(",
 			"expr": "COLOR_CONST",
 			"value": [
 				255,
@@ -10,10 +11,12 @@
 			]
 		},
 		{
-			"opc": "ledOnAction"
+			"opc": "ledOnAction",
+			"BLOCK_ID":"j()bCMB@vT0D+pGbc0[0"
 		},
 		{
 			"opc": "statusLightAction",
+			"BLOCK_ID":"hsCy=%3|2^SI%i/J[^.`",
 			"port": "internal",
 			"name": "calliope"
 		}
