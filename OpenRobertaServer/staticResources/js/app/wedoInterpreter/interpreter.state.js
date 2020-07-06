@@ -255,8 +255,7 @@
                 }
             }
             if (stmt.hasOwnProperty(C.BLOCK_ID)) {
-                // @ts-ignore
-                var block = Blockly.getMainWorkspace().getBlockById(stmt[C.BLOCK_ID]);
+                var block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
                 if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])) {
                     block.svgPath_.classList.add("highlight");
                     this.currentBlocks[stmt[C.BLOCK_ID]] = { "block": block, "terminate": false };

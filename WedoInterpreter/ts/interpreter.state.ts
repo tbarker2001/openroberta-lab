@@ -1,5 +1,6 @@
 import * as C from 'interpreter.constants';
 import * as U from 'interpreter.util';
+declare var stackmachineJsHelper;
 
 export class State {
     /**
@@ -273,8 +274,8 @@ export class State {
             }
         }
         if (stmt.hasOwnProperty(C.BLOCK_ID)) {
-            // @ts-ignore
-            let block = Blockly.getMainWorkspace().getBlockById(stmt[C.BLOCK_ID]);
+
+            let block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
             if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])){
                 block.svgPath_.classList.add("highlight");
                 this.currentBlocks[stmt[C.BLOCK_ID]] = {"block": block,"terminate": false};
