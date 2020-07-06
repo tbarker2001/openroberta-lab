@@ -106,7 +106,7 @@ public class Ev3StackMachineVisitor<V> extends AbstractStackMachineVisitor<V> im
                 colorConst.addInfo(NepoInfo.error("SIM_BLOCK_NOT_SUPPORTED"));
                 throw new DbcException("Invalid color constant: " + colorConst.getHexValueAsString());
         }
-        JSONObject o = mk(C.EXPR).put(C.EXPR, C.COLOR_CONST).put(C.VALUE, color);
+        JSONObject o = mk(C.EXPR,colorConst).put(C.EXPR, C.COLOR_CONST).put(C.VALUE, color);
         return app(o);
     }
 
