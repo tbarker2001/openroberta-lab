@@ -115,22 +115,18 @@ export class Interpreter {
                     case C.ASSIGN_STMT: {
                         const name = stmt[C.NAME];
                         s.setVar( name, s.pop() );
-                        s.terminateBlock(stmt);
                         break;
                     }
                     case C.CLEAR_DISPLAY_ACTION: {
                         n.clearDisplay();
-                        s.terminateBlock(stmt);
                         return 0;
                     }
                     case C.CREATE_DEBUG_ACTION: {
                         U.debug( 'NYI' );
-                        s.terminateBlock(stmt);
-						break;
-					}
-					case C.EXPR:
-						this.evalExpr(stmt);
-						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.EXPR:
+                        this.evalExpr( stmt );
                         break;
                     case C.FLOW_CONTROL: {
                         const conditional = stmt[C.CONDITIONAL];
@@ -141,45 +137,38 @@ export class Interpreter {
                             if ( stmt[C.BREAK] ) {
                                 s.getOp();
                             }
-                            s.terminateBlock(stmt);
                         }
                         break;
                     }
                     case C.GET_SAMPLE: {
                         n.getSample( s, stmt[C.NAME], stmt[C.GET_SAMPLE], stmt[C.PORT], stmt[C.MODE] )
-                        s.terminateBlock(stmt);
                         break;
                     }
                     case C.IF_STMT:
                         s.pushOps( stmt[C.STMT_LIST] )
-                        s.terminateBlock(stmt);
                         break;
                     case C.IF_TRUE_STMT:
                         if ( s.pop() ) {
                             s.pushOps( stmt[C.STMT_LIST] )
                         }
-                        s.terminateBlock(stmt);
-						break;
-					case C.IF_RETURN:
-						if (s.pop()) {
-							s.pushOps(stmt[C.STMT_LIST])
-						}
-						s.terminateBlock(stmt);
+                        break;
+                    case C.IF_RETURN:
+                        if ( s.pop() ) {
+                            s.pushOps( stmt[C.STMT_LIST] )
+                        }
                         break;
                     case C.LED_ON_ACTION: {
                         const color = s.pop();
                         n.ledOnAction( stmt[C.NAME], stmt[C.PORT], color )
-                        s.terminateBlock(stmt);
-						break;
-					}
-					case C.METHOD_CALL_VOID:
-					case C.METHOD_CALL_RETURN: {
-						for (let parameterName of stmt[C.NAMES]) {
-							s.bindVar(parameterName, s.pop())
-						}
-						const body = s.getFunction(stmt[C.NAME])[C.STATEMENTS];
-						s.pushOps(body);
-						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.METHOD_CALL_VOID:
+                    case C.METHOD_CALL_RETURN: {
+                        for ( let parameterName of stmt[C.NAMES] ) {
+                            s.bindVar( parameterName, s.pop() )
+                        }
+                        const body = s.getFunction( stmt[C.NAME] )[C.STATEMENTS];
+                        s.pushOps( body );
                         break;
                     }
                     case C.MOTOR_ON_ACTION: {
@@ -207,7 +196,6 @@ export class Interpreter {
                         const name = stmt[C.NAME];
                         const direction = stmt[C.DRIVE_DIRECTION];
                         const duration = n.driveAction( name, direction, speed, distance );
-                        s.terminateBlock(stmt);
                         return duration;
                     }
                     case C.TURN_ACTION: {
@@ -217,24 +205,21 @@ export class Interpreter {
                         const name = stmt[C.NAME];
                         const direction = stmt[C.TURN_DIRECTION];
                         const duration = n.turnAction( name, direction, speed, angle );
-                        s.terminateBlock(stmt);
-						return duration;
-					}
-					case C.CURVE_ACTION: {
-						const speedOnly = stmt[C.SPEED_ONLY];
-						const distance = speedOnly ? undefined : s.pop();
-						const speedR = s.pop();
-						const speedL = s.pop();
-						const name = stmt[C.NAME];
-						const direction = stmt[C.DRIVE_DIRECTION];
-						const duration = n.curveAction(name, direction, speedL, speedR, distance);
-						s.terminateBlock(stmt);
+                        return duration;
+                    }
+                    case C.CURVE_ACTION: {
+                        const speedOnly = stmt[C.SPEED_ONLY];
+                        const distance = speedOnly ? undefined : s.pop();
+                        const speedR = s.pop();
+                        const speedL = s.pop();
+                        const name = stmt[C.NAME];
+                        const direction = stmt[C.DRIVE_DIRECTION];
+                        const duration = n.curveAction( name, direction, speedL, speedR, distance );
                         return duration;
                     }
                     case C.STOP_DRIVE:
                         const name = stmt[C.NAME];
                         n.driveStop( name );
-                        s.terminateBlock(stmt);
                         return 0;
                     case C.BOTH_MOTORS_ON_ACTION: {
                         const duration = s.pop();
@@ -244,26 +229,22 @@ export class Interpreter {
                         const portB = stmt[C.PORT_B];
                         n.motorOnAction( portA, portA, duration, speedA );
                         n.motorOnAction( portB, portB, duration, speedB );
-                        s.terminateBlock(stmt);
                         return duration;
                     }
                     case C.MOTOR_STOP: {
                         n.motorStopAction( stmt[C.NAME], stmt[C.PORT] );
-                        s.terminateBlock(stmt);
-						return 0;
-					}
-					case C.MOTOR_SET_POWER: {
-						const speed = s.pop();
-						const name = stmt[C.NAME];
-						const port = stmt[C.PORT];
-						n.setMotorSpeed(name, port, speed);
-						s.terminateBlock(stmt);
+                        return 0;
+                    }
+                    case C.MOTOR_SET_POWER: {
+                        const speed = s.pop();
+                        const name = stmt[C.NAME];
+                        const port = stmt[C.PORT];
+                        n.setMotorSpeed( name, port, speed );
                         return 0;
                     }
                     case C.MOTOR_GET_POWER: {
                         const port = stmt[C.PORT];
                         n.getMotorSpeed( s, name, port );
-                        s.terminateBlock(stmt);
                         break;
                     }
                     case C.REPEAT_STMT:
@@ -278,7 +259,6 @@ export class Interpreter {
                             if ( +value >= +end ) {
                                 s.popOpsUntil( C.REPEAT_STMT );
                                 s.getOp(); // the repeat has terminated
-                                s.terminateBlock(stmt);
                             } else {
                                 s.setVar( runVariableName, value );
                                 s.pushOps( stmt[C.STMT_LIST] );
@@ -294,7 +274,6 @@ export class Interpreter {
                             if ( +value >= +end ) {
                                 s.popOpsUntil( C.REPEAT_STMT );
                                 s.getOp(); // the repeat has terminated
-                                s.terminateBlock(stmt);
                             } else {
                                 s.setVar( runVariableName, value );
                                 s.bindVar( varName, list[value] );
@@ -309,10 +288,9 @@ export class Interpreter {
                             const x = s.pop();
                             const y = s.pop();
                             n.showTextActionPosition( text, x, y );
-                            s.terminateBlock(stmt);
-							return 0;
-						}
-						s.terminateBlock(stmt);
+                            return 0;
+                        }
+
                         return n.showTextAction( text, stmt[C.MODE] );
                     }
                     case C.SHOW_IMAGE_ACTION: {
@@ -322,116 +300,96 @@ export class Interpreter {
                         } else {
                             image = s.pop();
                         }
-                        s.terminateBlock(stmt);
                         return n.showImageAction( image, stmt[C.MODE] );
                     }
                     case C.DISPLAY_SET_BRIGHTNESS_ACTION: {
                         const b = s.pop();
-                        s.terminateBlock(stmt);
-						return n.displaySetBrightnessAction(b);
-					}
+                        return n.displaySetBrightnessAction( b );
+                    }
 
-					case C.IMAGE_SHIFT_ACTION: {
-						const nShift = s.pop();
-						const image = s.pop();
-						s.push(this.shiftImageAction(image, stmt[C.DIRECTION], nShift));
-						s.terminateBlock(stmt);
+                    case C.IMAGE_SHIFT_ACTION: {
+                        const nShift = s.pop();
+                        const image = s.pop();
+                        s.push( this.shiftImageAction( image, stmt[C.DIRECTION], nShift ) );
                         break;
                     }
 
-					case C.DISPLAY_SET_PIXEL_BRIGHTNESS_ACTION: {
-						const b = s.pop();
-						const y = s.pop();
-						const x = s.pop();
-						s.terminateBlock(stmt);
+                    case C.DISPLAY_SET_PIXEL_BRIGHTNESS_ACTION: {
+                        const b = s.pop();
+                        const y = s.pop();
+                        const x = s.pop();
                         return n.displaySetPixelBrightnessAction( x, y, b );
                     }
                     case C.DISPLAY_GET_PIXEL_BRIGHTNESS_ACTION: {
                         const y = s.pop();
                         const x = s.pop();
                         n.displayGetPixelBrightnessAction( s, x, y );
-                        s.terminateBlock(stmt);
-						break;
-					}
-					case C.LIGHT_ACTION:
-						n.lightAction(stmt[C.MODE], stmt[C.COLOR]);
-						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.LIGHT_ACTION:
+                        n.lightAction( stmt[C.MODE], stmt[C.COLOR] );
                         return 0;
                     case C.STATUS_LIGHT_ACTION:
                         n.statusLightOffAction( stmt[C.NAME], stmt[C.PORT] )
-                        s.terminateBlock(stmt);
                         return 0;
                     case C.STOP:
                         U.debug( "PROGRAM TERMINATED. stop op" );
                         this.terminated = true;
-                        s.terminateBlock(stmt);
-						break;
-					case C.TEXT_JOIN: {
-						const n = stmt[C.NUMBER];
-						var result = new Array(n);
-						for (let i = 0; i < n; i++) {
-							const e = s.pop();
-							result[n - i - 1] = e;
-						}
-						s.push(result.join(""));
-						s.terminateBlock(stmt);
+                        break;
+                    case C.TEXT_JOIN: {
+                        const n = stmt[C.NUMBER];
+                        var result = new Array( n );
+                        for ( let i = 0; i < n; i++ ) {
+                            const e = s.pop();
+                            result[n - i - 1] = e;
+                        }
+                        s.push( result.join( "" ) );
                         break;
                     }
                     case C.TIMER_SENSOR_RESET:
                         n.timerReset( stmt[C.PORT] );
-                        s.terminateBlock(stmt);
-						break;
-					case C.ENCODER_SENSOR_RESET:
-						n.encoderReset(stmt[C.PORT]);
-						s.terminateBlock(stmt);
+                        break;
+                    case C.ENCODER_SENSOR_RESET:
+                        n.encoderReset( stmt[C.PORT] );
                         return 0;
                     case C.GYRO_SENSOR_RESET:
                         n.gyroReset( stmt[C.PORT] );
-                        s.terminateBlock(stmt);
                         return 0;
                     case C.TONE_ACTION: {
                         const duration = s.pop();
                         const frequency = s.pop();
-                        s.terminateBlock(stmt);
-						return n.toneAction(stmt[C.NAME], frequency, duration);
-					}
-					case C.PLAY_FILE_ACTION:
-						s.terminateBlock(stmt);
+                        return n.toneAction( stmt[C.NAME], frequency, duration );
+                    }
+                    case C.PLAY_FILE_ACTION:
+
                         return n.playFileAction( stmt[C.FILE] );
                     case C.SET_VOLUME_ACTION:
                         n.setVolumeAction( s.pop() );
-                        s.terminateBlock(stmt);
-						return 0;
-					case C.GET_VOLUME:
-						n.getVolumeAction(s);
-						s.terminateBlock(stmt);
+                        return 0;
+                    case C.GET_VOLUME:
+                        n.getVolumeAction( s );
                         break;
                     case C.SET_LANGUAGE_ACTION:
                         n.setLanguage( stmt[C.LANGUAGE] );
-                        s.terminateBlock(stmt);
                         break;
                     case C.SAY_TEXT_ACTION: {
                         const pitch = s.pop();
                         const speed = s.pop();
                         const text = s.pop();
-                        s.terminateBlock(stmt);
-						return n.sayTextAction(text, speed, pitch)
-					}
-					case C.VAR_DECLARATION: {
-						const name = stmt[C.NAME];
-						s.bindVar(name, s.pop());
-						s.terminateBlock(stmt);
+                        return n.sayTextAction( text, speed, pitch )
+                    }
+                    case C.VAR_DECLARATION: {
+                        const name = stmt[C.NAME];
+                        s.bindVar( name, s.pop() );
                         break;
                     }
                     case C.WAIT_STMT: {
                         U.debug( 'waitstmt started' );
                         s.pushOps( stmt[C.STMT_LIST] );
-                        s.terminateBlock(stmt);
-						break;
-					}
-					case C.WAIT_TIME_STMT: {
-						const time = s.pop();
-						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.WAIT_TIME_STMT: {
+                        const time = s.pop();
                         return time; // wait for handler being called
                     }
                     case C.WRITE_PIN_ACTION: {
@@ -439,7 +397,6 @@ export class Interpreter {
                         const mode = stmt[C.MODE];
                         const pin = stmt[C.PIN];
                         n.writePinAction( pin, mode, value );
-                        s.terminateBlock(stmt);
                         return 0;
                     }
                     case C.LIST_OPERATION: {
@@ -461,21 +418,18 @@ export class Interpreter {
                                 list.splice( ix, 0, value );
                             }
                         }
-                        s.terminateBlock(stmt);
-						break;
-					}
-					case C.TEXT_APPEND:
-					case C.MATH_CHANGE: {
-						const value = s.pop();
-						const name = stmt[C.NAME];
-						s.bindVar(name, s.pop() + value);
-						s.terminateBlock(stmt);
+                        break;
+                    }
+                    case C.TEXT_APPEND:
+                    case C.MATH_CHANGE: {
+                        const value = s.pop();
+                        const name = stmt[C.NAME];
+                        s.bindVar( name, s.pop() + value );
                         break;
                     }
                     case C.DEBUG_ACTION: {
                         const value = s.pop();
                         n.debugAction( value );
-                        s.terminateBlock(stmt);
                         break;
                     }
                     case C.ASSERT_ACTION: {
@@ -483,13 +437,16 @@ export class Interpreter {
                         const left = s.pop();
                         const value = s.pop();
                         n.assertAction( stmt[C.MSG], left, stmt[C.OP], right, value );
-                        s.terminateBlock(stmt);
-						break;
-					}
-					case C.COMMENT:
-						s.terminateBlock(stmt);
                         break;
-                    default:
+                    }
+                    case C.COMMENT: {
+                        break;
+                    }
+                    case C.TERMINATE_BLOCK:{
+                        s.terminateBlock(stmt);
+                        break;
+                    }
+                        default:
                         U.dbcException( "invalid stmt op: " + opCode );
                 }
                 if (this.highlightMode) {

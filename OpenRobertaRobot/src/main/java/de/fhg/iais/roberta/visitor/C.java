@@ -260,6 +260,7 @@ public class C {
     public static final String STRING_CONST = "STRING_CONST";
     public static final String SUM = "sum";
     public static final String TEMPERATURE = "temperature";
+    public static final String TERMINATE_BLOCK = "TERMINATE_BLOCK";
     public static final String TERNARY_EXPR = "createTernaryExpr";
     public static final String TEXT = "text";
     public static final String TEXT_APPEND = "textAppend";

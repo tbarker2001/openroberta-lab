@@ -820,6 +820,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
 
     protected V app(JSONObject o) {
         this.getOpArray().add(o);
+        this.getOpArray().add(mk(C.TERMINATE_BLOCK).put(C.BLOCK_ID,o.get(C.BLOCK_ID)));
         return null;
     }
 

@@ -114,22 +114,18 @@
                         case C.ASSIGN_STMT: {
                             var name_1 = stmt[C.NAME];
                             s.setVar(name_1, s.pop());
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.CLEAR_DISPLAY_ACTION: {
                             n.clearDisplay();
-                            s.terminateBlock(stmt);
                             return 0;
                         }
                         case C.CREATE_DEBUG_ACTION: {
                             U.debug('NYI');
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.EXPR:
                             this.evalExpr(stmt);
-                            s.terminateBlock(stmt);
                             break;
                         case C.FLOW_CONTROL: {
                             var conditional = stmt[C.CONDITIONAL];
@@ -140,35 +136,29 @@
                                 if (stmt[C.BREAK]) {
                                     s.getOp();
                                 }
-                                s.terminateBlock(stmt);
                             }
                             break;
                         }
                         case C.GET_SAMPLE: {
                             n.getSample(s, stmt[C.NAME], stmt[C.GET_SAMPLE], stmt[C.PORT], stmt[C.MODE]);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.IF_STMT:
                             s.pushOps(stmt[C.STMT_LIST]);
-                            s.terminateBlock(stmt);
                             break;
                         case C.IF_TRUE_STMT:
                             if (s.pop()) {
                                 s.pushOps(stmt[C.STMT_LIST]);
                             }
-                            s.terminateBlock(stmt);
                             break;
                         case C.IF_RETURN:
                             if (s.pop()) {
                                 s.pushOps(stmt[C.STMT_LIST]);
                             }
-                            s.terminateBlock(stmt);
                             break;
                         case C.LED_ON_ACTION: {
                             var color = s.pop();
                             n.ledOnAction(stmt[C.NAME], stmt[C.PORT], color);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.METHOD_CALL_VOID:
@@ -179,7 +169,6 @@
                             }
                             var body = s.getFunction(stmt[C.NAME])[C.STATEMENTS];
                             s.pushOps(body);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.MOTOR_ON_ACTION: {
@@ -207,7 +196,6 @@
                             var name_3 = stmt[C.NAME];
                             var direction = stmt[C.DRIVE_DIRECTION];
                             var duration = n.driveAction(name_3, direction, speed, distance);
-                            s.terminateBlock(stmt);
                             return duration;
                         }
                         case C.TURN_ACTION: {
@@ -217,7 +205,6 @@
                             var name_4 = stmt[C.NAME];
                             var direction = stmt[C.TURN_DIRECTION];
                             var duration = n.turnAction(name_4, direction, speed, angle);
-                            s.terminateBlock(stmt);
                             return duration;
                         }
                         case C.CURVE_ACTION: {
@@ -228,13 +215,11 @@
                             var name_5 = stmt[C.NAME];
                             var direction = stmt[C.DRIVE_DIRECTION];
                             var duration = n.curveAction(name_5, direction, speedL, speedR, distance);
-                            s.terminateBlock(stmt);
                             return duration;
                         }
                         case C.STOP_DRIVE:
                             var name_6 = stmt[C.NAME];
                             n.driveStop(name_6);
-                            s.terminateBlock(stmt);
                             return 0;
                         case C.BOTH_MOTORS_ON_ACTION: {
                             var duration = s.pop();
@@ -244,12 +229,10 @@
                             var portB = stmt[C.PORT_B];
                             n.motorOnAction(portA, portA, duration, speedA);
                             n.motorOnAction(portB, portB, duration, speedB);
-                            s.terminateBlock(stmt);
                             return duration;
                         }
                         case C.MOTOR_STOP: {
                             n.motorStopAction(stmt[C.NAME], stmt[C.PORT]);
-                            s.terminateBlock(stmt);
                             return 0;
                         }
                         case C.MOTOR_SET_POWER: {
@@ -257,13 +240,11 @@
                             var name_7 = stmt[C.NAME];
                             var port = stmt[C.PORT];
                             n.setMotorSpeed(name_7, port, speed);
-                            s.terminateBlock(stmt);
                             return 0;
                         }
                         case C.MOTOR_GET_POWER: {
                             var port = stmt[C.PORT];
                             n.getMotorSpeed(s, name_6, port);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.REPEAT_STMT:
@@ -278,7 +259,6 @@
                                 if (+value >= +end) {
                                     s.popOpsUntil(C.REPEAT_STMT);
                                     s.getOp(); // the repeat has terminated
-                                    s.terminateBlock(stmt);
                                 }
                                 else {
                                     s.setVar(runVariableName, value);
@@ -296,7 +276,6 @@
                                 if (+value >= +end) {
                                     s.popOpsUntil(C.REPEAT_STMT);
                                     s.getOp(); // the repeat has terminated
-                                    s.terminateBlock(stmt);
                                 }
                                 else {
                                     s.setVar(runVariableName, value);
@@ -312,10 +291,8 @@
                                 var x = s.pop();
                                 var y = s.pop();
                                 n.showTextActionPosition(text, x, y);
-                                s.terminateBlock(stmt);
                                 return 0;
                             }
-                            s.terminateBlock(stmt);
                             return n.showTextAction(text, stmt[C.MODE]);
                         }
                         case C.SHOW_IMAGE_ACTION: {
@@ -326,47 +303,39 @@
                             else {
                                 image = s.pop();
                             }
-                            s.terminateBlock(stmt);
                             return n.showImageAction(image, stmt[C.MODE]);
                         }
                         case C.DISPLAY_SET_BRIGHTNESS_ACTION: {
                             var b = s.pop();
-                            s.terminateBlock(stmt);
                             return n.displaySetBrightnessAction(b);
                         }
                         case C.IMAGE_SHIFT_ACTION: {
                             var nShift = s.pop();
                             var image = s.pop();
                             s.push(this.shiftImageAction(image, stmt[C.DIRECTION], nShift));
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.DISPLAY_SET_PIXEL_BRIGHTNESS_ACTION: {
                             var b = s.pop();
                             var y = s.pop();
                             var x = s.pop();
-                            s.terminateBlock(stmt);
                             return n.displaySetPixelBrightnessAction(x, y, b);
                         }
                         case C.DISPLAY_GET_PIXEL_BRIGHTNESS_ACTION: {
                             var y = s.pop();
                             var x = s.pop();
                             n.displayGetPixelBrightnessAction(s, x, y);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.LIGHT_ACTION:
                             n.lightAction(stmt[C.MODE], stmt[C.COLOR]);
-                            s.terminateBlock(stmt);
                             return 0;
                         case C.STATUS_LIGHT_ACTION:
                             n.statusLightOffAction(stmt[C.NAME], stmt[C.PORT]);
-                            s.terminateBlock(stmt);
                             return 0;
                         case C.STOP:
                             U.debug("PROGRAM TERMINATED. stop op");
                             this.terminated = true;
-                            s.terminateBlock(stmt);
                             break;
                         case C.TEXT_JOIN: {
                             var n_1 = stmt[C.NUMBER];
@@ -376,64 +345,51 @@
                                 result[n_1 - i - 1] = e;
                             }
                             s.push(result.join(""));
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.TIMER_SENSOR_RESET:
                             n.timerReset(stmt[C.PORT]);
-                            s.terminateBlock(stmt);
                             break;
                         case C.ENCODER_SENSOR_RESET:
                             n.encoderReset(stmt[C.PORT]);
-                            s.terminateBlock(stmt);
                             return 0;
                         case C.GYRO_SENSOR_RESET:
                             n.gyroReset(stmt[C.PORT]);
-                            s.terminateBlock(stmt);
                             return 0;
                         case C.TONE_ACTION: {
                             var duration = s.pop();
                             var frequency = s.pop();
-                            s.terminateBlock(stmt);
                             return n.toneAction(stmt[C.NAME], frequency, duration);
                         }
                         case C.PLAY_FILE_ACTION:
-                            s.terminateBlock(stmt);
                             return n.playFileAction(stmt[C.FILE]);
                         case C.SET_VOLUME_ACTION:
                             n.setVolumeAction(s.pop());
-                            s.terminateBlock(stmt);
                             return 0;
                         case C.GET_VOLUME:
                             n.getVolumeAction(s);
-                            s.terminateBlock(stmt);
                             break;
                         case C.SET_LANGUAGE_ACTION:
                             n.setLanguage(stmt[C.LANGUAGE]);
-                            s.terminateBlock(stmt);
                             break;
                         case C.SAY_TEXT_ACTION: {
                             var pitch = s.pop();
                             var speed = s.pop();
                             var text = s.pop();
-                            s.terminateBlock(stmt);
                             return n.sayTextAction(text, speed, pitch);
                         }
                         case C.VAR_DECLARATION: {
                             var name_9 = stmt[C.NAME];
                             s.bindVar(name_9, s.pop());
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.WAIT_STMT: {
                             U.debug('waitstmt started');
                             s.pushOps(stmt[C.STMT_LIST]);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.WAIT_TIME_STMT: {
                             var time = s.pop();
-                            s.terminateBlock(stmt);
                             return time; // wait for handler being called
                         }
                         case C.WRITE_PIN_ACTION: {
@@ -441,7 +397,6 @@
                             var mode = stmt[C.MODE];
                             var pin = stmt[C.PIN];
                             n.writePinAction(pin, mode, value);
-                            s.terminateBlock(stmt);
                             return 0;
                         }
                         case C.LIST_OPERATION: {
@@ -465,7 +420,6 @@
                                     list.splice(ix, 0, value);
                                 }
                             }
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.TEXT_APPEND:
@@ -473,13 +427,11 @@
                             var value = s.pop();
                             var name_10 = stmt[C.NAME];
                             s.bindVar(name_10, s.pop() + value);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.DEBUG_ACTION: {
                             var value = s.pop();
                             n.debugAction(value);
-                            s.terminateBlock(stmt);
                             break;
                         }
                         case C.ASSERT_ACTION: {
@@ -487,12 +439,15 @@
                             var left = s.pop();
                             var value = s.pop();
                             n.assertAction(stmt[C.MSG], left, stmt[C.OP], right, value);
+                            break;
+                        }
+                        case C.COMMENT: {
+                            break;
+                        }
+                        case C.TERMINATE_BLOCK: {
                             s.terminateBlock(stmt);
                             break;
                         }
-                        case C.COMMENT:
-                            s.terminateBlock(stmt);
-                            break;
                         default:
                             U.dbcException("invalid stmt op: " + opCode);
                     }
@@ -538,7 +493,7 @@
                 case C.CREATE_LIST_REPEAT: {
                     var rep = s.pop();
                     var val = s.pop();
-                    var arr = new Array();
+                    var arr = [];
                     for (var i = 0; i < rep; i++) {
                         arr[i] = val;
                     }

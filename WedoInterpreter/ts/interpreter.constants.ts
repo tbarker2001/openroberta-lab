@@ -258,6 +258,7 @@ export const STRING: string = "STRING";
 export const STRING_CONST: string = "STRING_CONST";
 export const SUM: string = "sum";
 export const TEMPERATURE: string = "temperature";
+export const TERMINATE_BLOCK: string = "TERMINATE_BLOCK";
 export const TERNARY_EXPR: string = "createTernaryExpr";
 export const TEXT: string = "text";
 export const TEXT_APPEND: string = "textAppend";
