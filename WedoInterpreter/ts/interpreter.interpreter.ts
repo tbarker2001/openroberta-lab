@@ -137,6 +137,9 @@ export class Interpreter {
                             if ( stmt[C.BREAK] ) {
                                 s.getOp();
                             }
+                            if (stmt[C.KIND] ===  C.METHOD_CALL_VOID || stmt[C.KIND] === C.METHOD_CALL_RETURN){
+                                s.terminateBlock(stmt);
+                            }
                         }
                         break;
                     }
@@ -168,6 +171,7 @@ export class Interpreter {
                             s.bindVar( parameterName, s.pop() )
                         }
                         const body = s.getFunction( stmt[C.NAME] )[C.STATEMENTS];
+                        s.highlightBlock(body[body.length-1]);
                         s.pushOps( body );
                         break;
                     }
@@ -361,7 +365,6 @@ export class Interpreter {
                         return n.toneAction( stmt[C.NAME], frequency, duration );
                     }
                     case C.PLAY_FILE_ACTION:
-
                         return n.playFileAction( stmt[C.FILE] );
                     case C.SET_VOLUME_ACTION:
                         n.setVolumeAction( s.pop() );
