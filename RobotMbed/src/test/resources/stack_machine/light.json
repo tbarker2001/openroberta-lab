@@ -1,27 +1,39 @@
 {
-	"ops": [
+	"ops":[
 		{
-			"opc": "expr",
+			"opc":"expr",
 			"BLOCK_ID":"mdSVJclsydU}L@Rrf=m(",
-			"expr": "COLOR_CONST",
-			"value": [
+			"expr":"COLOR_CONST",
+			"value":[
 				255,
 				0,
 				0
 			]
 		},
 		{
-			"opc": "ledOnAction",
+			"opc":"TERMINATE_BLOCK",
+			"BLOCK_ID":"mdSVJclsydU}L@Rrf=m("
+		},
+		{
+			"opc":"ledOnAction",
 			"BLOCK_ID":"j()bCMB@vT0D+pGbc0[0"
 		},
 		{
-			"opc": "statusLightAction",
+			"opc":"TERMINATE_BLOCK",
+			"BLOCK_ID":"j()bCMB@vT0D+pGbc0[0"
+		},
+		{
+			"opc":"statusLightAction",
 			"BLOCK_ID":"hsCy=%3|2^SI%i/J[^.`",
-			"port": "internal",
-			"name": "calliope"
+			"port":"internal",
+			"name":"calliope"
+		},
+		{
+			"opc":"TERMINATE_BLOCK",
+			"BLOCK_ID":"hsCy=%3|2^SI%i/J[^.`"
 		}
 	],
-	"functionDeclaration": {
-		
+	"functionDeclaration":{
+
 	}
 }
