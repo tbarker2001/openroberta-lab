@@ -207,6 +207,7 @@
                     throw 'pop ops until ' + target + '-stmt failed';
                 }
                 var suspendedStmt = opsWrapper[C.OPS][opsWrapper[C.PC]];
+                this.terminateBlock(suspendedStmt);
                 if (suspendedStmt !== undefined) {
                     if (suspendedStmt[C.OPCODE] === C.REPEAT_STMT && (suspendedStmt[C.MODE] === C.TIMES || suspendedStmt[C.MODE] === C.FOR)) {
                         this.unbindVar(suspendedStmt[C.NAME]);

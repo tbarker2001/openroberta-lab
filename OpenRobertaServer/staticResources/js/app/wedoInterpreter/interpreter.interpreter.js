@@ -136,9 +136,7 @@
                                 if (stmt[C.BREAK]) {
                                     s.getOp();
                                 }
-                                if (stmt[C.KIND] === C.METHOD_CALL_VOID || stmt[C.KIND] === C.METHOD_CALL_RETURN) {
-                                    s.terminateBlock(stmt);
-                                }
+                                s.terminateBlock(stmt);
                             }
                             break;
                         }
