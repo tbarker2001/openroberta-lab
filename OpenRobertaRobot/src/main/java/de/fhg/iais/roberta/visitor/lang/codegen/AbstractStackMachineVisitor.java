@@ -758,7 +758,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
         List<Expr<V>> parametersNames = methodCall.getParameters().get();
         pushOpArray();
         parametersNames.stream().forEach(n -> n.accept(this));
-        List<String> names = this.getOpArray().stream().map(d -> d.getString(C.NAME)).collect(Collectors.toList());
+        List<String> names = this.getOpArray().stream().filter(d-> d.get(C.OPCODE) != C.TERMINATE_BLOCK).map(d -> d.getString(C.NAME)).collect(Collectors.toList());
         names = Lists.reverse(names);
         popOpArray();
         List<Expr<V>> parametersValues = methodCall.getParametersValues().get();
