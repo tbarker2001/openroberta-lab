@@ -19,6 +19,7 @@ export class State {
     private bindings; // the binding of values to names (the 'environment')
     private stack: any[]; // the stack of values
     private currentBlocks: any; //hash map current blocks being executed
+    private debugMode: boolean;
 
     /**
      * initialization of the state.
@@ -35,9 +36,16 @@ export class State {
         this.bindings = {};
         this.stack = [];
         this.currentBlocks = {};
+        this.debugMode = false;
         // p( 'storeCode with state reset' );
     }
 
+    public getDebugMode(){
+        return this.debugMode;
+    }
+    public setDebugMode(mode: boolean){
+        this.debugMode = mode;
+    }
     /**
      * returns the code block of a function. The code block contains formal parameter names and the array of operations implementing the function
      * 
@@ -266,23 +274,27 @@ export class State {
             U.dbcException( 'bindVar value invalid' );
         }
     }
-    /** Cleans up blocks to be terminated and highlights statements block if necessary*/
-    public highlightBlock (stmt){
+
+    public processBlock(stmt){
         for (var block_ID in this.currentBlocks){
             if (this.currentBlocks[block_ID].terminate){
-                this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
+                if (this.debugMode){
+                    this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
+                }
                 delete this.currentBlocks[block_ID];
             }
         }
         if (stmt.hasOwnProperty(C.BLOCK_ID)) {
-
             let block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
             if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])){
-                block.svgPath_.classList.add("highlight");
+                if (this.debugMode){
+                    block.svgPath_.classList.add("highlight");
+                }
                 this.currentBlocks[stmt[C.BLOCK_ID]] = {"block": block,"terminate": false};
             }
         }
     }
+
     /** Marks a block to be terminated in the next iteration of the interpreter **/
     public terminateBlock (stmt) {
         if (stmt.hasOwnProperty(C.BLOCK_ID)) {
@@ -290,6 +302,16 @@ export class State {
             if (block_id in this.currentBlocks){
                 this.currentBlocks[block_id].terminate = true;
             }
+        }
+    }
+    public addHighlights(){
+        for (var block_ID in this.currentBlocks){
+            this.currentBlocks[block_ID].block.svgPath_.classList.add("highlight");
+        }
+    }
+    public removeHighlights(){
+        for (var block_ID in this.currentBlocks){
+            this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
         }
     }
 }

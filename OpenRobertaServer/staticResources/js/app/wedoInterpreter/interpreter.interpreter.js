@@ -23,7 +23,6 @@
         function Interpreter(generatedCode, r, cbOnTermination) {
             this.terminated = false;
             this.callbackOnTermination = undefined;
-            this.highlightMode = true;
             this.terminated = false;
             this.callbackOnTermination = cbOnTermination;
             var stmts = generatedCode[C.OPS];
@@ -59,13 +58,19 @@
         Interpreter.prototype.getRobotBehaviour = function () {
             return this.r;
         };
-        Interpreter.prototype.evalBlock = function (maxRunTime) {
+        Interpreter.prototype.setDebugMode = function (mode) {
+            var s = this.s;
+            s.setDebugMode(mode);
+            if (mode) {
+                s.addHighlights();
+            }
+            else {
+                s.removeHighlights();
+            }
         };
         Interpreter.prototype.evalSingleOperation = function (s, n, stmt) {
             s.opLog('actual ops: ');
-            if (this.highlightMode) {
-                s.highlightBlock(stmt);
-            }
+            s.processBlock(stmt);
             if (stmt === undefined) {
                 U.debug('PROGRAM TERMINATED. No ops remaining');
                 this.terminated = true;
@@ -131,7 +136,7 @@
                             s.bindVar(parameterName, s.pop());
                         }
                         var body = s.getFunction(stmt[C.NAME])[C.STATEMENTS];
-                        s.highlightBlock(body[body.length - 1]);
+                        s.processBlock(body[body.length - 1]);
                         s.pushOps(body);
                         break;
                     }
@@ -415,15 +420,6 @@
                     default:
                         U.dbcException("invalid stmt op: " + opCode);
                 }
-                if (this.highlightMode) {
-                    return 0;
-                }
-            }
-            if (this.terminated) {
-                // termination either requested by the client or by executing 'stop' or after last statement
-                n.close();
-                this.callbackOnTermination();
-                return 0;
             }
             return 0;
         };
@@ -466,8 +462,18 @@
         Interpreter.prototype.evalOperation = function (maxRunTime) {
             var s = this.s;
             var n = this.r;
+            console.log("Debug Mode is:" + s.getDebugMode());
             while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
-                return this.evalSingleOperation(s, n, s.getOp());
+                var result = this.evalSingleOperation(s, n, s.getOp());
+                if (s.getDebugMode() || result > 0) {
+                    return result;
+                }
+                if (this.terminated) {
+                    // termination either requested by the client or by executing 'stop' or after last statement
+                    n.close();
+                    this.callbackOnTermination();
+                    return 0;
+                }
             }
             return 0;
         };

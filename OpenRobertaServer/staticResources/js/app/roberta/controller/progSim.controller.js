@@ -127,6 +127,17 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
         $('#simResetPose').onWrap('click', function(event) {
             SIM.resetPose();
         }, 'simResetPose clicked');
+
+        $('#debugMode').onWrap('click',function (event) {
+            if ($('#debugMode').attr('data-original-title') === Blockly.Msg.MENU_DEBUG_START_TOOLTIP){
+                $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_STOP_TOOLTIP);
+                SIM.updateDebugMode(true);
+            }
+            else{
+                $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
+                SIM.updateDebugMode(false);
+            }
+        },'debugMode clicked');
     }
 
     function toggleSim() {

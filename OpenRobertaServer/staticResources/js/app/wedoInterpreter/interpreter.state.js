@@ -28,8 +28,15 @@
             this.bindings = {};
             this.stack = [];
             this.currentBlocks = {};
+            this.debugMode = false;
             // p( 'storeCode with state reset' );
         }
+        State.prototype.getDebugMode = function () {
+            return this.debugMode;
+        };
+        State.prototype.setDebugMode = function (mode) {
+            this.debugMode = mode;
+        };
         /**
          * returns the code block of a function. The code block contains formal parameter names and the array of operations implementing the function
          *
@@ -247,18 +254,21 @@
                 U.dbcException('bindVar value invalid');
             }
         };
-        /** Cleans up blocks to be terminated and highlights statements block if necessary*/
-        State.prototype.highlightBlock = function (stmt) {
+        State.prototype.processBlock = function (stmt) {
             for (var block_ID in this.currentBlocks) {
                 if (this.currentBlocks[block_ID].terminate) {
-                    this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
+                    if (this.debugMode) {
+                        this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
+                    }
                     delete this.currentBlocks[block_ID];
                 }
             }
             if (stmt.hasOwnProperty(C.BLOCK_ID)) {
                 var block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
                 if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])) {
-                    block.svgPath_.classList.add("highlight");
+                    if (this.debugMode) {
+                        block.svgPath_.classList.add("highlight");
+                    }
                     this.currentBlocks[stmt[C.BLOCK_ID]] = { "block": block, "terminate": false };
                 }
             }
@@ -270,6 +280,16 @@
                 if (block_id in this.currentBlocks) {
                     this.currentBlocks[block_id].terminate = true;
                 }
+            }
+        };
+        State.prototype.addHighlights = function () {
+            for (var block_ID in this.currentBlocks) {
+                this.currentBlocks[block_ID].block.svgPath_.classList.add("highlight");
+            }
+        };
+        State.prototype.removeHighlights = function () {
+            for (var block_ID in this.currentBlocks) {
+                this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
             }
         };
         return State;

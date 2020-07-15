@@ -29,6 +29,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     var canceled;
     var storedPrograms;
     var customBackgroundLoaded = false;
+    var debugMode = false;
 
     var imgObstacle1 = new Image();
     var imgPattern = new Image();
@@ -341,7 +342,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
             configurations.push(x.javaScriptConfiguration);
             return new SIM_I.Interpreter(src, new MBED_R.RobotMbedBehaviour(), callbackOnTermination);
         });
-        
+        this.updateDebugMode(this.debugMode);
 
         isDownRobots = [];
         for (var i = 0; i < numRobots; i++) {
@@ -1133,6 +1134,16 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         return this.webAudio;
     }
     exports.getWebAudio = getWebAudio;
+
+    function updateDebugMode(mode) {
+        this.debugMode = mode;
+        if (interpreters !== null){
+            for (var i = 0; i < numRobots; i++) {
+                interpreters[i].setDebugMode(mode);
+            }
+        }
+    }
+    exports.updateDebugMode = updateDebugMode;
 });
 
 //http://paulirish.com/2011/requestanimationframe-for-smart-animating/

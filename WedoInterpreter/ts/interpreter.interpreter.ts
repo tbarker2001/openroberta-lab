@@ -7,7 +7,6 @@ export class Interpreter {
 
 	private terminated = false;
 	private callbackOnTermination = undefined;
-    private highlightMode = true;
 
 	private r: ARobotBehaviour;
 	private s: State; // the state of the interpreter (ops, pc, bindings, stack, ...)
@@ -61,11 +60,21 @@ export class Interpreter {
 		return this.r;
 	}
 
+    public setDebugMode(mode){
+        const s = this.s;
+        s.setDebugMode(mode)
+        if (mode) {
+            s.addHighlights();
+        }
+        else{
+            s.removeHighlights();
+        }
+    }
+
     private evalSingleOperation(s: any, n: any,stmt: any){
         s.opLog( 'actual ops: ' );
-        if (this.highlightMode){
-            s.highlightBlock(stmt);
-        }
+        s.processBlock(stmt)
+
         if ( stmt === undefined ) {
             U.debug( 'PROGRAM TERMINATED. No ops remaining' );
             this.terminated = true;
@@ -129,7 +138,7 @@ export class Interpreter {
                         s.bindVar( parameterName, s.pop() )
                     }
                     const body = s.getFunction( stmt[C.NAME] )[C.STATEMENTS];
-                    s.highlightBlock(body[body.length-1]);
+                    s.processBlock(body[body.length-1]);
                     s.pushOps( body );
                     break;
                 }
@@ -411,12 +420,6 @@ export class Interpreter {
                     U.dbcException( "invalid stmt op: " + opCode );
             }
         }
-        if ( this.terminated ) {
-            // termination either requested by the client or by executing 'stop' or after last statement
-            n.close();
-            this.callbackOnTermination()
-            return 0;
-        }
         return 0;
 }
 
@@ -459,31 +462,21 @@ export class Interpreter {
     private evalOperation( maxRunTime: number ) {
         const s = this.s;
         const n = this.r;
+        console.log("Debug Mode is:"+s.getDebugMode())
         while ( maxRunTime >= new Date().getTime() && !n.getBlocking() ) {
             let result =  this.evalSingleOperation(s,n,s.getOp());
-            if (this.highlightMode || result > 0) {
+            if (s.getDebugMode() || result > 0) {
                 return result;
+            }
+            if ( this.terminated ) {
+                // termination either requested by the client or by executing 'stop' or after last statement
+                n.close();
+                this.callbackOnTermination()
+                return 0;
             }
         }
         return 0;
     }
-
-    private evalBlock(maxRunTime: number){
-        const s = this.s;
-        const n = this.r;
-        let prevOp = s.getOp();
-        let currentOp = prevOp;
-        let result;
-        let newBlock = (): boolean =>  currentOp.hasOwnProperty(C.BLOCK_ID) && prevOp.hasOwnProperty(C.BLOCK_ID) && currentOp[C.BLOCK_ID] !== prevOp[C.BLOCK_ID];
-
-        while ( maxRunTime >= new Date().getTime() && !n.getBlocking() && !newBlock()) {
-            result =  this.evalSingleOperation(s,n,currentOp);
-            prevOp = currentOp;
-            currentOp = s.getOp();
-        }
-        return result;
-    }
-
     /**
      *  called from @see evalOperation() to evaluate all kinds of expressions
      *  
