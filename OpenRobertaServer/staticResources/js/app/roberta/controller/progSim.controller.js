@@ -131,13 +131,16 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
         $('#debugMode').onWrap('click',function (event) {
             if ($('#debugMode').attr('data-original-title') === Blockly.Msg.MENU_DEBUG_START_TOOLTIP){
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_STOP_TOOLTIP);
+                $('#simControlForward').show();
                 SIM.updateDebugMode(true);
             }
             else{
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
+                $('#simControlForward').hide();
                 SIM.updateDebugMode(false);
             }
         },'debugMode clicked');
+        $()
     }
 
     function toggleSim() {
@@ -167,6 +170,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                     $('#simButtonsCollapse').collapse({
                         'toggle' : false
                     });
+                    $('#simControlForward').hide();
                     if (TOUR_C.getInstance() && TOUR_C.getInstance().trigger) {
                         TOUR_C.getInstance().trigger('startSim');
                     }
