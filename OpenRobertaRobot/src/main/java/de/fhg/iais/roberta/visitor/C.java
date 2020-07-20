@@ -111,6 +111,7 @@ public class C {
     public static final String IMAGE_SHIFT_ACTION = "ImageShiftAction";
     public static final String IN = "in";
     public static final String INFRARED = "infrared";
+    public static final String INITIATE_BLOCK = "INITIATE_BLOCK";
     public static final String INSERT = "insert";
     public static final String ITEM = "item";
     public static final String KIND = "kind";

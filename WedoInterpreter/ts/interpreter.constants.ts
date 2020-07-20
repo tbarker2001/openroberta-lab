@@ -109,6 +109,7 @@ export const IMAGE_INVERT_ACTION: string = "ImageInvertAction";
 export const IMAGE_SHIFT_ACTION: string = "ImageShiftAction";
 export const IN: string = "in";
 export const INFRARED: string = "infrared";
+export const INITIATE_BLOCK: string = "INITIATE_BLOCK";
 export const INSERT: string = "insert";
 export const ITEM: string = "item";
 export const KIND: string = "kind";

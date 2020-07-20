@@ -414,7 +414,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
             } else if ( mode == Mode.FOR_EACH ) {
                 pushOpArray();
                 repeatStmt.getExpr().accept(this);
-                List<JSONObject> timesExprs = popOpArray();
+                List<JSONObject> timesExprs =popOpArray().stream().filter(d-> (d.get(C.OPCODE) != C.TERMINATE_BLOCK && d.get(C.OPCODE) != C.INITIATE_BLOCK)).collect(Collectors.toList());
                 timesExprs.remove(0);
                 JSONObject varDecl = timesExprs.remove(0);
                 JSONObject listDecl = timesExprs.remove(0);
@@ -433,7 +433,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
             } else {
                 pushOpArray();
                 repeatStmt.getExpr().accept(this); // expected: expr list length 4: var, start, end, incr
-                List<JSONObject> timesExprs = popOpArray();
+                List<JSONObject> timesExprs = popOpArray().stream().filter(d-> (d.get(C.OPCODE) != C.TERMINATE_BLOCK && d.get(C.OPCODE) != C.INITIATE_BLOCK)).collect(Collectors.toList());;
                 JSONObject decl = timesExprs.remove(0);
                 this.getOpArray().addAll(timesExprs);
                 String runVarName = decl.getString(C.NAME);
@@ -758,7 +758,7 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
         List<Expr<V>> parametersNames = methodCall.getParameters().get();
         pushOpArray();
         parametersNames.stream().forEach(n -> n.accept(this));
-        List<String> names = this.getOpArray().stream().filter(d-> d.get(C.OPCODE) != C.TERMINATE_BLOCK).map(d -> d.getString(C.NAME)).collect(Collectors.toList());
+        List<String> names = this.getOpArray().stream().filter(d-> (d.get(C.OPCODE) != C.TERMINATE_BLOCK && d.get(C.OPCODE) != C.INITIATE_BLOCK)).map(d -> d.getString(C.NAME)).collect(Collectors.toList());
         names = Lists.reverse(names);
         popOpArray();
         List<Expr<V>> parametersValues = methodCall.getParametersValues().get();
@@ -819,9 +819,13 @@ public abstract class AbstractStackMachineVisitor<V> implements ILanguageVisitor
     }
 
     protected V app(JSONObject o) {
-        this.getOpArray().add(o);
         if (o.has(C.BLOCK_ID)){
+            this.getOpArray().add(mk(C.INITIATE_BLOCK).put(C.BLOCK_ID,o.get(C.BLOCK_ID)));
+            this.getOpArray().add(o);
             this.getOpArray().add(mk(C.TERMINATE_BLOCK).put(C.BLOCK_ID,o.get(C.BLOCK_ID)));
+        }
+        else{
+            this.getOpArray().add(o);
         }
         return null;
     }
