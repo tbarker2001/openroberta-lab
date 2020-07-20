@@ -12,6 +12,7 @@ export class Interpreter {
 	private r: ARobotBehaviour;
 	private s: State; // the state of the interpreter (ops, pc, bindings, stack, ...)
     private breakPoints : any[];
+    private previousBlockId: any;
 
     /*
      * 
@@ -471,9 +472,10 @@ export class Interpreter {
 
         while ( maxRunTime >= new Date().getTime() && !n.getBlocking() ) {
             let op = s.getOp();
+
             let result =  this.evalSingleOperation(s,n,op);
 
-            if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK){
+            if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== this.previousBlockId){
                 //check if is a break block
                 this.breakPoints.forEach(function (breakPoint) {
                     if (op[C.BLOCK_ID] === breakPoint.id){
@@ -482,6 +484,7 @@ export class Interpreter {
                     }
                 })
             }
+            this.previousBlockId = op[C.BLOCK_ID];
 
 
             if (s.getDebugMode() || result > 0) {

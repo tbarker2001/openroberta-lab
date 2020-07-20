@@ -469,7 +469,7 @@
             var _loop_1 = function () {
                 var op = s.getOp();
                 var result = this_1.evalSingleOperation(s, n, op);
-                if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK) {
+                if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== this_1.previousBlockId) {
                     //check if is a break block
                     this_1.breakPoints.forEach(function (breakPoint) {
                         if (op[C.BLOCK_ID] === breakPoint.id) {
@@ -478,6 +478,7 @@
                         }
                     });
                 }
+                this_1.previousBlockId = op[C.BLOCK_ID];
                 if (s.getDebugMode() || result > 0) {
                     return { value: result };
                 }
