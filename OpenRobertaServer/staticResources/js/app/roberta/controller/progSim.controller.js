@@ -133,14 +133,32 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_STOP_TOOLTIP);
                 $('#simControlForward').show();
                 SIM.updateDebugMode(true);
+
+                Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
+                    console.log(block);
+                    $(block.svgPath_).onWrap('click', function(event){
+                        if (block.svgPath_.classList.contains('breakpoint')){
+                            SIM.removeBreakPoint(block);
+                            block.svgPath_.classList.remove('breakpoint');
+                        }
+                        else{
+                            SIM.addBreakPoint(block);
+                            block.svgPath_.classList.add('breakpoint');
+                        }
+                    },'breakpoints activated')
+                })
             }
             else{
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
                 $('#simControlForward').hide();
                 SIM.updateDebugMode(false);
+
+                Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
+                    block.svgPath_.classList.remove('breakpoint');
+                    $(block.svgGroup_).off('click');})
             }
         },'debugMode clicked');
-        $()
+        $('#simControlForward').onWrap('click', function(event){SIM.setPause(false)});
     }
 
     function toggleSim() {

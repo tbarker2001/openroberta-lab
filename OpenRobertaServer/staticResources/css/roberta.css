@@ -3021,3 +3021,9 @@ path.blocklyPath.highlight {
     stroke-opacity: 1;
     transition: none;
 }
+
+path.blocklyPath.breakpoint {
+    stroke-opacity: 1;
+    transition: none;
+    stroke: red;
+}

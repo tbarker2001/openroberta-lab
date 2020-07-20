@@ -2,6 +2,7 @@ import { ARobotBehaviour } from "interpreter.aRobotBehaviour";
 import { State } from "interpreter.state";
 import * as C from "interpreter.constants";
 import * as U from "interpreter.util";
+declare var stackmachineJsHelper;
 
 export class Interpreter {
 
@@ -10,6 +11,7 @@ export class Interpreter {
 
 	private r: ARobotBehaviour;
 	private s: State; // the state of the interpreter (ops, pc, bindings, stack, ...)
+    private breakPoints : any[];
 
     /*
      * 
@@ -17,12 +19,13 @@ export class Interpreter {
      * . @param r implementation of the ARobotBehaviour class
      * . @param cbOnTermination is called when the program has terminated
     */
-	constructor(generatedCode: any, r: ARobotBehaviour, cbOnTermination: () => void) {
-		this.terminated = false;
-		this.callbackOnTermination = cbOnTermination;
-		const stmts = generatedCode[C.OPS];
-		const functions = generatedCode[C.FUNCTION_DECLARATION];
-		this.r = r;
+	constructor(generatedCode: any, r: ARobotBehaviour, cbOnTermination: () => void,breakpoints : any[]) {
+        this.terminated = false;
+        this.callbackOnTermination = cbOnTermination;
+        const stmts = generatedCode[C.OPS];
+        const functions = generatedCode[C.FUNCTION_DECLARATION];
+        this.r = r;
+        this.breakPoints = breakpoints;
 
 		var stop = {};
 		stop[C.OPCODE] = "stop";
@@ -412,6 +415,9 @@ export class Interpreter {
                 case C.COMMENT: {
                     break;
                 }
+                case C.INITIATE_BLOCK:{
+                    break;
+                }
                 case C.TERMINATE_BLOCK:{
                     s.terminateBlock(stmt);
                     break;
@@ -462,9 +468,22 @@ export class Interpreter {
     private evalOperation( maxRunTime: number ) {
         const s = this.s;
         const n = this.r;
-        console.log("Debug Mode is:"+s.getDebugMode())
+
         while ( maxRunTime >= new Date().getTime() && !n.getBlocking() ) {
-            let result =  this.evalSingleOperation(s,n,s.getOp());
+            let op = s.getOp();
+            let result =  this.evalSingleOperation(s,n,op);
+
+            if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK){
+                //check if is a break block
+                this.breakPoints.forEach(function (breakPoint) {
+                    if (op[C.BLOCK_ID] === breakPoint.id){
+                        //breakpoint has been hit
+                        stackmachineJsHelper.setSimBreak();
+                    }
+                })
+            }
+
+
             if (s.getDebugMode() || result > 0) {
                 return result;
             }
@@ -474,6 +493,7 @@ export class Interpreter {
                 this.callbackOnTermination()
                 return 0;
             }
+
         }
         return 0;
     }

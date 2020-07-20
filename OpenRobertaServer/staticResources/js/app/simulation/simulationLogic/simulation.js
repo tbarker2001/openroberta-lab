@@ -30,6 +30,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     var storedPrograms;
     var customBackgroundLoaded = false;
     var debugMode = false;
+    var breakpoints = [];
 
     var imgObstacle1 = new Image();
     var imgPattern = new Image();
@@ -305,7 +306,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         console.log("END of Sim");
     }
 
-    function init(programs, refresh, robotType) {        
+    function init(programs, refresh, robotType) {
         mouseOnRobotIndex = -1;
         storedPrograms = programs;
         numRobots = programs.length;
@@ -340,7 +341,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         interpreters = programs.map(function(x) {
             var src = JSON.parse(x.javaScriptProgram);
             configurations.push(x.javaScriptConfiguration);
-            return new SIM_I.Interpreter(src, new MBED_R.RobotMbedBehaviour(), callbackOnTermination);
+            return new SIM_I.Interpreter(src, new MBED_R.RobotMbedBehaviour(), callbackOnTermination,breakpoints);
         });
         this.updateDebugMode(this.debugMode);
 
@@ -371,6 +372,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                 setObstacle();
                 setRuler();
                 initScene();
+
             });
 
         } else {
@@ -457,7 +459,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                     scene.drawRobots();
                     // some time to cancel all timeouts
                     setTimeout(function() {
-                        init(userPrograms, false, simRobotType);
+                        init(userPrograms, false, simRobotType,false);
                         addMouseEvents();
                     }, 205);
                     setTimeout(function() {
@@ -1144,6 +1146,20 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         }
     }
     exports.updateDebugMode = updateDebugMode;
+    
+    function  addBreakPoint(block) {
+        breakpoints.push(block);
+    }
+    exports.addBreakPoint = addBreakPoint;
+
+    function removeBreakPoint(block) {
+        for (var i = 0; i< breakpoints.length; i++){
+            if (breakpoints[i].id === block.id){
+                breakpoints.splice(i, 1);
+            }
+        }
+    }
+    exports.removeBreakPoint = removeBreakPoint;
 });
 
 //http://paulirish.com/2011/requestanimationframe-for-smart-animating/

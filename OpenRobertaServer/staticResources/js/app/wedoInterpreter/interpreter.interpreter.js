@@ -20,7 +20,7 @@
          * . @param r implementation of the ARobotBehaviour class
          * . @param cbOnTermination is called when the program has terminated
         */
-        function Interpreter(generatedCode, r, cbOnTermination) {
+        function Interpreter(generatedCode, r, cbOnTermination, breakpoints) {
             this.terminated = false;
             this.callbackOnTermination = undefined;
             this.terminated = false;
@@ -28,6 +28,7 @@
             var stmts = generatedCode[C.OPS];
             var functions = generatedCode[C.FUNCTION_DECLARATION];
             this.r = r;
+            this.breakPoints = breakpoints;
             var stop = {};
             stop[C.OPCODE] = "stop";
             stmts.push(stop);
@@ -413,6 +414,9 @@
                     case C.COMMENT: {
                         break;
                     }
+                    case C.INITIATE_BLOCK: {
+                        break;
+                    }
                     case C.TERMINATE_BLOCK: {
                         s.terminateBlock(stmt);
                         break;
@@ -462,18 +466,33 @@
         Interpreter.prototype.evalOperation = function (maxRunTime) {
             var s = this.s;
             var n = this.r;
-            console.log("Debug Mode is:" + s.getDebugMode());
-            while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
-                var result = this.evalSingleOperation(s, n, s.getOp());
-                if (s.getDebugMode() || result > 0) {
-                    return result;
+            var _loop_1 = function () {
+                var op = s.getOp();
+                var result = this_1.evalSingleOperation(s, n, op);
+                if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK) {
+                    //check if is a break block
+                    this_1.breakPoints.forEach(function (breakPoint) {
+                        if (op[C.BLOCK_ID] === breakPoint.id) {
+                            //breakpoint has been hit
+                            stackmachineJsHelper.setSimBreak();
+                        }
+                    });
                 }
-                if (this.terminated) {
+                if (s.getDebugMode() || result > 0) {
+                    return { value: result };
+                }
+                if (this_1.terminated) {
                     // termination either requested by the client or by executing 'stop' or after last statement
                     n.close();
-                    this.callbackOnTermination();
-                    return 0;
+                    this_1.callbackOnTermination();
+                    return { value: 0 };
                 }
+            };
+            var this_1 = this;
+            while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
+                var state_1 = _loop_1();
+                if (typeof state_1 === "object")
+                    return state_1.value;
             }
             return 0;
         };
