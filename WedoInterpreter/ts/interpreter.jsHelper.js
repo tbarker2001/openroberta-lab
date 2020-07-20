@@ -10,4 +10,9 @@ define(["require","simulation.simulation", "exports"], function(require,SIM, exp
 		SIM.setPause(true);
 	}
 	exports.setSimBreak = setSimBreak;
+
+	function resetSim(){
+		SIM.resetStepping();
+	}
+	exports.resetSim = resetSim;
 });

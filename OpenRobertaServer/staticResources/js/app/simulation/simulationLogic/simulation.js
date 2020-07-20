@@ -31,6 +31,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     var customBackgroundLoaded = false;
     var debugMode = false;
     var breakpoints = [];
+    var steppingFinished = false;
 
     var imgObstacle1 = new Image();
     var imgPattern = new Image();
@@ -343,7 +344,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
             configurations.push(x.javaScriptConfiguration);
             return new SIM_I.Interpreter(src, new MBED_R.RobotMbedBehaviour(), callbackOnTermination,breakpoints);
         });
-        this.updateDebugMode(this.debugMode);
+        updateDebugMode(this.debugMode);
 
         isDownRobots = [];
         for (var i = 0; i < numRobots; i++) {
@@ -447,10 +448,10 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                         var nowNext = new Date().getTime();
                         runRenderUntil[i] = nowNext + delayMs;
                     }
-                } else if (interpreters[i].isTerminated() && !robots[i].endless) {
+                } else if (interpreters[i].isTerminated() && !robots[i].endless && !debugMode) {
                     robots[i].pause = true;
                     robots[i].reset();
-                } else if (reset) {
+                } else if (reset || steppingFinished) {
                     reset = false;
                     robots[i].buttons.Reset = false;
                     removeMouseEvents();
@@ -458,17 +459,26 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                     robots[i].reset();
                     scene.drawRobots();
                     // some time to cancel all timeouts
-                    setTimeout(function() {
-                        init(userPrograms, false, simRobotType,false);
-                        addMouseEvents();
-                    }, 205);
-                    setTimeout(function() {
-                        //delete robot.button.Reset;
-                        setPause(false);
-                        for (var i = 0; i < robots.length; i++) {
-                            robots[i].pause = false;
-                        }
-                    }, 1000);
+                    if (steppingFinished){
+                        setTimeout(function() {
+                            init(userPrograms, true, simRobotType);
+                            addMouseEvents();
+                        }, 205);
+                        steppingFinished = false;
+                    }
+                    else{
+                        setTimeout(function() {
+                            init(userPrograms, false, simRobotType);
+                            addMouseEvents();
+                        }, 205);
+                        setTimeout(function() {
+                            //delete robot.button.Reset;
+                            setPause(false);
+                            for (var i = 0; i < robots.length; i++) {
+                                robots[i].pause = false;
+                            }
+                        }, 1000);
+                    }
                 }
             }
             robots[i].update();
@@ -1138,7 +1148,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     exports.getWebAudio = getWebAudio;
 
     function updateDebugMode(mode) {
-        this.debugMode = mode;
+        debugMode = mode;
         if (interpreters !== null){
             for (var i = 0; i < numRobots; i++) {
                 interpreters[i].setDebugMode(mode);
@@ -1160,6 +1170,10 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         }
     }
     exports.removeBreakPoint = removeBreakPoint;
+    function resetStepping(){
+        steppingFinished = true;
+    }
+    exports.resetStepping = resetStepping;
 });
 
 //http://paulirish.com/2011/requestanimationframe-for-smart-animating/

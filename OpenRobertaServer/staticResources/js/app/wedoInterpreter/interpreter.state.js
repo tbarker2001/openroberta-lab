@@ -256,9 +256,16 @@
         };
         State.prototype.processBlock = function (stmt) {
             for (var block_ID in this.currentBlocks) {
+                var block = this.currentBlocks[block_ID].block;
                 if (this.currentBlocks[block_ID].terminate) {
                     if (this.debugMode) {
-                        this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
+                        if (block.svgPath_.classList.contains("selectedBreakpoint")) {
+                            block.svgPath_.classList.remove("selectedBreakpoint");
+                            block.svgPath_.classList.add("breakpoint");
+                        }
+                        else {
+                            block.svgPath_.classList.remove("highlight");
+                        }
                     }
                     delete this.currentBlocks[block_ID];
                 }
@@ -267,7 +274,12 @@
                 var block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
                 if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])) {
                     if (this.debugMode) {
-                        block.svgPath_.classList.add("highlight");
+                        if (block.svgPath_.classList.contains("breakpoint")) {
+                            block.svgPath_.classList.add("selectedBreakpoint");
+                        }
+                        else {
+                            block.svgPath_.classList.add("highlight");
+                        }
                     }
                     this.currentBlocks[stmt[C.BLOCK_ID]] = { "block": block, "terminate": false };
                 }
@@ -287,10 +299,14 @@
                 this.currentBlocks[block_ID].block.svgPath_.classList.add("highlight");
             }
         };
-        State.prototype.removeHighlights = function () {
+        State.prototype.removeHighlights = function (breakPoints) {
             for (var block_ID in this.currentBlocks) {
                 this.currentBlocks[block_ID].block.svgPath_.classList.remove("highlight");
             }
+            breakPoints.forEach(function (block) {
+                block.svgPath_.classList.remove("breakpoint");
+                block.svgPath_.classList.remove("selectedBreakpoint");
+            });
         };
         return State;
     }());

@@ -7,7 +7,12 @@ define(["require","simulation.simulation", "exports"], function(require,SIM, exp
 	exports.getBlockById = getBlockById;
 
 	function setSimBreak(){
-		SIM.setPause(true)
+		SIM.setPause(true);
 	}
 	exports.setSimBreak = setSimBreak;
+
+	function resetSim(){
+		SIM.resetStepping();
+	}
+	exports.resetSim = resetSim;
 });

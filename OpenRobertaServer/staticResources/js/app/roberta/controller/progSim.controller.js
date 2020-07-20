@@ -135,12 +135,17 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                 SIM.updateDebugMode(true);
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
-                    console.log(block);
                     $(block.svgPath_).onWrap('click', function(event){
                         if (block.svgPath_.classList.contains('breakpoint')){
                             SIM.removeBreakPoint(block);
                             block.svgPath_.classList.remove('breakpoint');
                         }
+                        else if (block.svgPath_.classList.contains('selectedBreakpoint')){
+                            SIM.removeBreakPoint(block);
+                            block.svgPath_.classList.remove('selectedBreakpoint');
+                            block.svgPath_.classList.add('highlight');
+                        }
+
                         else{
                             SIM.addBreakPoint(block);
                             block.svgPath_.classList.add('breakpoint');
@@ -155,7 +160,8 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
                     block.svgPath_.classList.remove('breakpoint');
-                    $(block.svgGroup_).off('click');})
+                    SIM.removeBreakPoint(block);
+                    $(block.svgPath_).off('click');})
             }
         },'debugMode clicked');
         $('#simControlForward').onWrap('click', function(event){SIM.setPause(false)});

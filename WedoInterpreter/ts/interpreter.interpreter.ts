@@ -71,7 +71,7 @@ export class Interpreter {
             s.addHighlights();
         }
         else{
-            s.removeHighlights();
+            s.removeHighlights(this.breakPoints);
         }
     }
 
@@ -310,6 +310,7 @@ export class Interpreter {
                 case C.STOP:
                     U.debug( "PROGRAM TERMINATED. stop op" );
                     this.terminated = true;
+                    if (s.getDebugMode()){stackmachineJsHelper.resetSim();}
                     break;
                 case C.TEXT_JOIN: {
                     const n = stmt[C.NUMBER];
@@ -472,10 +473,11 @@ export class Interpreter {
 
         while ( maxRunTime >= new Date().getTime() && !n.getBlocking() ) {
             let op = s.getOp();
+            let previousId = this.previousBlockId;
 
             let result =  this.evalSingleOperation(s,n,op);
 
-            if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== this.previousBlockId){
+            if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== previousId){
                 //check if is a break block
                 this.breakPoints.forEach(function (breakPoint) {
                     if (op[C.BLOCK_ID] === breakPoint.id){

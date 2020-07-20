@@ -66,7 +66,7 @@
                 s.addHighlights();
             }
             else {
-                s.removeHighlights();
+                s.removeHighlights(this.breakPoints);
             }
         };
         Interpreter.prototype.evalSingleOperation = function (s, n, stmt) {
@@ -306,6 +306,9 @@
                     case C.STOP:
                         U.debug("PROGRAM TERMINATED. stop op");
                         this.terminated = true;
+                        if (s.getDebugMode()) {
+                            stackmachineJsHelper.resetSim();
+                        }
                         break;
                     case C.TEXT_JOIN: {
                         var n_1 = stmt[C.NUMBER];
@@ -468,8 +471,9 @@
             var n = this.r;
             var _loop_1 = function () {
                 var op = s.getOp();
+                var previousId = this_1.previousBlockId;
                 var result = this_1.evalSingleOperation(s, n, op);
-                if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== this_1.previousBlockId) {
+                if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== previousId) {
                     //check if is a break block
                     this_1.breakPoints.forEach(function (breakPoint) {
                         if (op[C.BLOCK_ID] === breakPoint.id) {
