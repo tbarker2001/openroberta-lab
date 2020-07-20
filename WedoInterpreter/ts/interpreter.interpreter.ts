@@ -75,6 +75,19 @@ export class Interpreter {
         }
     }
 
+    private isPossibleBreakPoint(op){
+        if (op.hasOwnProperty(C.BLOCK_ID)){
+            if (op[C.BLOCK_ID] !== this.previousBlockId){
+                switch (op[C.OPCODE]) {
+                    case C.INITIATE_BLOCK:{return true;}
+                    case C.REPEAT_STMT_CONTINUATION:{return true;}
+                    case C.REPEAT_STMT: {return true;}
+                    default :{return false;}
+                }
+            }
+        }
+        return false;
+    }
     private evalSingleOperation(s: any, n: any,stmt: any){
         s.opLog( 'actual ops: ' );
         s.processBlock(stmt)
@@ -473,11 +486,10 @@ export class Interpreter {
 
         while ( maxRunTime >= new Date().getTime() && !n.getBlocking() ) {
             let op = s.getOp();
-            let previousId = this.previousBlockId;
 
             let result =  this.evalSingleOperation(s,n,op);
 
-            if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== previousId){
+            if (s.getDebugMode() && this.isPossibleBreakPoint(op)){
                 //check if is a break block
                 this.breakPoints.forEach(function (breakPoint) {
                     if (op[C.BLOCK_ID] === breakPoint.id){

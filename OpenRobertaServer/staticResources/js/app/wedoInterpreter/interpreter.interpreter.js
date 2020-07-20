@@ -69,6 +69,27 @@
                 s.removeHighlights(this.breakPoints);
             }
         };
+        Interpreter.prototype.isPossibleBreakPoint = function (op) {
+            if (op.hasOwnProperty(C.BLOCK_ID)) {
+                if (op[C.BLOCK_ID] !== this.previousBlockId) {
+                    switch (op[C.OPCODE]) {
+                        case C.INITIATE_BLOCK: {
+                            return true;
+                        }
+                        case C.REPEAT_STMT_CONTINUATION: {
+                            return true;
+                        }
+                        case C.REPEAT_STMT: {
+                            return true;
+                        }
+                        default: {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return false;
+        };
         Interpreter.prototype.evalSingleOperation = function (s, n, stmt) {
             s.opLog('actual ops: ');
             s.processBlock(stmt);
@@ -471,9 +492,8 @@
             var n = this.r;
             var _loop_1 = function () {
                 var op = s.getOp();
-                var previousId = this_1.previousBlockId;
                 var result = this_1.evalSingleOperation(s, n, op);
-                if (s.getDebugMode() && op.hasOwnProperty(C.BLOCK_ID) && op[C.OPCODE] === C.INITIATE_BLOCK && op[C.BLOCK_ID] !== previousId) {
+                if (s.getDebugMode() && this_1.isPossibleBreakPoint(op)) {
                     //check if is a break block
                     this_1.breakPoints.forEach(function (breakPoint) {
                         if (op[C.BLOCK_ID] === breakPoint.id) {
