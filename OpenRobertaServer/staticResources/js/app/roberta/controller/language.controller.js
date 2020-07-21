@@ -170,8 +170,12 @@ define([ 'exports', 'log', 'jquery', 'guiState.controller', 'program.controller'
                 $('#simResetPose').attr('data-original-title', value);
             } else if (lkey == 'Blockly.Msg.MENU_DEBUG_START_TOOLTIP') {
                 $('#debugMode').attr('data-original-title', value);
-            }else if (lkey == 'Blockly.Msg.MENU_DEBUG_STEP_FORWARD_TOOLTIP'){
-                $('#simControlForward').attr('data-original-title', value);
+            }else if (lkey == 'Blockly.Msg.MENU_DEBUG_STEP_BREAKPOINT_TOOLTIP'){
+                $('#simControlBreakPoint').attr('data-original-title', value);
+            }else if (lkey == 'Blockly.Msg.MENU_DEBUG_STEP_BLOCK_TOOLTIP'){
+                $('#simControlBlock').attr('data-original-title', value);
+            }else if (lkey == 'Blockly.Msg.MENU_DEBUG_STEP_INTO_TOOLTIP'){
+                $('#simControlStepInto').attr('data-original-title', value);
             } else if (lkey == 'Blockly.Msg.MENU_CODE_DOWNLOAD_TOOLTIP') {
                 $('#codeDownload').attr('data-original-title', value);
                 $('#downloadSourceCodeEditor').attr('data-original-title', value);

@@ -131,7 +131,9 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
         $('#debugMode').onWrap('click',function (event) {
             if ($('#debugMode').attr('data-original-title') === Blockly.Msg.MENU_DEBUG_START_TOOLTIP){
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_STOP_TOOLTIP);
-                $('#simControlForward').show();
+                $('#simControlBreakPoint').show();
+                $('#simControlBlock').show();
+                $('#simControlStepInto').show();
                 SIM.updateDebugMode(true);
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
@@ -155,7 +157,10 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             }
             else{
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
-                $('#simControlForward').hide();
+                $('#simControlBreakPoint').hide();
+                $('#simControlBlock').hide();
+                $('#simControlStepInto').hide();
+
                 SIM.updateDebugMode(false);
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
@@ -164,7 +169,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                     $(block.svgPath_).off('click');})
             }
         },'debugMode clicked');
-        $('#simControlForward').onWrap('click', function(event){SIM.setPause(false)});
+        $('#simControlBreakPoint').onWrap('click', function(event){SIM.setPause(false)});
     }
 
     function toggleSim() {
@@ -173,6 +178,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             $(".sim").addClass('hide');
             $("#simButtonsCollapse").collapse('hide');
             $('#simControl').addClass('typcn-media-play-outline').removeClass('typcn-media-stop');
+            $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
             $('#blockly').closeRightView(function() {
                 $('#menuSim').parent().addClass('disabled');
                 $('.nav > li > ul > .robotType').removeClass('disabled');
@@ -194,7 +200,10 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                     $('#simButtonsCollapse').collapse({
                         'toggle' : false
                     });
-                    $('#simControlForward').hide();
+                    $('#simControlBreakPoint').hide();
+                    $('#simControlBlock').hide();
+                    $('#simControlStepInto').hide();
+
                     if (TOUR_C.getInstance() && TOUR_C.getInstance().trigger) {
                         TOUR_C.getInstance().trigger('startSim');
                     }
