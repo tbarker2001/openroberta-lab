@@ -490,35 +490,29 @@
         Interpreter.prototype.evalOperation = function (maxRunTime) {
             var s = this.s;
             var n = this.r;
-            var _loop_1 = function () {
+            while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
                 var op = s.getOp();
-                var result = this_1.evalSingleOperation(s, n, op);
-                if (s.getDebugMode() && this_1.isPossibleBreakPoint(op)) {
+                var result = this.evalSingleOperation(s, n, op);
+                if (s.getDebugMode() && this.isPossibleBreakPoint(op)) {
                     //check if is a break block
-                    this_1.breakPoints.forEach(function (breakPoint) {
-                        if (op[C.BLOCK_ID] === breakPoint.id) {
+                    for (var i = 0; i < this.breakPoints.length; i++) {
+                        if (op[C.BLOCK_ID] === this.breakPoints[i].id) {
                             //breakpoint has been hit
                             stackmachineJsHelper.setSimBreak();
                             return result;
                         }
-                    });
+                    }
                 }
-                this_1.previousBlockId = op[C.BLOCK_ID];
+                this.previousBlockId = op[C.BLOCK_ID];
                 if (result > 0) {
-                    return { value: result };
+                    return result;
                 }
-                if (this_1.terminated) {
+                if (this.terminated) {
                     // termination either requested by the client or by executing 'stop' or after last statement
                     n.close();
-                    this_1.callbackOnTermination();
-                    return { value: 0 };
+                    this.callbackOnTermination();
+                    return 0;
                 }
-            };
-            var this_1 = this;
-            while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
-                var state_1 = _loop_1();
-                if (typeof state_1 === "object")
-                    return state_1.value;
             }
             return 0;
         };

@@ -484,21 +484,22 @@ export class Interpreter {
         const s = this.s;
         const n = this.r;
 
-        while ( maxRunTime >= new Date().getTime() && !n.getBlocking() ) {
+        while ( maxRunTime >= new Date().getTime() && !n.getBlocking()) {
             let op = s.getOp();
 
             let result =  this.evalSingleOperation(s,n,op);
 
             if (s.getDebugMode() && this.isPossibleBreakPoint(op)){
                 //check if is a break block
-                this.breakPoints.forEach(function (breakPoint) {
-                    if (op[C.BLOCK_ID] === breakPoint.id){
+                for (let i =0; i< this.breakPoints.length ; i++){
+                    if (op[C.BLOCK_ID] === this.breakPoints[i].id) {
                         //breakpoint has been hit
                         stackmachineJsHelper.setSimBreak();
                         return result;
                     }
-                })
+                }
             }
+
             this.previousBlockId = op[C.BLOCK_ID];
 
 
