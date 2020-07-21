@@ -495,13 +495,14 @@ export class Interpreter {
                     if (op[C.BLOCK_ID] === breakPoint.id){
                         //breakpoint has been hit
                         stackmachineJsHelper.setSimBreak();
+                        return result;
                     }
                 })
             }
             this.previousBlockId = op[C.BLOCK_ID];
 
 
-            if (s.getDebugMode() || result > 0) {
+            if (result > 0) {
                 return result;
             }
             if ( this.terminated ) {

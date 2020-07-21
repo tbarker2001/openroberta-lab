@@ -499,11 +499,12 @@
                         if (op[C.BLOCK_ID] === breakPoint.id) {
                             //breakpoint has been hit
                             stackmachineJsHelper.setSimBreak();
+                            return result;
                         }
                     });
                 }
                 this_1.previousBlockId = op[C.BLOCK_ID];
-                if (s.getDebugMode() || result > 0) {
+                if (result > 0) {
                     return { value: result };
                 }
                 if (this_1.terminated) {
