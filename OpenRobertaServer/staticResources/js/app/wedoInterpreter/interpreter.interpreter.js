@@ -29,6 +29,13 @@
             var functions = generatedCode[C.FUNCTION_DECLARATION];
             this.r = r;
             this.breakPoints = breakpoints;
+            this.events = {};
+            this.events[C.DEBUG_BLOCK] = false;
+            this.events[C.DEBUG_BREAKPOINT] = false;
+            this.events[C.DEBUG_STEP_INTO] = false;
+            if (this.breakPoints.length > 0) {
+                this.events[C.DEBUG_BREAKPOINT] = true;
+            }
             var stop = {};
             stop[C.OPCODE] = "stop";
             stmts.push(stop);
@@ -69,11 +76,33 @@
                 s.removeHighlights(this.breakPoints);
             }
         };
+        Interpreter.prototype.addEvent = function (mode) {
+            this.events[mode] = true;
+        };
+        Interpreter.prototype.removeEvent = function (mode) {
+            this.events[mode] = false;
+        };
         Interpreter.prototype.isPossibleBreakPoint = function (op) {
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 if (op[C.BLOCK_ID] !== this.previousBlockId) {
                     switch (op[C.OPCODE]) {
+                        case C.INITIATE_BLOCK:
+                        case C.REPEAT_STMT_CONTINUATION:
+                        case C.REPEAT_STMT: return true;
+                        default: return false;
+                    }
+                }
+            }
+            return false;
+        };
+        Interpreter.prototype.isPossibleNewBlock = function (op) {
+            if (op.hasOwnProperty(C.BLOCK_ID)) {
+                if (op[C.BLOCK_ID] !== this.previousBlockId) {
+                    switch (op[C.OPCODE]) {
                         case C.INITIATE_BLOCK: {
+                            switch (op[C.OP]) {
+                                case C.EXPR: return false;
+                            }
                             return true;
                         }
                         case C.REPEAT_STMT_CONTINUATION: {
@@ -87,8 +116,106 @@
                         }
                     }
                 }
+                return false;
+            }
+        };
+        Interpreter.prototype.isPossibleStepInto = function (op) {
+            if (op.hasOwnProperty(C.BLOCK_ID)) {
+                switch (op[C.OPCODE]) {
+                    case C.REPEAT_STMT: {
+                        return true;
+                    }
+                    default: {
+                        return false;
+                    }
+                }
             }
             return false;
+        };
+        /**
+         * the central interpreter. It is a stack machine interpreting operations given as JSON objects. The operations are all IMMUTABLE. It
+         * - uses the S (state) component to store the state of the interpretation.
+         * - uses the R (robotBehaviour) component for accessing hardware sensors and actors
+         *
+         * if the program is not terminated, it will take one operation after the other and execute it. The property C.OPCODE contains the
+         * operation code and is used for switching to the various operations implementations. For some operation codes the implementations is extracted to
+         * special functions (repeat, expression) for better readability.
+         *
+         * The state of the interpreter consists of
+         * - a stack of computed values
+         * - the actual array of operations to be executed now, including a program counter as index into the array
+         * - a stack of operations-arrays (including their program counters), that are actually frozen until the actual array has been interpreted.
+         * - a hash map of bindings. A binding map a name as key to an array of values. This implements hiding of variables.
+         *
+         * The stack of operations-arrays is used to store the history of complex operation as
+         *   - function call
+         *   - if-then-else
+         *   - repeat
+         *   - wait
+         * - If such an operation is executed, it pushes the actual array of operations (including itself) onto the stack of operations-arrays,
+         *   set the actual array of operations to a new array of own operations (found at the property C.STMT_LIST) and set the program counter to 0
+         * - The program counter of the pushed array of operations keeps pointing to the operation that effected the push. Thus some operations as break
+         *   have to increase the program counter (to avoid an endless loop)
+         * - if the actual array of operations is exhausted, the last array of operations pushed to the stack of operations-arrays is re-activated
+         *
+         * The statement C.FLOW_CONTROL is rather complex:
+         * - it is used explicitly by 'continue' and 'break' and know about the repeat-statement / repeat-continuation structure (@see eval_repeat())
+         * - it is used implicitly by if-then-else, if one branch is selected and is exhausted. It forces the continuation after the if-then-else
+         *
+         * Each operation code implementation may
+         * - create new bindings of values to names (variable declaration)
+         * - change the values of the binding (assign)
+         * - push and pop values to the stack (expressions)
+         * - push and pop to the stack of operations-arrays
+         */
+        Interpreter.prototype.evalOperation = function (maxRunTime) {
+            var s = this.s;
+            var n = this.r;
+            while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
+                var op = s.getOp();
+                var result = this.evalSingleOperation(s, n, op);
+                if (s.getDebugMode()) {
+                    if (this.events[C.DEBUG_BREAKPOINT]) {
+                        if (this.isPossibleBreakPoint(op)) {
+                            for (var i = 0; i < this.breakPoints.length; i++) {
+                                if (op[C.BLOCK_ID] === this.breakPoints[i].id) {
+                                    //breakpoint has been hit
+                                    stackmachineJsHelper.setSimBreak();
+                                    this.previousBlockId = op[C.BLOCK_ID];
+                                    return result;
+                                }
+                            }
+                        }
+                    }
+                    if (this.events[C.DEBUG_BLOCK]) {
+                        if (this.isPossibleNewBlock(op)) {
+                            stackmachineJsHelper.setSimBreak();
+                            this.previousBlockId = op[C.BLOCK_ID];
+                            this.events[C.DEBUG_BLOCK] = false;
+                            return result;
+                        }
+                    }
+                    if (this.events[C.DEBUG_STEP_INTO]) {
+                        if (this.isPossibleStepInto(op)) {
+                            stackmachineJsHelper.setSimBreak();
+                            this.previousBlockId = op[C.BLOCK_ID];
+                            this.events[C.DEBUG_STEP_INTO] = false;
+                            return result;
+                        }
+                    }
+                }
+                this.previousBlockId = op[C.BLOCK_ID];
+                if (result > 0) {
+                    return result;
+                }
+                if (this.terminated) {
+                    // termination either requested by the client or by executing 'stop' or after last statement
+                    n.close();
+                    this.callbackOnTermination();
+                    return 0;
+                }
+            }
+            return 0;
         };
         Interpreter.prototype.evalSingleOperation = function (s, n, stmt) {
             s.opLog('actual ops: ');
@@ -447,71 +574,6 @@
                     }
                     default:
                         U.dbcException("invalid stmt op: " + opCode);
-                }
-            }
-            return 0;
-        };
-        /**
-         * the central interpreter. It is a stack machine interpreting operations given as JSON objects. The operations are all IMMUTABLE. It
-         * - uses the S (state) component to store the state of the interpretation.
-         * - uses the R (robotBehaviour) component for accessing hardware sensors and actors
-         *
-         * if the program is not terminated, it will take one operation after the other and execute it. The property C.OPCODE contains the
-         * operation code and is used for switching to the various operations implementations. For some operation codes the implementations is extracted to
-         * special functions (repeat, expression) for better readability.
-         *
-         * The state of the interpreter consists of
-         * - a stack of computed values
-         * - the actual array of operations to be executed now, including a program counter as index into the array
-         * - a stack of operations-arrays (including their program counters), that are actually frozen until the actual array has been interpreted.
-         * - a hash map of bindings. A binding map a name as key to an array of values. This implements hiding of variables.
-         *
-         * The stack of operations-arrays is used to store the history of complex operation as
-         *   - function call
-         *   - if-then-else
-         *   - repeat
-         *   - wait
-         * - If such an operation is executed, it pushes the actual array of operations (including itself) onto the stack of operations-arrays,
-         *   set the actual array of operations to a new array of own operations (found at the property C.STMT_LIST) and set the program counter to 0
-         * - The program counter of the pushed array of operations keeps pointing to the operation that effected the push. Thus some operations as break
-         *   have to increase the program counter (to avoid an endless loop)
-         * - if the actual array of operations is exhausted, the last array of operations pushed to the stack of operations-arrays is re-activated
-         *
-         * The statement C.FLOW_CONTROL is rather complex:
-         * - it is used explicitly by 'continue' and 'break' and know about the repeat-statement / repeat-continuation structure (@see eval_repeat())
-         * - it is used implicitly by if-then-else, if one branch is selected and is exhausted. It forces the continuation after the if-then-else
-         *
-         * Each operation code implementation may
-         * - create new bindings of values to names (variable declaration)
-         * - change the values of the binding (assign)
-         * - push and pop values to the stack (expressions)
-         * - push and pop to the stack of operations-arrays
-         */
-        Interpreter.prototype.evalOperation = function (maxRunTime) {
-            var s = this.s;
-            var n = this.r;
-            while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
-                var op = s.getOp();
-                var result = this.evalSingleOperation(s, n, op);
-                if (s.getDebugMode() && this.isPossibleBreakPoint(op)) {
-                    //check if is a break block
-                    for (var i = 0; i < this.breakPoints.length; i++) {
-                        if (op[C.BLOCK_ID] === this.breakPoints[i].id) {
-                            //breakpoint has been hit
-                            stackmachineJsHelper.setSimBreak();
-                            return result;
-                        }
-                    }
-                }
-                this.previousBlockId = op[C.BLOCK_ID];
-                if (result > 0) {
-                    return result;
-                }
-                if (this.terminated) {
-                    // termination either requested by the client or by executing 'stop' or after last statement
-                    n.close();
-                    this.callbackOnTermination();
-                    return 0;
                 }
             }
             return 0;

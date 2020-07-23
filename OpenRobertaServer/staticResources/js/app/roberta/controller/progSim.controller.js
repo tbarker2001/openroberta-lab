@@ -134,23 +134,23 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                 $('#simControlBreakPoint').show();
                 $('#simControlBlock').show();
                 $('#simControlStepInto').show();
+
                 SIM.updateDebugMode(true);
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
                     $(block.svgPath_).onWrap('click', function(event){
-                        if (block.svgPath_.classList.contains('breakpoint')){
+                        if ($(block.svgPath_).hasClass('breakpoint')){
                             SIM.removeBreakPoint(block);
-                            block.svgPath_.classList.remove('breakpoint');
+                            $(block.svgPath_).removeClass('breakpoint');
                         }
-                        else if (block.svgPath_.classList.contains('selectedBreakpoint')){
+                        else if ($(block.svgPath_).hasClass('selectedBreakpoint')){
                             SIM.removeBreakPoint(block);
-                            block.svgPath_.classList.remove('selectedBreakpoint');
-                            block.svgPath_.classList.add('highlight');
+                            $(block.svgPath_).removeClass('selectedBreakpoint').addClass('highlight');
                         }
 
                         else{
                             SIM.addBreakPoint(block);
-                            block.svgPath_.classList.add('breakpoint');
+                            $(block.svgPath_).addClass('breakpoint');
                         }
                     },'breakpoints activated')
                 })
@@ -169,7 +169,23 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                     $(block.svgPath_).off('click');})
             }
         },'debugMode clicked');
-        $('#simControlBreakPoint').onWrap('click', function(event){SIM.setPause(false)});
+
+
+        $('#simControlBreakPoint').onWrap('click', function(event){
+            SIM.setPause(false);
+            SIM.interpreterControl(CONST.DEBUG_BREAKPOINT);
+        });
+
+        $('#simControlBlock').onWrap('click', function(event){
+            SIM.setPause(false);
+            SIM.interpreterControl(CONST.DEBUG_BLOCK);
+        });
+
+        $('#simControlStepInto').onWrap('click', function(event){
+            SIM.setPause(false);
+            SIM.interpreterControl(CONST.DEBUG_STEP_INTO);
+        });
+
     }
 
     function toggleSim() {

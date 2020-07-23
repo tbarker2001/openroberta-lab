@@ -1159,6 +1159,11 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     
     function  addBreakPoint(block) {
         breakpoints.push(block);
+        if (breakpoints.length > 0 && interpreters !== null){
+            for (var i =0; i< numRobots; i++){
+                interpreters[i].addEvent(CONST.DEBUG_BREAKPOINT);
+            }
+        }
     }
     exports.addBreakPoint = addBreakPoint;
 
@@ -1168,12 +1173,28 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                 breakpoints.splice(i, 1);
             }
         }
+        if(!breakpoints.length > 0){
+            if (interpreters !== null){
+                for (var i =0; i< numRobots; i++){
+                    interpreters[i].removeEvent(CONST.DEBUG_BREAKPOINT);
+                }
+            }
+        }
     }
     exports.removeBreakPoint = removeBreakPoint;
     function resetStepping(){
         steppingFinished = true;
     }
     exports.resetStepping = resetStepping;
+
+    function interpreterControl(mode){
+        if (interpreters !== null){
+            for (var i =0; i< numRobots; i++){
+                interpreters[i].addEvent(mode);
+            }
+        }
+    }
+    exports.interpreterControl = interpreterControl;
 });
 
 //http://paulirish.com/2011/requestanimationframe-for-smart-animating/
