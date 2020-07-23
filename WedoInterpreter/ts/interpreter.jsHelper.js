@@ -15,4 +15,9 @@ define(["require","simulation.simulation", "exports"], function(require,SIM, exp
 		SIM.resetStepping();
 	}
 	exports.resetSim = resetSim;
+
+	function getJqueryObject(object) {
+		return $(object);
+	}
+	exports.getJqueryObject = getJqueryObject;
 });

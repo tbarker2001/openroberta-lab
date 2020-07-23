@@ -280,11 +280,11 @@ export class State {
             let block = this.currentBlocks[block_ID].block;
             if (this.currentBlocks[block_ID].terminate){
                 if (this.debugMode){
-                    if ($(block.svgPath_).hasClass("selectedBreakpoint")){
-                        $(block.svgPath_).removeClass("selectedBreakpoint").addClass("breakpoint");
+                    if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("selectedBreakpoint")){
+                        stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("selectedBreakpoint").addClass("breakpoint");
                     }
                     else{
-                        block.svgPath_.classList.remove("highlight");
+                        stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("highlight");
                     }
                 }
                 delete this.currentBlocks[block_ID];
@@ -294,11 +294,11 @@ export class State {
             let block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
             if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])){
                 if (this.debugMode){
-                    if ($(block.svgPath_).hasClass("breakpoint")){
-                        $(block.svgPath_).addClass("selectedBreakpoint");
+                    if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("breakpoint")){
+                        stackmachineJsHelper.getJqueryObject(block.svgPath_).addClass("selectedBreakpoint");
                     }
                     else{
-                        $(block.svgPath_).addClass("highlight");
+                        stackmachineJsHelper.getJqueryObject(block.svgPath_).addClass("highlight");
                     }
                 }
                 this.currentBlocks[stmt[C.BLOCK_ID]] = {"block": block,"terminate": false};
@@ -317,16 +317,16 @@ export class State {
     }
     public addHighlights(){
         for (var id in this.currentBlocks){
-            $(this.currentBlocks[id].block.svgPath_).addClass("highlight");
+            stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_).addClass("highlight");
         }
 
     }
     public removeHighlights(breakPoints :any[]){
         for (var id in this.currentBlocks){
-            $(this.currentBlocks[id].block.svgPath_).removeClass("highlight");
+            stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_).removeClass("highlight");
         }
         breakPoints.forEach(function (block) {
-            $(block.svgPath_).removeClass("breakpoint").removeClass("selectedBreakpoint");
+            stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("breakpoint").removeClass("selectedBreakpoint");
         });
     }
 }
