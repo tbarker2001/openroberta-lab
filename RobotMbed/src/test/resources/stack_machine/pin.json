@@ -1,6 +1,7 @@
 {
     "ops":[
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"`85zzp86|El)6pxPC_i9"
         },
@@ -15,6 +16,7 @@
             "BLOCK_ID":"`85zzp86|El)6pxPC_i9"
         },
         {
+            "op":"writePinAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"#01y;@M{,biUmNRUkr{Q"
         },
@@ -29,6 +31,7 @@
             "BLOCK_ID":"#01y;@M{,biUmNRUkr{Q"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"%1C+h@BMb#J0w8EeToM%"
         },
@@ -43,6 +46,7 @@
             "BLOCK_ID":"%1C+h@BMb#J0w8EeToM%"
         },
         {
+            "op":"writePinAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"iBT,ueyPUw:^.W!q.X6^"
         },
@@ -57,6 +61,7 @@
             "BLOCK_ID":"iBT,ueyPUw:^.W!q.X6^"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"mCDsQ~T_H)]_bg^T4/++"
         },
@@ -71,6 +76,7 @@
             "BLOCK_ID":"mCDsQ~T_H)]_bg^T4/++"
         },
         {
+            "op":"writePinAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"tk:F#7d#/qF#2n:bF3JD"
         },
@@ -85,6 +91,7 @@
             "BLOCK_ID":"tk:F#7d#/qF#2n:bF3JD"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"_O?M+!z46-@5S[u1_K[3"
         },
@@ -99,6 +106,7 @@
             "BLOCK_ID":"_O?M+!z46-@5S[u1_K[3"
         },
         {
+            "op":"writePinAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"(z_kYRQ-8_WM_lZ5mu{L"
         },

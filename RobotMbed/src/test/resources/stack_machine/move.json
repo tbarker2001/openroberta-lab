@@ -1,6 +1,7 @@
 {
     "ops":[
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"*x:OV=e66%UVih5r{^-6"
         },
@@ -15,6 +16,7 @@
             "BLOCK_ID":"*x:OV=e66%UVih5r{^-6"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"ckeTx+|JS*M?S,L,*:4m"
         },
@@ -34,6 +36,7 @@
             "value":0
         },
         {
+            "op":"bothMotorsOnAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"/efs`/x@@#PIe4W{GDq!"
         },
@@ -48,6 +51,7 @@
             "BLOCK_ID":"/efs`/x@@#PIe4W{GDq!"
         },
         {
+            "op":"motorStop",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"pnGd7Rw]Yfiy2^)502t:"
         },
@@ -61,6 +65,7 @@
             "BLOCK_ID":"pnGd7Rw]Yfiy2^)502t:"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"n%Qqpvcu.nv{{l+9e[lT"
         },
@@ -80,6 +85,7 @@
             "value":0
         },
         {
+            "op":"motorOnAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"h%k_]:x]WKT#3+-@`o;_"
         },
@@ -94,6 +100,7 @@
             "BLOCK_ID":"h%k_]:x]WKT#3+-@`o;_"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"n2%wk).JqP~0F-8q=arp"
         },
@@ -113,6 +120,7 @@
             "value":0
         },
         {
+            "op":"motorOnAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"4}q#Hz,-5X~?|FHvy~X{"
         },
@@ -127,6 +135,7 @@
             "BLOCK_ID":"4}q#Hz,-5X~?|FHvy~X{"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"*x:OV=e66%UVih5r{^-6"
         },
@@ -141,6 +150,7 @@
             "BLOCK_ID":"*x:OV=e66%UVih5r{^-6"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"ckeTx+|JS*M?S,L,*:4m"
         },
@@ -160,6 +170,7 @@
             "value":0
         },
         {
+            "op":"bothMotorsOnAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":".G;Y5*=oI;;+aSA-r}=v"
         },
@@ -174,6 +185,7 @@
             "BLOCK_ID":".G;Y5*=oI;;+aSA-r}=v"
         },
         {
+            "op":"motorStop",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"U^`s.aL{A)t|95yuMp^p"
         },
@@ -187,6 +199,7 @@
             "BLOCK_ID":"U^`s.aL{A)t|95yuMp^p"
         },
         {
+            "op":"motorStop",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"}=Or24u+E34QN+u}w3kI"
         },
@@ -200,6 +213,7 @@
             "BLOCK_ID":"}=Or24u+E34QN+u}w3kI"
         },
         {
+            "op":"motorStop",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"h3_Dck/L8IkIm^kUZl7j"
         },

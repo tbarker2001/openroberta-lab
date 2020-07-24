@@ -1,6 +1,7 @@
 {
     "ops":[
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"v3/rd]{Goeu}9(Cs*No7"
         },
@@ -15,6 +16,7 @@
             "BLOCK_ID":"v3/rd]{Goeu}9(Cs*No7"
         },
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"*m9D{z9sjsGKKPbY-3t7"
         },
@@ -29,6 +31,7 @@
             "BLOCK_ID":"*m9D{z9sjsGKKPbY-3t7"
         },
         {
+            "op":"ToneAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"f[p,XI]V`,gR1kyo?eXg"
         },
@@ -51,6 +54,7 @@
             "value":"2000"
         },
         {
+            "op":"ToneAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"#Qef|+e=Q6j[gt{{i0{+"
         },
@@ -73,6 +77,7 @@
             "value":"1000"
         },
         {
+            "op":"ToneAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"[weC8tcKn[ZaovaQl{bk"
         },
@@ -95,6 +100,7 @@
             "value":"500"
         },
         {
+            "op":"ToneAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"*6p,_?Ii4s(vC!?r09z|"
         },
@@ -117,6 +123,7 @@
             "value":"250"
         },
         {
+            "op":"ToneAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"B2f_=`lCUvn-HD_[,R-i"
         },
@@ -139,6 +146,7 @@
             "value":"125"
         },
         {
+            "op":"ToneAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"s]nVg:U8b~|GxdlHYKZ|"
         },

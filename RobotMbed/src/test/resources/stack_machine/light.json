@@ -1,6 +1,7 @@
 {
     "ops":[
         {
+            "op":"expr",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"mdSVJclsydU}L@Rrf=m("
         },
@@ -19,6 +20,7 @@
             "BLOCK_ID":"mdSVJclsydU}L@Rrf=m("
         },
         {
+            "op":"ledOnAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"j()bCMB@vT0D+pGbc0[0"
         },
@@ -31,6 +33,7 @@
             "BLOCK_ID":"j()bCMB@vT0D+pGbc0[0"
         },
         {
+            "op":"statusLightAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"hsCy=%3|2^SI%i/J[^.`"
         },

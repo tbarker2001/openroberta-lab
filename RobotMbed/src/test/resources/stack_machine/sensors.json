@@ -1,6 +1,7 @@
 {
     "ops":[
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"rkY_.`jFpk}p!_C,lHh}"
         },
@@ -16,6 +17,7 @@
             "BLOCK_ID":"rkY_.`jFpk}p!_C,lHh}"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"wA{t#~1hTWdk9Jc|PHa{"
         },
@@ -29,6 +31,7 @@
             "BLOCK_ID":"wA{t#~1hTWdk9Jc|PHa{"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"#[v9iAol6/{q^Fzz]#We"
         },
@@ -44,6 +47,7 @@
             "BLOCK_ID":"#[v9iAol6/{q^Fzz]#We"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"|BmQA.!S,a^/*IB3o`:("
         },
@@ -57,6 +61,7 @@
             "BLOCK_ID":"|BmQA.!S,a^/*IB3o`:("
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"ZC)U?lb5O{*IYnO]@[(="
         },
@@ -72,6 +77,7 @@
             "BLOCK_ID":"ZC)U?lb5O{*IYnO]@[(="
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"jBa5]CT#sV%4AwZ8NL;U"
         },
@@ -85,6 +91,7 @@
             "BLOCK_ID":"jBa5]CT#sV%4AwZ8NL;U"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"YT!GB`yb)1rYL%[%s~HI"
         },
@@ -100,6 +107,7 @@
             "BLOCK_ID":"YT!GB`yb)1rYL%[%s~HI"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"dD}=q50IWJ.MQAar_Sy*"
         },
@@ -113,6 +121,7 @@
             "BLOCK_ID":"dD}=q50IWJ.MQAar_Sy*"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"vsSv9BXb5so?q@7X9zGl"
         },
@@ -128,6 +137,7 @@
             "BLOCK_ID":"vsSv9BXb5so?q@7X9zGl"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"Be;FTfO)*Im/2hyKrP5]"
         },
@@ -141,6 +151,7 @@
             "BLOCK_ID":"Be;FTfO)*Im/2hyKrP5]"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"3!26o.{K0Lh.t_/%N(Nl"
         },
@@ -156,6 +167,7 @@
             "BLOCK_ID":"3!26o.{K0Lh.t_/%N(Nl"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"*4O7K6Kwo;k]d6:1W[e@"
         },
@@ -169,6 +181,7 @@
             "BLOCK_ID":"*4O7K6Kwo;k]d6:1W[e@"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"cA#_80rl#6?Pj:zRD/9/"
         },
@@ -184,6 +197,7 @@
             "BLOCK_ID":"cA#_80rl#6?Pj:zRD/9/"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"%k!T~4qV0GFp`1GQE-=9"
         },
@@ -197,6 +211,7 @@
             "BLOCK_ID":"%k!T~4qV0GFp`1GQE-=9"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"Q:nibt3,_FcAv[J!ih^w"
         },
@@ -212,6 +227,7 @@
             "BLOCK_ID":"Q:nibt3,_FcAv[J!ih^w"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"cHvJ:BI_7QU2NE|Wvd!["
         },
@@ -225,6 +241,7 @@
             "BLOCK_ID":"cHvJ:BI_7QU2NE|Wvd!["
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"A/gRh*XZI^X6H?sTT,|_"
         },
@@ -240,6 +257,7 @@
             "BLOCK_ID":"A/gRh*XZI^X6H?sTT,|_"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"^[41aqjO{V.8n}r29351"
         },
@@ -253,6 +271,7 @@
             "BLOCK_ID":"^[41aqjO{V.8n}r29351"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"LlsSIwhRd.6D#gV?oD8N"
         },
@@ -268,6 +287,7 @@
             "BLOCK_ID":"LlsSIwhRd.6D#gV?oD8N"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"VT96gh;[IZghf~NY4w2t"
         },
@@ -281,6 +301,7 @@
             "BLOCK_ID":"VT96gh;[IZghf~NY4w2t"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":")NTO6F[EI?JUWS|qMPr;"
         },
@@ -296,6 +317,7 @@
             "BLOCK_ID":")NTO6F[EI?JUWS|qMPr;"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"rY3~}Wp;]2kbXTE1Mc[g"
         },
@@ -309,6 +331,7 @@
             "BLOCK_ID":"rY3~}Wp;]2kbXTE1Mc[g"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"Pq83kTjQl@ZpYFDP9^1|"
         },
@@ -324,6 +347,7 @@
             "BLOCK_ID":"Pq83kTjQl@ZpYFDP9^1|"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"M;OV2Ls]I^Ekl9G-wl]7"
         },
@@ -337,6 +361,7 @@
             "BLOCK_ID":"M;OV2Ls]I^Ekl9G-wl]7"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"x4kn{@Fa?]#4Z_FP)[Q_"
         },
@@ -352,6 +377,7 @@
             "BLOCK_ID":"x4kn{@Fa?]#4Z_FP)[Q_"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"4Uf8=:U^[SnLwuc8PBvJ"
         },
@@ -365,6 +391,7 @@
             "BLOCK_ID":"4Uf8=:U^[SnLwuc8PBvJ"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"T:yVBJ|j(X}RZ.||]`AA"
         },
@@ -380,6 +407,7 @@
             "BLOCK_ID":"T:yVBJ|j(X}RZ.||]`AA"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"gu-c[LjboE4+/a,G*#{g"
         },
@@ -393,6 +421,7 @@
             "BLOCK_ID":"gu-c[LjboE4+/a,G*#{g"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"ci-PF7wmG{F6jiW7Z.gi"
         },
@@ -408,6 +437,7 @@
             "BLOCK_ID":"ci-PF7wmG{F6jiW7Z.gi"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"ZuxTZ[XlF,hxF~H`c]Za"
         },
@@ -421,6 +451,7 @@
             "BLOCK_ID":"ZuxTZ[XlF,hxF~H`c]Za"
         },
         {
+            "op":"createResetTimer",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"}n0.3?7fZF/y~lhgJncg"
         },
@@ -435,6 +466,7 @@
             "BLOCK_ID":"}n0.3?7fZF/y~lhgJncg"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"MaZ_u[9Mm`k=.`*|I7U]"
         },
@@ -450,6 +482,7 @@
             "BLOCK_ID":"MaZ_u[9Mm`k=.`*|I7U]"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"K^yl168R,@?LZKWau(GA"
         },
@@ -463,6 +496,7 @@
             "BLOCK_ID":"K^yl168R,@?LZKWau(GA"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"v]%AaB=50O0had?{[8iU"
         },
@@ -478,6 +512,7 @@
             "BLOCK_ID":"v]%AaB=50O0had?{[8iU"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"~1`4Wcq86s(8Y8ph-yo%"
         },
@@ -491,6 +526,7 @@
             "BLOCK_ID":"~1`4Wcq86s(8Y8ph-yo%"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"]CoNoSQ5-HCa:B3rcE10"
         },
@@ -506,6 +542,7 @@
             "BLOCK_ID":"]CoNoSQ5-HCa:B3rcE10"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"Bi2SXh=#cZ-gLF_b/H]l"
         },
@@ -519,6 +556,7 @@
             "BLOCK_ID":"Bi2SXh=#cZ-gLF_b/H]l"
         },
         {
+            "op":"GetSample",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"ZV4jK8ETc^!nbEcWs=.D"
         },
@@ -534,6 +572,7 @@
             "BLOCK_ID":"ZV4jK8ETc^!nbEcWs=.D"
         },
         {
+            "op":"ShowTextAction",
             "opc":"INITIATE_BLOCK",
             "BLOCK_ID":"J:P4#!7Of7Gy4;c}Bv6P"
         },

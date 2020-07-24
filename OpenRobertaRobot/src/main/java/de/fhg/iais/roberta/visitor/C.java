@@ -48,6 +48,9 @@ public class C {
     public static final String CREATE_LIST_WITH_ITEM = "createCreateListWithItem";
     public static final String CURVE_ACTION = "CurveAction";
     public static final String DEBUG_ACTION = "DebugAction";
+    public static final String DEBUG_BREAKPOINT = "DebugBreakpoint";
+    public static final String DEBUG_STEP_INTO = "DebugStepInto";
+    public static final String DEBUG_BLOCK = "DebugBlock";
     public static final String DEGREE = "degree";
     public static final String DIGITAL = "digital";
     public static final String DIRECTION = "direction";
