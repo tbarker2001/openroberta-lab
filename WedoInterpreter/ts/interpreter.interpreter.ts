@@ -14,6 +14,7 @@ export class Interpreter {
     private breakPoints : any[];
     private previousBlockId: any;
     private events: any ;
+    private stepBlock: any;
 
     /*
      * 
@@ -21,21 +22,25 @@ export class Interpreter {
      * . @param r implementation of the ARobotBehaviour class
      * . @param cbOnTermination is called when the program has terminated
     */
-	constructor(generatedCode: any, r: ARobotBehaviour, cbOnTermination: () => void,breakpoints : any[]) {
+
+    constructor( generatedCode: any, r: ARobotBehaviour, cbOnTermination: () => void ,breakpoints : any[]) {
         this.terminated = false;
         this.callbackOnTermination = cbOnTermination;
         const stmts = generatedCode[C.OPS];
         const functions = generatedCode[C.FUNCTION_DECLARATION];
         this.r = r;
+
         this.breakPoints = breakpoints;
 
 		this.events = {};
         this.events[C.DEBUG_BLOCK] = false;
         this.events[C.DEBUG_BREAKPOINT] = false;
         this.events[C.DEBUG_STEP_INTO] = false;
+        this.stepBlock = null;
         if (this.breakPoints.length > 0){
             this.events[C.DEBUG_BREAKPOINT] = true;
         }
+
 
         var stop = {};
         stop[C.OPCODE] = "stop";
@@ -114,12 +119,6 @@ export class Interpreter {
                         }
                         return true;
                     }
-                    case C.REPEAT_STMT_CONTINUATION: {
-                        return true;
-                    }
-                    case C.REPEAT_STMT: {
-                        return true;
-                    }
                     default : {
                         return false;
                     }
@@ -128,13 +127,17 @@ export class Interpreter {
             return false;
         }
     }
+
     private isPossibleStepInto(op){
-        if (op.hasOwnProperty(C.BLOCK_ID)){
+        if (op.hasOwnProperty(C.BLOCK_ID)) {
             switch (op[C.OPCODE]) {
-                case C.REPEAT_STMT: {
+                case C.INITIATE_BLOCK: {
+                    switch (op[C.OP]){
+                        case C.EXPR: return false;
+                    }
                     return true;
                 }
-                default: {
+                default : {
                     return false;
                 }
             }
@@ -185,11 +188,11 @@ export class Interpreter {
 
         while ( maxRunTime >= new Date().getTime() && !n.getBlocking()) {
             let op = s.getOp();
-
             let result =  this.evalSingleOperation(s,n,op);
 
             if (s.getDebugMode()) {
 
+                //continue till next breakpoint is reached
                 if (this.events[C.DEBUG_BREAKPOINT]){
                     if (this.isPossibleBreakPoint(op)) {
                         for (let i = 0; i < this.breakPoints.length; i++) {
@@ -202,6 +205,7 @@ export class Interpreter {
                         }
                     }
                 }
+                // executes next block then pauses
                 if (this.events[C.DEBUG_BLOCK]){
                     if (this.isPossibleNewBlock(op)){
                         stackmachineJsHelper.setSimBreak();
@@ -211,12 +215,21 @@ export class Interpreter {
                     }
 
                 }
+                // executes next statement then pauses
                 if (this.events[C.DEBUG_STEP_INTO]){
                     if (this.isPossibleStepInto(op)){
-                        stackmachineJsHelper.setSimBreak();
-                        this.previousBlockId = op[C.BLOCK_ID];
-                        this.events[C.DEBUG_STEP_INTO] = false;
-                        return result;
+                        if (this.stepBlock !== null ){
+                            if (!s.beingExecuted(this.stepBlock)){
+                                stackmachineJsHelper.setSimBreak();
+                                this.previousBlockId = op[C.BLOCK_ID];
+                                this.events[C.DEBUG_STEP_INTO] = false;
+                                this.stepBlock = null;
+                                return result;
+                            }
+                        }
+                        else{
+                            this.stepBlock = op;
+                        }
                     }
                 }
 
@@ -241,8 +254,7 @@ export class Interpreter {
 
     private evalSingleOperation(s: any, n: any,stmt: any){
         s.opLog( 'actual ops: ' );
-        s.processBlock(stmt)
-
+        s.processBlock(stmt);
         if ( stmt === undefined ) {
             U.debug( 'PROGRAM TERMINATED. No ops remaining' );
             this.terminated = true;

@@ -254,6 +254,7 @@
                 U.dbcException('bindVar value invalid');
             }
         };
+        /** adds/removes block from currentBlocks and applies correct highlight to block**/
         State.prototype.processBlock = function (stmt) {
             for (var block_ID in this.currentBlocks) {
                 var block = this.currentBlocks[block_ID].block;
@@ -292,6 +293,13 @@
                     this.currentBlocks[block_id].terminate = true;
                 }
             }
+        };
+        /** Returns true if the current block is currently being executed**/
+        State.prototype.beingExecuted = function (stmt) {
+            if (stmt.hasOwnProperty(C.BLOCK_ID)) {
+                return this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID]);
+            }
+            return false;
         };
         State.prototype.addHighlights = function () {
             for (var id in this.currentBlocks) {

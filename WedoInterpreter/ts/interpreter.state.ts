@@ -274,7 +274,7 @@ export class State {
             U.dbcException( 'bindVar value invalid' );
         }
     }
-
+    /** adds/removes block from currentBlocks and applies correct highlight to block**/
     public processBlock(stmt){
         for (var block_ID in this.currentBlocks){
             let block = this.currentBlocks[block_ID].block;
@@ -314,6 +314,13 @@ export class State {
                 this.currentBlocks[block_id].terminate = true;
             }
         }
+    }
+    /** Returns true if the current block is currently being executed**/
+    public beingExecuted(stmt) {
+        if (stmt.hasOwnProperty(C.BLOCK_ID)){
+            return this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])
+        }
+        return false;
     }
     public addHighlights(){
         for (var id in this.currentBlocks){

@@ -33,6 +33,7 @@
             this.events[C.DEBUG_BLOCK] = false;
             this.events[C.DEBUG_BREAKPOINT] = false;
             this.events[C.DEBUG_STEP_INTO] = false;
+            this.stepBlock = null;
             if (this.breakPoints.length > 0) {
                 this.events[C.DEBUG_BREAKPOINT] = true;
             }
@@ -105,12 +106,6 @@
                             }
                             return true;
                         }
-                        case C.REPEAT_STMT_CONTINUATION: {
-                            return true;
-                        }
-                        case C.REPEAT_STMT: {
-                            return true;
-                        }
                         default: {
                             return false;
                         }
@@ -122,7 +117,10 @@
         Interpreter.prototype.isPossibleStepInto = function (op) {
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 switch (op[C.OPCODE]) {
-                    case C.REPEAT_STMT: {
+                    case C.INITIATE_BLOCK: {
+                        switch (op[C.OP]) {
+                            case C.EXPR: return false;
+                        }
                         return true;
                     }
                     default: {
@@ -175,6 +173,7 @@
                 var op = s.getOp();
                 var result = this.evalSingleOperation(s, n, op);
                 if (s.getDebugMode()) {
+                    //continue till next breakpoint is reached
                     if (this.events[C.DEBUG_BREAKPOINT]) {
                         if (this.isPossibleBreakPoint(op)) {
                             for (var i = 0; i < this.breakPoints.length; i++) {
@@ -187,6 +186,7 @@
                             }
                         }
                     }
+                    // executes next block then pauses
                     if (this.events[C.DEBUG_BLOCK]) {
                         if (this.isPossibleNewBlock(op)) {
                             stackmachineJsHelper.setSimBreak();
@@ -195,12 +195,21 @@
                             return result;
                         }
                     }
+                    // executes next statement then pauses
                     if (this.events[C.DEBUG_STEP_INTO]) {
                         if (this.isPossibleStepInto(op)) {
-                            stackmachineJsHelper.setSimBreak();
-                            this.previousBlockId = op[C.BLOCK_ID];
-                            this.events[C.DEBUG_STEP_INTO] = false;
-                            return result;
+                            if (this.stepBlock !== null) {
+                                if (!s.beingExecuted(this.stepBlock)) {
+                                    stackmachineJsHelper.setSimBreak();
+                                    this.previousBlockId = op[C.BLOCK_ID];
+                                    this.events[C.DEBUG_STEP_INTO] = false;
+                                    this.stepBlock = null;
+                                    return result;
+                                }
+                            }
+                            else {
+                                this.stepBlock = op;
+                            }
                         }
                     }
                 }
