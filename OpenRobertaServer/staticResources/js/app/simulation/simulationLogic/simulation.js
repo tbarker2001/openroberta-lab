@@ -1195,6 +1195,18 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         }
     }
     exports.interpreterControl = interpreterControl;
+
+    function endDebugging(){
+        if (interpreters !== null){
+            for (var i =0; i< numRobots; i++){
+                interpreters[i].setDebugMode(false);
+                interpreters[i].breakPoints = [];
+            }
+        }
+        breakpoints = [];
+
+    }
+    exports.endDebugging = endDebugging;
 });
 
 //http://paulirish.com/2011/requestanimationframe-for-smart-animating/

@@ -132,7 +132,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             if ($('#debugMode').attr('data-original-title') === Blockly.Msg.MENU_DEBUG_START_TOOLTIP){
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_STOP_TOOLTIP);
                 $('#simControlBreakPoint').show();
-                $('#simControlBlock').show();
+                $('#simControlStepOver').show();
                 $('#simControlStepInto').show();
 
                 SIM.updateDebugMode(true);
@@ -158,10 +158,10 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             else{
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
                 $('#simControlBreakPoint').hide();
-                $('#simControlBlock').hide();
+                $('#simControlStepOver').hide();
                 $('#simControlStepInto').hide();
 
-                SIM.updateDebugMode(false);
+                SIM.endDebugging();
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
                     block.svgPath_.classList.remove('breakpoint');
@@ -176,30 +176,33 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             SIM.interpreterControl(CONST.DEBUG_BREAKPOINT);
         });
 
-        $('#simControlBlock').onWrap('click', function(event){
-            SIM.setPause(false);
-            SIM.interpreterControl(CONST.DEBUG_BLOCK);
-        });
-
         $('#simControlStepInto').onWrap('click', function(event){
             SIM.setPause(false);
             SIM.interpreterControl(CONST.DEBUG_STEP_INTO);
         });
 
+        $('#simControlStepOver').onWrap('click', function(event){
+            SIM.setPause(false);
+            SIM.interpreterControl(CONST.DEBUG_STEP_OVER);
+        });
+
     }
 
     function toggleSim() {
+        let breakpoints;
         if ($('#simButton').hasClass('rightActive')) {
             SIM.cancel();
             $(".sim").addClass('hide');
             $("#simButtonsCollapse").collapse('hide');
             $('#simControl').addClass('typcn-media-play-outline').removeClass('typcn-media-stop');
             $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
-            $('#blockly').closeRightView(function() {
+            $('#blockly').closeRightView(function () {
                 $('#menuSim').parent().addClass('disabled');
                 $('.nav > li > ul > .robotType').removeClass('disabled');
                 $('.' + GUISTATE_C.getRobot()).addClass('disabled');
             });
+            SIM.endDebugging();
+
         } else {
             var xmlProgram = Blockly.Xml.workspaceToDom(blocklyWorkspace);
             var xmlTextProgram = Blockly.Xml.domToText(xmlProgram);
@@ -208,16 +211,16 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             var xmlConfigText = GUISTATE_C.isConfigurationAnonymous() ? GUISTATE_C.getConfigurationXML() : undefined;
             var language = GUISTATE_C.getLanguage();
 
-            PROGRAM.runInSim(GUISTATE_C.getProgramName(), configName, xmlTextProgram, xmlConfigText, language, function(result) {
+            PROGRAM.runInSim(GUISTATE_C.getProgramName(), configName, xmlTextProgram, xmlConfigText, language, function (result) {
                 if (result.rc == "ok") {
-                    SIM.init([ result ], true, GUISTATE_C.getRobotGroup())
+                    SIM.init([result], true, GUISTATE_C.getRobotGroup())
                     //                    runNewInterpreter(result);
                     $(".sim").removeClass('hide');
                     $('#simButtonsCollapse').collapse({
-                        'toggle' : false
+                        'toggle': false
                     });
                     $('#simControlBreakPoint').hide();
-                    $('#simControlBlock').hide();
+                    $('#simControlStepOver').hide();
                     $('#simControlStepInto').hide();
 
                     if (TOUR_C.getInstance() && TOUR_C.getInstance().trigger) {

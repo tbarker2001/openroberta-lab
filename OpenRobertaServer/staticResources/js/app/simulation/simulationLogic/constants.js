@@ -533,5 +533,5 @@ define({
 
     DEBUG_STEP_INTO: "DebugStepInto",
 
-    DEBUG_BLOCK: "DebugBlock"
+    DEBUG_STEP_OVER: "DebugStepOver"
 });

@@ -11,7 +11,7 @@ export class Interpreter {
 
 	private r: ARobotBehaviour;
 	private s: State; // the state of the interpreter (ops, pc, bindings, stack, ...)
-    private breakPoints : any[];
+    public breakPoints : any[];
     private previousBlockId: any;
     private events: any ;
     private stepBlock: any;
@@ -32,11 +32,12 @@ export class Interpreter {
 
         this.breakPoints = breakpoints;
 
-		this.events = {};
-        this.events[C.DEBUG_BLOCK] = false;
-        this.events[C.DEBUG_BREAKPOINT] = false;
+        this.events = {};
         this.events[C.DEBUG_STEP_INTO] = false;
+        this.events[C.DEBUG_BREAKPOINT] = false;
+        this.events[C.DEBUG_STEP_OVER] = false;
         this.stepBlock = null;
+        this.previousBlockId = null;
         if (this.breakPoints.length > 0){
             this.events[C.DEBUG_BREAKPOINT] = true;
         }
@@ -101,7 +102,9 @@ export class Interpreter {
                 switch (op[C.OPCODE]) {
                     case C.INITIATE_BLOCK:
                     case C.REPEAT_STMT_CONTINUATION:
-                    case C.REPEAT_STMT: return true;
+                    case C.REPEAT_STMT:
+                    case C.METHOD_CALL_VOID:
+                    case C.METHOD_CALL_RETURN:return true;
                     default :return false;
                 }
             }
@@ -111,7 +114,7 @@ export class Interpreter {
 
     private isPossibleNewBlock(op) {
         if (op.hasOwnProperty(C.BLOCK_ID)) {
-            if (op[C.BLOCK_ID] !== this.previousBlockId) {
+            if (this.previousBlockId == null || op[C.BLOCK_ID] !== this.previousBlockId) {
                 switch (op[C.OPCODE]) {
                     case C.INITIATE_BLOCK: {
                         switch (op[C.OP]){
@@ -119,6 +122,8 @@ export class Interpreter {
                         }
                         return true;
                     }
+                    case C.METHOD_CALL_VOID:
+                    case C.METHOD_CALL_RETURN:return true;
                     default : {
                         return false;
                     }
@@ -128,7 +133,7 @@ export class Interpreter {
         }
     }
 
-    private isPossibleStepInto(op){
+    private isPossibleStepOver(op){
         if (op.hasOwnProperty(C.BLOCK_ID)) {
             switch (op[C.OPCODE]) {
                 case C.INITIATE_BLOCK: {
@@ -137,6 +142,8 @@ export class Interpreter {
                     }
                     return true;
                 }
+                case C.METHOD_CALL_VOID:
+                case C.METHOD_CALL_RETURN:return true;
                 default : {
                     return false;
                 }
@@ -181,6 +188,14 @@ export class Interpreter {
      * - change the values of the binding (assign)
      * - push and pop values to the stack (expressions)
      * - push and pop to the stack of operations-arrays
+     *
+     * Debugging functions:
+     *
+     * -StepOver will step over a given line. If the line contains a function the function will be executed and the result returned without debugging each line.
+     * -StepInto If the line does not contain a function it behaves the same as “step over” but if it does the debugger will enter the called function
+     * and continue line-by-line debugging there.
+     * -BreakPoint will continue execution until the next breakpoint is reached or the program exits.
+
      */
     private evalOperation( maxRunTime: number ) {
         const s = this.s;
@@ -206,23 +221,23 @@ export class Interpreter {
                     }
                 }
                 // executes next block then pauses
-                if (this.events[C.DEBUG_BLOCK]){
+                if (this.events[C.DEBUG_STEP_INTO]){
                     if (this.isPossibleNewBlock(op)){
                         stackmachineJsHelper.setSimBreak();
                         this.previousBlockId = op[C.BLOCK_ID];
-                        this.events[C.DEBUG_BLOCK] = false;
+                        this.events[C.DEBUG_STEP_INTO] = false;
                         return result;
                     }
 
                 }
                 // executes next statement then pauses
-                if (this.events[C.DEBUG_STEP_INTO]){
-                    if (this.isPossibleStepInto(op)){
+                if (this.events[C.DEBUG_STEP_OVER]){
+                    if (this.isPossibleStepOver(op)){
                         if (this.stepBlock !== null ){
                             if (!s.beingExecuted(this.stepBlock)){
                                 stackmachineJsHelper.setSimBreak();
                                 this.previousBlockId = op[C.BLOCK_ID];
-                                this.events[C.DEBUG_STEP_INTO] = false;
+                                this.events[C.DEBUG_STEP_OVER] = false;
                                 this.stepBlock = null;
                                 return result;
                             }
