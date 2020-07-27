@@ -134,7 +134,6 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                 $('#simControlBreakPoint').show();
                 $('#simControlStepOver').show();
                 $('#simControlStepInto').show();
-
                 SIM.updateDebugMode(true);
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
@@ -189,7 +188,6 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
     }
 
     function toggleSim() {
-        let breakpoints;
         if ($('#simButton').hasClass('rightActive')) {
             SIM.cancel();
             $(".sim").addClass('hide');
@@ -201,6 +199,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                 $('.nav > li > ul > .robotType').removeClass('disabled');
                 $('.' + GUISTATE_C.getRobot()).addClass('disabled');
             });
+            $('#debugMode').hide();
             SIM.endDebugging();
 
         } else {
@@ -219,9 +218,13 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                     $('#simButtonsCollapse').collapse({
                         'toggle': false
                     });
-                    $('#simControlBreakPoint').hide();
-                    $('#simControlStepOver').hide();
-                    $('#simControlStepInto').hide();
+                    if (SIM.getNumRobots() == 1) {
+                        $('#debugMode').show();
+                        $('#simControlBreakPoint').hide();
+                        $('#simControlStepOver').hide();
+                        $('#simControlStepInto').hide();
+                    }
+
 
                     if (TOUR_C.getInstance() && TOUR_C.getInstance().trigger) {
                         TOUR_C.getInstance().trigger('startSim');
