@@ -122,6 +122,8 @@ export class Interpreter {
                         }
                         return true;
                     }
+                    case C.REPEAT_STMT:
+                    case C.REPEAT_STMT_CONTINUATION:
                     case C.METHOD_CALL_VOID:
                     case C.METHOD_CALL_RETURN:return true;
                     default : {
@@ -136,14 +138,15 @@ export class Interpreter {
     private isPossibleStepOver(op){
         if (op.hasOwnProperty(C.BLOCK_ID)) {
             switch (op[C.OPCODE]) {
-                case C.INITIATE_BLOCK: {
-                    switch (op[C.OP]){
-                        case C.EXPR: return false;
-                    }
-                    return true;
-                }
                 case C.METHOD_CALL_VOID:
                 case C.METHOD_CALL_RETURN:return true;
+                case C.INITIATE_BLOCK: {
+                    switch (op[C.OP]){
+                        case C.METHOD_CALL_VOID:
+                        case C.METHOD_CALL_RETURN:return true;
+                    }
+                    return false;
+                }
                 default : {
                     return false;
                 }
@@ -220,7 +223,6 @@ export class Interpreter {
                         }
                     }
                 }
-                // executes next block then pauses
                 if (this.events[C.DEBUG_STEP_INTO]){
                     if (this.isPossibleNewBlock(op)){
                         stackmachineJsHelper.setSimBreak();
@@ -230,22 +232,24 @@ export class Interpreter {
                     }
 
                 }
-                // executes next statement then pauses
                 if (this.events[C.DEBUG_STEP_OVER]){
-                    if (this.isPossibleStepOver(op)){
-                        if (this.stepBlock !== null ){
-                            if (!s.beingExecuted(this.stepBlock)){
-                                stackmachineJsHelper.setSimBreak();
-                                this.previousBlockId = op[C.BLOCK_ID];
-                                this.events[C.DEBUG_STEP_OVER] = false;
-                                this.stepBlock = null;
-                                return result;
-                            }
-                        }
-                        else{
-                            this.stepBlock = op;
-                        }
+                    if (this.stepBlock !== null && !s.beingExecuted(this.stepBlock) && this.isPossibleNewBlock(op)){
+                        stackmachineJsHelper.setSimBreak();
+                        this.previousBlockId = op[C.BLOCK_ID];
+                        this.events[C.DEBUG_STEP_OVER] = false;
+                        this.stepBlock = null;
+                        return result;
                     }
+                    else if (this.stepBlock === null && this.isPossibleStepOver(op)){
+                        this.stepBlock = op;
+                    }
+                    else if (this.stepBlock === null && this.isPossibleNewBlock(op)){
+                        stackmachineJsHelper.setSimBreak();
+                        this.previousBlockId = op[C.BLOCK_ID];
+                        this.events[C.DEBUG_STEP_OVER] = false;
+                        return result;
+                    }
+
                 }
 
             }
