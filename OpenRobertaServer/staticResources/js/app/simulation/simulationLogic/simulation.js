@@ -195,7 +195,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                 setPause(false);
             }, 100);
         } else {
-            if (value) {
+            if (value && !debugMode) {
                 $('#simControl').addClass('typcn-media-play-outline').removeClass('typcn-media-stop');
                 $('#simControl').attr('data-original-title', Blockly.Msg.MENU_SIM_START_TOOLTIP);
             } else {
