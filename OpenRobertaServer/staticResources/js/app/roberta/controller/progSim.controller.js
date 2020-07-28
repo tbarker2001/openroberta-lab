@@ -193,13 +193,13 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             $(".sim").addClass('hide');
             $("#simButtonsCollapse").collapse('hide');
             $('#simControl').addClass('typcn-media-play-outline').removeClass('typcn-media-stop');
-            $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
+            $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP).hide();
             $('#blockly').closeRightView(function () {
                 $('#menuSim').parent().addClass('disabled');
                 $('.nav > li > ul > .robotType').removeClass('disabled');
                 $('.' + GUISTATE_C.getRobot()).addClass('disabled');
             });
-            $('#debugMode').hide();
+
             SIM.endDebugging();
 
         } else {

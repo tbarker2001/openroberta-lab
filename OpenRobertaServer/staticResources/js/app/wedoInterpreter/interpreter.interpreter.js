@@ -73,9 +73,11 @@
             s.setDebugMode(mode);
             if (mode) {
                 s.addHighlights();
+                stackmachineJsHelper.getJqueryObject("#blockly").addClass("debug");
             }
             else {
                 s.removeHighlights(this.breakPoints);
+                stackmachineJsHelper.getJqueryObject("#blockly").removeClass("debug");
             }
         };
         Interpreter.prototype.addEvent = function (mode) {
@@ -99,7 +101,7 @@
             }
             return false;
         };
-        Interpreter.prototype.isPossibleNewBlock = function (op) {
+        Interpreter.prototype.isPossiblStepInto = function (op) {
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 if (this.previousBlockId == null || op[C.BLOCK_ID] !== this.previousBlockId) {
                     switch (op[C.OPCODE]) {
@@ -205,7 +207,7 @@
                         }
                     }
                     if (this.events[C.DEBUG_STEP_INTO]) {
-                        if (this.isPossibleNewBlock(op)) {
+                        if (this.isPossiblStepInto(op)) {
                             stackmachineJsHelper.setSimBreak();
                             this.previousBlockId = op[C.BLOCK_ID];
                             this.events[C.DEBUG_STEP_INTO] = false;
@@ -213,7 +215,7 @@
                         }
                     }
                     if (this.events[C.DEBUG_STEP_OVER]) {
-                        if (this.stepBlock !== null && !s.beingExecuted(this.stepBlock) && this.isPossibleNewBlock(op)) {
+                        if (this.stepBlock !== null && !s.beingExecuted(this.stepBlock) && this.isPossiblStepInto(op)) {
                             stackmachineJsHelper.setSimBreak();
                             this.previousBlockId = op[C.BLOCK_ID];
                             this.events[C.DEBUG_STEP_OVER] = false;
@@ -223,7 +225,7 @@
                         else if (this.stepBlock === null && this.isPossibleStepOver(op)) {
                             this.stepBlock = op;
                         }
-                        else if (this.stepBlock === null && this.isPossibleNewBlock(op)) {
+                        else if (this.stepBlock === null && this.isPossiblStepInto(op)) {
                             stackmachineJsHelper.setSimBreak();
                             this.previousBlockId = op[C.BLOCK_ID];
                             this.events[C.DEBUG_STEP_OVER] = false;
