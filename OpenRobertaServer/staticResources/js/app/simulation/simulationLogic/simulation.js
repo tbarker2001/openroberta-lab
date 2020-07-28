@@ -458,19 +458,17 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                     robots[i].pause = true;
                     robots[i].reset();
                     scene.drawRobots();
+
                     // some time to cancel all timeouts
+                    setTimeout(function() {
+                        init(userPrograms, false, simRobotType);
+                        addMouseEvents();
+                    }, 205);
+
                     if (steppingFinished){
-                        setTimeout(function() {
-                            init(userPrograms, true, simRobotType);
-                            addMouseEvents();
-                        }, 205);
                         steppingFinished = false;
                     }
                     else{
-                        setTimeout(function() {
-                            init(userPrograms, false, simRobotType);
-                            addMouseEvents();
-                        }, 205);
                         setTimeout(function() {
                             //delete robot.button.Reset;
                             setPause(false);

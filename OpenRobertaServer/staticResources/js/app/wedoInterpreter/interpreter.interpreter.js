@@ -107,7 +107,8 @@
                     switch (op[C.OPCODE]) {
                         case C.INITIATE_BLOCK: {
                             switch (op[C.OP]) {
-                                case C.EXPR: return false;
+                                case C.EXPR:
+                                case C.GET_SAMPLE: return false;
                             }
                             return true;
                         }
