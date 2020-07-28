@@ -508,7 +508,7 @@ export class Interpreter {
                 case C.STOP:
                     U.debug( "PROGRAM TERMINATED. stop op" );
                     this.terminated = true;
-                    if (s.getDebugMode()){stackmachineJsHelper.resetSim();}
+                    stackmachineJsHelper.resetSim();
                     break;
                 case C.TEXT_JOIN: {
                     const n = stmt[C.NUMBER];

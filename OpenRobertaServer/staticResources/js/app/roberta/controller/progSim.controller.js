@@ -173,16 +173,19 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
         $('#simControlBreakPoint').onWrap('click', function(event){
             SIM.setPause(false);
             SIM.interpreterControl(CONST.DEBUG_BREAKPOINT);
+            $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
         });
 
         $('#simControlStepInto').onWrap('click', function(event){
             SIM.setPause(false);
             SIM.interpreterControl(CONST.DEBUG_STEP_INTO);
+            $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
         });
 
         $('#simControlStepOver').onWrap('click', function(event){
             SIM.setPause(false);
             SIM.interpreterControl(CONST.DEBUG_STEP_OVER);
+            $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
         });
 
     }

@@ -448,10 +448,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                         var nowNext = new Date().getTime();
                         runRenderUntil[i] = nowNext + delayMs;
                     }
-                } else if (interpreters[i].isTerminated() && !robots[i].endless && !debugMode) {
-                    robots[i].pause = true;
-                    robots[i].reset();
-                } else if (reset || steppingFinished) {
+                } else if (reset || steppingFinished || interpreters[i].isTerminated() && !robots[i].endless) {
                     reset = false;
                     robots[i].buttons.Reset = false;
                     removeMouseEvents();
