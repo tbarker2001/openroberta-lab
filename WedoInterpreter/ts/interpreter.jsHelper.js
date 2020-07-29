@@ -11,11 +11,6 @@ define(["require","simulation.simulation", "exports"], function(require,SIM, exp
 	}
 	exports.setSimBreak = setSimBreak;
 
-	function resetSim(){
-		SIM.resetStepping();
-	}
-	exports.resetSim = resetSim;
-
 	function getJqueryObject(object) {
 		return $(object);
 	}

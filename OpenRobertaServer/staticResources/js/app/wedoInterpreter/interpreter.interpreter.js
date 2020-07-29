@@ -488,7 +488,6 @@
                     case C.STOP:
                         U.debug("PROGRAM TERMINATED. stop op");
                         this.terminated = true;
-                        stackmachineJsHelper.resetSim();
                         break;
                     case C.TEXT_JOIN: {
                         var n_1 = stmt[C.NUMBER];

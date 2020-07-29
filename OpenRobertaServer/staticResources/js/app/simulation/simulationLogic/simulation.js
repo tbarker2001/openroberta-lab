@@ -31,7 +31,6 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     var customBackgroundLoaded = false;
     var debugMode = false;
     var breakpoints = [];
-    var steppingFinished = false;
 
     var imgObstacle1 = new Image();
     var imgPattern = new Image();
@@ -448,7 +447,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                         var nowNext = new Date().getTime();
                         runRenderUntil[i] = nowNext + delayMs;
                     }
-                } else if (reset || steppingFinished || interpreters[i].isTerminated() && !robots[i].endless) {
+                } else if (reset || interpreters[i].isTerminated() && !robots[i].endless) {
                     reset = false;
                     robots[i].buttons.Reset = false;
                     removeMouseEvents();
@@ -463,10 +462,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                         addMouseEvents();
                     }, 205);
 
-                    if (steppingFinished){
-                        steppingFinished = false;
-                    }
-                    else{
+                    if (!(interpreters[i].isTerminated() && !robots[i].endless)){
                         setTimeout(function() {
                             //delete robot.button.Reset;
                             setPause(false);
@@ -1180,19 +1176,15 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         }
     }
     exports.removeBreakPoint = removeBreakPoint;
-    function resetStepping(){
-        steppingFinished = true;
-    }
-    exports.resetStepping = resetStepping;
 
-    function interpreterControl(mode){
+    function interpreterAddEvent(mode){
         if (interpreters !== null){
             for (var i =0; i< numRobots; i++){
                 interpreters[i].addEvent(mode);
             }
         }
     }
-    exports.interpreterControl = interpreterControl;
+    exports.interpreterAddEvent = interpreterAddEvent;
 
     function endDebugging(){
         if (interpreters !== null){
