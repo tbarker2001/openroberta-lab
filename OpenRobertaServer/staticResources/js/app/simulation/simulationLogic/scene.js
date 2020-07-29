@@ -121,6 +121,20 @@ define(['simulation.simulation', 'simulation.math', 'util', 'interpreter.constan
         }
     };
 
+    Scene.prototype.drawVariables = function (){
+        $("#variableValue").html("");
+        var variables = SIM.getSimVariables()
+        if (Object.keys(variables).length > 0){
+            for (var v in variables) {
+                var value  = variables[v][0];
+                addVariableValue(v,value);
+            }
+        }
+        else{
+            $('#variableValue').append('<div><span> No variables instantiated</span></div>')
+        }
+    }
+
     Scene.prototype.drawMbed = function() {
         this.rCtx.clearRect(0, 0, C.MAX_WIDTH, C.MAX_HEIGHT);
         this.rCtx.restore();
@@ -215,18 +229,6 @@ define(['simulation.simulation', 'simulation.math', 'util', 'interpreter.constan
                 for (var s in this.robots[r].colorSensor) {
                     $("#notConstantValue").append('<div><label>Color Sensor ' + s + '</label><span style="margin-left:6px; width: 20px; background-color:' + this.robots[r].colorSensor[s].color + '">&nbsp;</span></div>');
                 }
-                $("#variableValue").html("");
-                var variables = SIM.getSimVariables()
-                if (Object.keys(variables).length > 0){
-                    for (var v in variables) {
-                        var value  = variables[v][0];
-                        addVariableValue(v,value);
-                    }
-                }
-                else{
-                    $('#variableValue').append('<div><span> No variables instantiated</span></div>')
-                }
-
             }
             this.rCtx.scale(SIM.getScale(), SIM.getScale());
             this.rCtx.save();

@@ -125,7 +125,9 @@ export class Interpreter {
                     case C.INITIATE_BLOCK: {
                         switch (op[C.OP]){
                             case C.EXPR:
-                            case C.GET_SAMPLE:return false;
+                            case C.GET_SAMPLE:
+                            case C.VAR_DECLARATION: return false;
+
                         }
                         return true;
                     }

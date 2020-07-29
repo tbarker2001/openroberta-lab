@@ -455,6 +455,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                     robots[i].pause = true;
                     robots[i].reset();
                     scene.drawRobots();
+                    scene.drawVariables();
 
                     // some time to cancel all timeouts
                     setTimeout(function() {
@@ -498,6 +499,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         reset = robots[0].buttons.Reset;
         scene.updateSensorValues(!pause);
         scene.drawRobots();
+        scene.drawVariables();
         renderTime = new Date().getTime() - renderTimeStart;
     }
 
@@ -892,6 +894,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         scene.drawObjects();
         scene.drawRuler();
         scene.drawRobots();
+        scene.drawVariables();
         addMouseEvents();
         for (var i = 0; i < numRobots; i++) {
             readyRobots[i] = true;
