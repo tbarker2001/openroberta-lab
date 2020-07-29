@@ -134,6 +134,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                 $('#simControlBreakPoint').show();
                 $('#simControlStepOver').show();
                 $('#simControlStepInto').show();
+                $('#simVariables').show();
                 SIM.updateDebugMode(true);
 
                 Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
@@ -159,6 +160,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                 $('#simControlBreakPoint').hide();
                 $('#simControlStepOver').hide();
                 $('#simControlStepInto').hide();
+                $('#simVariables').hide();
 
                 SIM.endDebugging();
 
@@ -174,20 +176,34 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
             SIM.setPause(false);
             SIM.interpreterControl(CONST.DEBUG_BREAKPOINT);
             $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
-        });
+        },'simControlBreakPoint clicked');
 
         $('#simControlStepInto').onWrap('click', function(event){
             SIM.setPause(false);
             SIM.interpreterControl(CONST.DEBUG_STEP_INTO);
             $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
-        });
+        },'simControlStepInto clicked');
 
         $('#simControlStepOver').onWrap('click', function(event){
             SIM.setPause(false);
             SIM.interpreterControl(CONST.DEBUG_STEP_OVER);
             $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
-        });
+        },'simControlStepOver clicked');
 
+        $('#simVariables').onWrap('click', function(event) {
+            $("#simVariablesModal").modal("toggle");
+            var position = $("#simDiv").position();
+            position.top += 12;
+            $("#simVariablesModal").css({
+                top : position.top,
+                right : 12,
+                left : 'initial',
+                bottom : 'inherit'
+            });
+            $('#simVariablesModal').draggable();
+
+            $("#simButtonsCollapse").collapse('hide');
+        }, 'simVariables clicked');
     }
 
     function toggleSim() {
@@ -226,6 +242,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState
                         $('#simControlBreakPoint').hide();
                         $('#simControlStepOver').hide();
                         $('#simControlStepInto').hide();
+                        $('#simVariables').hide();
                     }
 
 

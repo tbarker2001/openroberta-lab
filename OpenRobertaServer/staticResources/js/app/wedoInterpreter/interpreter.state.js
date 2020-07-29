@@ -93,6 +93,12 @@
             return nameBindings[0];
         };
         /**
+         * gets all the bindings.
+         */
+        State.prototype.getVariables = function () {
+            return this.bindings;
+        };
+        /**
          * update the value of a binding.
          *
          * . @param name the name whose value is updated

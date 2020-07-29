@@ -105,6 +105,13 @@ export class State {
     }
 
     /**
+     * gets all the bindings.
+     */
+    public getVariables() {
+        return this.bindings;
+    }
+
+    /**
      * update the value of a binding.
      * 
      * . @param name the name whose value is updated

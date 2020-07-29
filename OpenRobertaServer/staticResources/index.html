@@ -347,6 +347,8 @@ limitations under the License.
                             data-original-title="" title=""></button>
                     <button id="simControlStepInto" type="button" class="blbtn typcn typcn-arrow-down-outline" lkey="Blockly.Msg.MENU_DEBUG_STEP_INTO_TOOLTIP" rel="tooltip"
                             data-original-title="" title=""></button>
+                    <button id="simVariables" type="button" class="simVariables blbtn typcn typcn-sort-alphabetically-outline" lkey="Blockly.Msg.MENU_SIM_VARIABLES_TOOLTIP" rel="tooltip"
+                            data-original-title="" title=""></button>
 
                 </div>
             </div>
@@ -1386,6 +1388,20 @@ limitations under the License.
             </div>
         </div>
     </div>
+    <!-- Popup for simulation variable data -->
+    <div id="simVariablesModal" class="modal fade simRobotModal" data-backdrop="false">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div id="simVariablesContent">
+                <div id="variablesContent">
+                    <div id="variableValue"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!--  Popup to show downloads for mbed -->
     <div id="save-client-compiled-program" class="modal fade">
         <div class="modal-dialog">

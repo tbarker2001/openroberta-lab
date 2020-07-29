@@ -1202,6 +1202,16 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
 
     }
     exports.endDebugging = endDebugging;
+
+    function getSimVariables() {
+        if (interpreters !== null){
+            return interpreters[0].getVariables();
+        }
+        else{
+            return {};
+        }
+    }
+    exports.getSimVariables = getSimVariables;
 });
 
 //http://paulirish.com/2011/requestanimationframe-for-smart-animating/

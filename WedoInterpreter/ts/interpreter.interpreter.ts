@@ -79,6 +79,10 @@ export class Interpreter {
 		return this.r;
 	}
 
+    public getVariables(){
+        return this.s.getVariables();
+    }
+
     public setDebugMode(mode){
         const s = this.s;
         s.setDebugMode(mode)

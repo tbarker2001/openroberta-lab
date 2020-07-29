@@ -68,6 +68,9 @@
         Interpreter.prototype.getRobotBehaviour = function () {
             return this.r;
         };
+        Interpreter.prototype.getVariables = function () {
+            return this.s.getVariables();
+        };
         Interpreter.prototype.setDebugMode = function (mode) {
             var s = this.s;
             s.setDebugMode(mode);

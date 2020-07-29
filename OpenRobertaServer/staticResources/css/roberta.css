@@ -458,6 +458,7 @@ body.blocklyMinimalBody * {
     z-index: 9;
 }
 
+#variablesContent,
 #mbedContent,
 #valuesContent {
     background-color: #fff;
@@ -1050,12 +1051,21 @@ div.rightMenuButton:hover,
     color: #f1f1f1;
 }
 
+.modal#simVariablesContent button.close,
 .modal#simValuesModal button.close {
     margin-right: -10px;
     margin-top: -14px;
     color: #bbb;
 }
 
+#simVariablesContent label{
+    display: inline-block;
+    float: left;
+    clear: left;
+    width: 100px;
+    text-align: left;
+    margin-right: 6px;
+}
 #simValuesContent label {
     display: inline-block;
     float: left;
@@ -1065,12 +1075,14 @@ div.rightMenuButton:hover,
     margin-right: 6px;
 }
 
+#simVariablesContent div > div,
 #simValuesContent div > div {
     white-space: nowrap;
     overflow: hidden;
     min-width: 166px;
 }
 
+#simVariablesContent span,
 #simValuesContent span {
     display: inline-block;
     float: left;
@@ -1084,6 +1096,7 @@ div.rightMenuButton:hover,
     color: #ffffff;
 }
 
+.modal#simVariablesModal button.close,
 .modal#simValuesModal button.close:hover {
     margin-right: -10px;
     margin-top: -14px;
