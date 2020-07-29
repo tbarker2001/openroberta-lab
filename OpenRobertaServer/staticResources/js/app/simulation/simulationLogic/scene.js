@@ -131,7 +131,7 @@ define(['simulation.simulation', 'simulation.math', 'util', 'interpreter.constan
             }
         }
         else{
-            $('#variableValue').append('<div><span> No variables instantiated</span></div>')
+            $('#variableValue').append('<div><label> No variables instantiated</label></div>')
         }
     }
 
@@ -859,15 +859,15 @@ define(['simulation.simulation', 'simulation.math', 'util', 'interpreter.constan
     function addVariableValue(name,value) {
         switch (typeof value) {
             case "number": {
-                $("#variableValue").append('<div><label>' + name + ': </label><span> ' + UTIL.round(value, 0) + '</span></div>');
+                $("#variableValue").append('<div><label>' + name + ' :  </label><span> ' + UTIL.round(value, 0) + '</span></div>');
                 break;
             }
             case "string": {
-                $("#variableValue").append('<div><label>' + name + ': </label><span> ' + value + '</span></div>');
+                $("#variableValue").append('<div><label>' + name + ' :  </label><span> ' + value + '</span></div>');
                 break;
             }
             case "boolean": {
-                $("#variableValue").append('<div><label>' + name + ': </label><span> ' + value + '</span></div>');
+                $("#variableValue").append('<div><label>' + name + ' :  </label><span> ' + value + '</span></div>');
                 break;
             }
             case "object": {

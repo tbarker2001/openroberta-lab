@@ -1058,11 +1058,16 @@ div.rightMenuButton:hover,
     color: #bbb;
 }
 
+#VariablesContent{
+    height: 300px;
+    overflow: auto;
+    width: auto;
+}
 #simVariablesContent label{
     display: inline-block;
     float: left;
     clear: left;
-    width: 100px;
+    width: auto;
     text-align: left;
     margin-right: 6px;
 }
@@ -1079,16 +1084,22 @@ div.rightMenuButton:hover,
 #simValuesContent div > div {
     white-space: nowrap;
     overflow: hidden;
-    min-width: 166px;
+    min-width: 250px;
 }
 
-#simVariablesContent span,
+#simVariablesContent span{
+    display: inline;
+    float: right;
+    padding: 0 10px;
+    width: auto;
+}
 #simValuesContent span {
     display: inline-block;
     float: left;
     padding: 0 6px;
     width: 60px;
 }
+
 
 .modal#simRobotModal button.close:hover {
     margin-right: -10px;
