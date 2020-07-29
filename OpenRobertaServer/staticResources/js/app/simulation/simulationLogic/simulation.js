@@ -343,7 +343,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
             configurations.push(x.javaScriptConfiguration);
             return new SIM_I.Interpreter(src, new MBED_R.RobotMbedBehaviour(), callbackOnTermination,breakpoints);
         });
-        updateDebugMode(this.debugMode);
+        updateDebugMode(debugMode);
 
         isDownRobots = [];
         for (var i = 0; i < numRobots; i++) {
@@ -1194,7 +1194,8 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
             }
         }
         breakpoints = [];
-
+        debugMode =false;
+        updateDebugMode(debugMode);
     }
     exports.endDebugging = endDebugging;
 

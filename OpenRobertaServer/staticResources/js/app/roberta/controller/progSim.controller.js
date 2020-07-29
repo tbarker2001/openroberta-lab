@@ -1,5 +1,5 @@
-define([ 'exports', 'message', 'log', 'util', 'simulation.simulation', 'guiState.controller', 'tour.controller', 'program.controller', 'program.model',
-        'blockly', 'jquery', 'jquery-validate' ], function(exports, MSG, LOG, UTIL, SIM, GUISTATE_C, TOUR_C, PROG_C, PROGRAM, Blockly, $) {
+define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulation.constants', 'guiState.controller', 'tour.controller', 'program.controller', 'program.model',
+        'blockly', 'jquery', 'jquery-validate' ], function(exports, MSG, LOG, UTIL, SIM,CONST, GUISTATE_C, TOUR_C, PROG_C, PROGRAM, Blockly, $) {
 
     const INITIAL_WIDTH = 0.5;
     var blocklyWorkspace;
