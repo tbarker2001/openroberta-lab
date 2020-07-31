@@ -252,6 +252,16 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
             robots[i].reset();
         }
         reloadProgram();
+        for (var i = 0; i < numRobots; i++) {
+            interpreters[i].removeHighlights();
+        }
+
+        setTimeout(function() {
+            init(userPrograms, false, simRobotType);
+            addMouseEvents();
+        }, 205);
+
+
     }
     exports.stopProgram = stopProgram;
 
@@ -1148,22 +1158,40 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                 interpreters[i].setDebugMode(mode);
             }
         }
+
+        if (mode){
+            Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
+                if (!$(block.svgGroup_).hasClass('blocklyDisabled')){
+                    $(block.svgPath_).onWrap('click', function(event){
+                        if ($(block.svgPath_).hasClass('breakpoint')){
+                            removeBreakPoint(block);
+                            $(block.svgPath_).removeClass('breakpoint');
+                        } else if ($(block.svgPath_).hasClass('selectedBreakpoint')){
+                            removeBreakPoint(block);
+                            $(block.svgPath_).removeClass('selectedBreakpoint').addClass('highlight');
+                        } else{
+                            addBreakPoint(block);
+                            $(block.svgPath_).addClass('breakpoint');
+                        }
+                    },'breakpoint added');
+                }
+            });
+        }
+        else{
+            Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
+                $(block.svgPath_).off('click').removeClass('breakpoint');})
+        }
     }
     exports.updateDebugMode = updateDebugMode;
     
     function  addBreakPoint(block) {
-        breakpoints.push(block);
-        if (breakpoints.length > 0 && interpreters !== null){
-            for (var i =0; i< numRobots; i++){
-                interpreters[i].addEvent(CONST.DEBUG_BREAKPOINT);
-            }
-        }
+        breakpoints.push(block.id);
     }
     exports.addBreakPoint = addBreakPoint;
 
     function removeBreakPoint(block) {
         for (var i = 0; i< breakpoints.length; i++){
-            if (breakpoints[i].id === block.id){
+            if (breakpoints[i] === block.id){
                 breakpoints.splice(i, 1);
             }
         }
@@ -1195,7 +1223,6 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         }
         breakpoints = [];
         debugMode =false;
-        updateDebugMode(debugMode);
     }
     exports.endDebugging = endDebugging;
 

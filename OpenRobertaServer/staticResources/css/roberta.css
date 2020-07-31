@@ -3035,12 +3035,12 @@ pre code {
     }
 }
 
-path.blocklyPath.breakpoint {
+#blockly.debug path.blocklyPath.breakpoint {
     stroke-opacity: 1;
     transition: none;
     stroke: red;
 }
-path.blocklyPath.selectedBreakpoint{
+#blockly.debug path.blocklyPath.selectedBreakpoint{
     stroke-opacity: 1;
     transition: none;
     stroke: purple;

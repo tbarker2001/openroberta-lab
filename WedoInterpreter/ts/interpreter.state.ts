@@ -283,9 +283,9 @@ export class State {
     }
     /** adds/removes block from currentBlocks and applies correct highlight to block**/
     public processBlock(stmt){
-        for (var block_ID in this.currentBlocks){
-            let block = this.currentBlocks[block_ID].block;
-            if (this.currentBlocks[block_ID].terminate){
+        for (var id in this.currentBlocks){
+            let block = this.currentBlocks[id].block;
+            if (this.currentBlocks[id].terminate){
                 if (this.debugMode){
                     if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("selectedBreakpoint")){
                         stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("selectedBreakpoint").addClass("breakpoint");
@@ -294,7 +294,7 @@ export class State {
                         stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("highlight");
                     }
                 }
-                delete this.currentBlocks[block_ID];
+                delete this.currentBlocks[id];
             }
         }
         if (stmt.hasOwnProperty(C.BLOCK_ID)) {
@@ -329,17 +329,28 @@ export class State {
         }
         return false;
     }
-    public addHighlights(){
+    public addHighlights(breakPoints: any[]){
         for (var id in this.currentBlocks){
             stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_).addClass("highlight");
         }
+        breakPoints.forEach(function (id) {
+            let block = stackmachineJsHelper.getBlockById(id)
+            stackmachineJsHelper.getJqueryObject(block.svgPath_).addClass("breakpoint");
+        });
 
     }
     public removeHighlights(breakPoints :any[]){
         for (var id in this.currentBlocks){
-            stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_).removeClass("highlight");
+            let object = stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_);
+            if (object.hasClass("selectedBreakpoint")) {
+                object.removeClass("selectedBreakpoint").addClass("breakpoint");
+            }
+            else{
+                object.removeClass("highlight");
+            }
         }
-        breakPoints.forEach(function (block) {
+        breakPoints.forEach(function (id) {
+            let block = stackmachineJsHelper.getBlockById(id)
             stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("breakpoint").removeClass("selectedBreakpoint");
         });
     }

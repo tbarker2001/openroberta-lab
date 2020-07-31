@@ -131,44 +131,16 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
         $('#debugMode').onWrap('click',function (event) {
             if ($('#debugMode').attr('data-original-title') === Blockly.Msg.MENU_DEBUG_START_TOOLTIP){
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_STOP_TOOLTIP);
-                $('#simControlBreakPoint').show();
-                $('#simControlStepOver').show();
-                $('#simControlStepInto').show();
-                $('#simVariables').show();
+                $('#simControlBreakPoint,#simControlStepOver,#simControlStepInto,#simVariables').show();
                 SIM.updateDebugMode(true);
 
-                Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
-                    $(block.svgPath_).onWrap('click', function(event){
-                        if ($(block.svgPath_).hasClass('breakpoint')){
-                            SIM.removeBreakPoint(block);
-                            $(block.svgPath_).removeClass('breakpoint');
-                        }
-                        else if ($(block.svgPath_).hasClass('selectedBreakpoint')){
-                            SIM.removeBreakPoint(block);
-                            $(block.svgPath_).removeClass('selectedBreakpoint').addClass('highlight');
-                        }
-
-                        else{
-                            SIM.addBreakPoint(block);
-                            $(block.svgPath_).addClass('breakpoint');
-                        }
-                    },'breakpoints activated')
-                })
             }
-            else{
+            else {
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
-                $('#simControlBreakPoint').hide();
-                $('#simControlStepOver').hide();
-                $('#simControlStepInto').hide();
-                $('#simVariables').hide();
-
+                $('#simControlBreakPoint,#simControlStepOver,#simControlStepInto,#simVariables').hide();
                 SIM.endDebugging();
-
-                Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
-                    block.svgPath_.classList.remove('breakpoint');
-                    SIM.removeBreakPoint(block);
-                    $(block.svgPath_).off('click');})
             }
+
         },'debugMode clicked');
 
 
@@ -239,10 +211,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
                     });
                     if (SIM.getNumRobots() == 1) {
                         $('#debugMode').show();
-                        $('#simControlBreakPoint').hide();
-                        $('#simControlStepOver').hide();
-                        $('#simControlStepInto').hide();
-                        $('#simVariables').hide();
+                        $('#simControlBreakPoint,#simControlStepOver,#simControlStepInto,#simVariables').hide();
                     }
 
 

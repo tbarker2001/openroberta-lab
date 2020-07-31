@@ -35,9 +35,6 @@
             this.events[C.DEBUG_STEP_OVER] = false;
             this.stepBlock = null;
             this.previousBlockId = null;
-            if (this.breakPoints.length > 0) {
-                this.events[C.DEBUG_BREAKPOINT] = true;
-            }
             var stop = {};
             stop[C.OPCODE] = "stop";
             stmts.push(stop);
@@ -64,6 +61,7 @@
             this.terminated = true;
             this.callbackOnTermination();
             this.r.close();
+            this.s.removeHighlights([]);
         };
         Interpreter.prototype.getRobotBehaviour = function () {
             return this.r;
@@ -71,12 +69,15 @@
         Interpreter.prototype.getVariables = function () {
             return this.s.getVariables();
         };
+        Interpreter.prototype.removeHighlights = function () {
+            this.s.removeHighlights([]);
+        };
         Interpreter.prototype.setDebugMode = function (mode) {
             var s = this.s;
             s.setDebugMode(mode);
             if (mode) {
-                s.addHighlights();
                 stackmachineJsHelper.getJqueryObject("#blockly").addClass("debug");
+                s.addHighlights(this.breakPoints);
             }
             else {
                 s.removeHighlights(this.breakPoints);
@@ -104,7 +105,7 @@
             }
             return false;
         };
-        Interpreter.prototype.isPossiblStepInto = function (op) {
+        Interpreter.prototype.isPossibleStepInto = function (op) {
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 if (this.previousBlockId == null || op[C.BLOCK_ID] !== this.previousBlockId) {
                     switch (op[C.OPCODE]) {
@@ -202,17 +203,18 @@
                     if (this.events[C.DEBUG_BREAKPOINT]) {
                         if (this.isPossibleBreakPoint(op)) {
                             for (var i = 0; i < this.breakPoints.length; i++) {
-                                if (op[C.BLOCK_ID] === this.breakPoints[i].id) {
+                                if (op[C.BLOCK_ID] === this.breakPoints[i]) {
                                     //breakpoint has been hit
                                     stackmachineJsHelper.setSimBreak();
                                     this.previousBlockId = op[C.BLOCK_ID];
+                                    this.events[C.DEBUG_BREAKPOINT] = false;
                                     return result;
                                 }
                             }
                         }
                     }
                     if (this.events[C.DEBUG_STEP_INTO]) {
-                        if (this.isPossiblStepInto(op)) {
+                        if (this.isPossibleStepInto(op)) {
                             stackmachineJsHelper.setSimBreak();
                             this.previousBlockId = op[C.BLOCK_ID];
                             this.events[C.DEBUG_STEP_INTO] = false;
@@ -220,7 +222,7 @@
                         }
                     }
                     if (this.events[C.DEBUG_STEP_OVER]) {
-                        if (this.stepBlock !== null && !s.beingExecuted(this.stepBlock) && this.isPossiblStepInto(op)) {
+                        if (this.stepBlock !== null && !s.beingExecuted(this.stepBlock) && this.isPossibleStepInto(op)) {
                             stackmachineJsHelper.setSimBreak();
                             this.previousBlockId = op[C.BLOCK_ID];
                             this.events[C.DEBUG_STEP_OVER] = false;
@@ -230,7 +232,7 @@
                         else if (this.stepBlock === null && this.isPossibleStepOver(op)) {
                             this.stepBlock = op;
                         }
-                        else if (this.stepBlock === null && this.isPossiblStepInto(op)) {
+                        else if (this.stepBlock === null && this.isPossibleStepInto(op)) {
                             stackmachineJsHelper.setSimBreak();
                             this.previousBlockId = op[C.BLOCK_ID];
                             this.events[C.DEBUG_STEP_OVER] = false;
