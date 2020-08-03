@@ -66,12 +66,15 @@
         Interpreter.prototype.getRobotBehaviour = function () {
             return this.r;
         };
+        /** Returns the map of interpreters variables */
         Interpreter.prototype.getVariables = function () {
             return this.s.getVariables();
         };
+        /** Removes all highlights from currently executing blocks*/
         Interpreter.prototype.removeHighlights = function () {
             this.s.removeHighlights([]);
         };
+        /** Sets the debug mode*/
         Interpreter.prototype.setDebugMode = function (mode) {
             var s = this.s;
             s.setDebugMode(mode);
@@ -84,12 +87,15 @@
                 stackmachineJsHelper.getJqueryObject("#blockly").removeClass("debug");
             }
         };
+        /** sets relevant event value to true */
         Interpreter.prototype.addEvent = function (mode) {
             this.events[mode] = true;
         };
+        /** sets relevant event value to false */
         Interpreter.prototype.removeEvent = function (mode) {
             this.events[mode] = false;
         };
+        /** Returns true if the operation is a possible breakpoint*/
         Interpreter.prototype.isPossibleBreakPoint = function (op) {
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 if (op[C.BLOCK_ID] !== this.previousBlockId) {
@@ -105,6 +111,7 @@
             }
             return false;
         };
+        /** Returns true if the operation is a possible block where stepInto should stop*/
         Interpreter.prototype.isPossibleStepInto = function (op) {
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 if (this.previousBlockId == null || op[C.BLOCK_ID] !== this.previousBlockId) {
@@ -129,6 +136,7 @@
                 return false;
             }
         };
+        /** Returns true if the operation is a possible block where stepOver should stop*/
         Interpreter.prototype.isPossibleStepOver = function (op) {
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 switch (op[C.OPCODE]) {
@@ -199,12 +207,10 @@
                 var op = s.getOp();
                 var result = this.evalSingleOperation(s, n, op);
                 if (s.getDebugMode()) {
-                    //continue till next breakpoint is reached
                     if (this.events[C.DEBUG_BREAKPOINT]) {
                         if (this.isPossibleBreakPoint(op)) {
                             for (var i = 0; i < this.breakPoints.length; i++) {
                                 if (op[C.BLOCK_ID] === this.breakPoints[i]) {
-                                    //breakpoint has been hit
                                     stackmachineJsHelper.setSimBreak();
                                     this.previousBlockId = op[C.BLOCK_ID];
                                     this.events[C.DEBUG_BREAKPOINT] = false;
@@ -253,6 +259,13 @@
             }
             return 0;
         };
+        /**
+         *  called from @see evalOperation() to evaluate all the operations
+         *
+         * @param s the S (state) component to store the state of the interpretation.
+         * @param n the R (robotBehaviour) component for accessing hardware sensors and actors
+         * @param stmt the operation to be evaluated
+         */
         Interpreter.prototype.evalSingleOperation = function (s, n, stmt) {
             s.opLog('actual ops: ');
             s.processBlock(stmt);
@@ -612,7 +625,7 @@
             return 0;
         };
         /**
-         *  called from @see evalOperation() to evaluate all kinds of expressions
+         *  called from @see evalSingleOperation() to evaluate all kinds of expressions
          *
          * . @param expr to be evaluated
          */
@@ -640,7 +653,7 @@
                 case C.CREATE_LIST_REPEAT: {
                     var rep = s.pop();
                     var val = s.pop();
-                    var arr = [];
+                    var arr = new Array();
                     for (var i = 0; i < rep; i++) {
                         arr[i] = val;
                     }
