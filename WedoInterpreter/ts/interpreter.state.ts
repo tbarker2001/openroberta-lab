@@ -329,6 +329,9 @@ export class State {
         }
         return false;
     }
+
+    /** Will add highlights from all currently blocks being currently executed and all given Breakpoints
+     * @param breakPoints the array of breakpoint block id's to have their highlights added*/
     public addHighlights(breakPoints: any[]){
         for (var id in this.currentBlocks){
             stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_).addClass("highlight");
@@ -339,6 +342,9 @@ export class State {
         });
 
     }
+
+    /** Will remove highlights from all currently blocks being currently executed and all given Breakpoints
+     * @param breakPoints the array of breakpoint block id's to have their highlights removed*/
     public removeHighlights(breakPoints :any[]){
         for (var id in this.currentBlocks){
             let object = stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_);
