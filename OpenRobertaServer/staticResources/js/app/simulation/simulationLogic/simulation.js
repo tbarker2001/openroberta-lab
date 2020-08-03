@@ -31,6 +31,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     var customBackgroundLoaded = false;
     var debugMode = false;
     var breakpoints = [];
+    var observers = {};
 
     var imgObstacle1 = new Image();
     var imgPattern = new Image();
@@ -1162,24 +1163,36 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         if (mode){
             Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
                 if (!$(block.svgGroup_).hasClass('blocklyDisabled')){
-                    $(block.svgPath_).onWrap('click', function(event){
-                        if ($(block.svgPath_).hasClass('breakpoint')){
-                            removeBreakPoint(block);
-                            $(block.svgPath_).removeClass('breakpoint');
-                        } else if ($(block.svgPath_).hasClass('selectedBreakpoint')){
-                            removeBreakPoint(block);
-                            $(block.svgPath_).removeClass('selectedBreakpoint').addClass('highlight');
-                        } else{
-                            addBreakPoint(block);
-                            $(block.svgPath_).addClass('breakpoint');
-                        }
-                    },'breakpoint added');
+
+                    var observer = new MutationObserver(function(mutations){
+                        mutations.forEach((mutation)=> {
+                            if ($(block.svgGroup_).hasClass('blocklySelected')) {
+                                if ($(block.svgPath_).hasClass('breakpoint')) {
+                                    removeBreakPoint(block);
+                                    $(block.svgPath_).removeClass('breakpoint');
+                                } else if ($(block.svgPath_).hasClass('selectedBreakpoint')) {
+                                    removeBreakPoint(block);
+                                    $(block.svgPath_).removeClass('selectedBreakpoint').addClass('highlight');
+                                } else {
+                                    addBreakPoint(block);
+                                    $(block.svgPath_).addClass('breakpoint');
+                                }
+                            }
+                        });
+
+                    });
+                    observers[block.id] = observer;
+                    observer.observe(block.svgGroup_,{attributes: true});
+
                 }
             });
         }
         else{
             Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
-                $(block.svgPath_).off('click').removeClass('breakpoint');})
+                if (observers.hasOwnProperty(block.id)){
+                    observers[block.id].disconnect();
+                }
+                $(block.svgPath_).removeClass('breakpoint');})
         }
     }
     exports.updateDebugMode = updateDebugMode;
@@ -1206,6 +1219,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     exports.removeBreakPoint = removeBreakPoint;
 
     function interpreterAddEvent(mode){
+        updateDebugMode(debugMode);
         if (interpreters !== null){
             for (var i =0; i< numRobots; i++){
                 interpreters[i].addEvent(mode);
