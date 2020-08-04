@@ -485,6 +485,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                 }
             }
             robots[i].update();
+            updateBreakpointEvent();
         }
         var renderTimeStart = new Date().getTime();
 
@@ -1152,17 +1153,14 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     }
     exports.getWebAudio = getWebAudio;
 
-    function updateDebugMode(mode) {
-        debugMode = mode;
-        if (interpreters !== null){
-            for (var i = 0; i < numRobots; i++) {
-                interpreters[i].setDebugMode(mode);
-            }
-        }
-
-        if (mode){
+    function updateBreakpointEvent(){
+        if (debugMode){
             Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
                 if (!$(block.svgGroup_).hasClass('blocklyDisabled')){
+
+                    if (observers.hasOwnProperty(block.id)){
+                        observers[block.id].disconnect();
+                    }
 
                     var observer = new MutationObserver(function(mutations){
                         mutations.forEach((mutation)=> {
@@ -1195,6 +1193,18 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                 $(block.svgPath_).removeClass('breakpoint');})
         }
     }
+
+    function updateDebugMode(mode) {
+        debugMode = mode;
+        if (interpreters !== null){
+            for (var i = 0; i < numRobots; i++) {
+                interpreters[i].setDebugMode(mode);
+            }
+        }
+        updateBreakpointEvent();
+
+
+    }
     exports.updateDebugMode = updateDebugMode;
     
     function  addBreakPoint(block) {
@@ -1219,7 +1229,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     exports.removeBreakPoint = removeBreakPoint;
 
     function interpreterAddEvent(mode){
-        updateDebugMode(debugMode);
+        updateBreakpointEvent();
         if (interpreters !== null){
             for (var i =0; i< numRobots; i++){
                 interpreters[i].addEvent(mode);
@@ -1237,6 +1247,7 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
         }
         breakpoints = [];
         debugMode =false;
+        updateBreakpointEvent();
     }
     exports.endDebugging = endDebugging;
 

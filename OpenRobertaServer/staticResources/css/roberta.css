@@ -3039,11 +3039,13 @@ pre code {
     stroke-opacity: 1;
     transition: none;
     stroke: red;
+    stroke-width: 2px;
 }
 #blockly.debug path.blocklyPath.selectedBreakpoint{
     stroke-opacity: 1;
     transition: none;
     stroke: purple;
+    stroke-width: 2px;
 }
 
 #blockly.debug path.blocklyPath {

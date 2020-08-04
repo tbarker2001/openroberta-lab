@@ -236,11 +236,12 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
 
                     setTimeout(function() {
                         SIM.setPause(false);
+                        SIM.interpreterAddEvent(event);
                     }, 500);
-                    SIM.init([result], true, GUISTATE_C.getRobotGroup())
+                    SIM.init([result], false, GUISTATE_C.getRobotGroup());
                 }
 
-                SIM.interpreterAddEvent(event);
+
                 $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
 
             });
