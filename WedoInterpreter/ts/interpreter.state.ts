@@ -40,18 +40,22 @@ export class State {
         // p( 'storeCode with state reset' );
     }
 
-    public getDebugMode(){
+    /** returns the boolean debugMode */
+    public getDebugMode() {
         return this.debugMode;
     }
-    public setDebugMode(mode: boolean){
+
+    /** updates the boolean debugMode */
+    public setDebugMode(mode: boolean) {
         this.debugMode = mode;
     }
+
     /**
      * returns the code block of a function. The code block contains formal parameter names and the array of operations implementing the function
-     * 
+     *
      * . @param name the name of the function
      */
-    public getFunction( name: string ) {
+    public getFunction(name: string) {
         return this.functions[name];
     }
 
@@ -281,13 +285,14 @@ export class State {
             U.dbcException( 'bindVar value invalid' );
         }
     }
+
     /** adds/removes block from currentBlocks and applies correct highlight to block**/
-    public processBlock(stmt){
-        for (var id in this.currentBlocks){
+    public processBlock(stmt) {
+        for (var id in this.currentBlocks) {
             let block = this.currentBlocks[id].block;
-            if (this.currentBlocks[id].terminate){
-                if (this.debugMode){
-                    if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("selectedBreakpoint")){
+            if (this.currentBlocks[id].terminate) {
+                if (this.debugMode) {
+                    if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("selectedBreakpoint")) {
                         stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("selectedBreakpoint").addClass("breakpoint");
                     }
                     stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("highlight");
@@ -297,30 +302,31 @@ export class State {
         }
         if (stmt.hasOwnProperty(C.BLOCK_ID)) {
             let block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
-            if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])){
-                if (this.debugMode){
-                    if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("breakpoint")){
+            if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])) {
+                if (this.debugMode) {
+                    if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("breakpoint")) {
                         stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("breakpoint").addClass("selectedBreakpoint");
                     }
                     stackmachineJsHelper.getJqueryObject(block.svgPath_).addClass("highlight");
                 }
-                this.currentBlocks[stmt[C.BLOCK_ID]] = {"block": block,"terminate": false};
+                this.currentBlocks[stmt[C.BLOCK_ID]] = {"block": block, "terminate": false};
             }
         }
     }
 
     /** Marks a block to be terminated in the next iteration of the interpreter **/
-    public terminateBlock (stmt) {
+    public terminateBlock(stmt) {
         if (stmt.hasOwnProperty(C.BLOCK_ID)) {
             const block_id = stmt[C.BLOCK_ID];
-            if (block_id in this.currentBlocks){
+            if (block_id in this.currentBlocks) {
                 this.currentBlocks[block_id].terminate = true;
             }
         }
     }
+
     /** Returns true if the current block is currently being executed**/
     public beingExecuted(stmt) {
-        if (stmt.hasOwnProperty(C.BLOCK_ID)){
+        if (stmt.hasOwnProperty(C.BLOCK_ID)) {
             return this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])
         }
         return false;
@@ -328,8 +334,8 @@ export class State {
 
     /** Will add highlights from all currently blocks being currently executed and all given Breakpoints
      * @param breakPoints the array of breakpoint block id's to have their highlights added*/
-    public addHighlights(breakPoints: any[]){
-        for (var id in this.currentBlocks){
+    public addHighlights(breakPoints: any[]) {
+        for (var id in this.currentBlocks) {
             stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_).addClass("highlight");
         }
         breakPoints.forEach(function (id) {
@@ -341,8 +347,8 @@ export class State {
 
     /** Will remove highlights from all currently blocks being currently executed and all given Breakpoints
      * @param breakPoints the array of breakpoint block id's to have their highlights removed*/
-    public removeHighlights(breakPoints :any[]){
-        for (var id in this.currentBlocks){
+    public removeHighlights(breakPoints: any[]) {
+        for (var id in this.currentBlocks) {
             let object = stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_);
             if (object.hasClass("selectedBreakpoint")) {
                 object.removeClass("selectedBreakpoint").addClass("breakpoint");

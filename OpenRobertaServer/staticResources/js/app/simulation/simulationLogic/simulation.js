@@ -1153,17 +1153,17 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
     }
     exports.getWebAudio = getWebAudio;
 
-    function updateBreakpointEvent(){
-        if (debugMode){
+    function updateBreakpointEvent() {
+        if (debugMode) {
             Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
-                if (!$(block.svgGroup_).hasClass('blocklyDisabled')){
+                if (!$(block.svgGroup_).hasClass('blocklyDisabled')) {
 
-                    if (observers.hasOwnProperty(block.id)){
+                    if (observers.hasOwnProperty(block.id)) {
                         observers[block.id].disconnect();
                     }
 
-                    var observer = new MutationObserver(function(mutations){
-                        mutations.forEach((mutation)=> {
+                    var observer = new MutationObserver(function (mutations) {
+                        mutations.forEach((mutation) => {
                             if ($(block.svgGroup_).hasClass('blocklySelected')) {
                                 if ($(block.svgPath_).hasClass('breakpoint')) {
                                     removeBreakPoint(block);
@@ -1177,26 +1177,25 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
                                 }
                             }
                         });
-
                     });
                     observers[block.id] = observer;
-                    observer.observe(block.svgGroup_,{attributes: true});
+                    observer.observe(block.svgGroup_, {attributes: true});
 
                 }
             });
-        }
-        else{
+        } else {
             Blockly.getMainWorkspace().getAllBlocks().forEach(function (block) {
-                if (observers.hasOwnProperty(block.id)){
+                if (observers.hasOwnProperty(block.id)) {
                     observers[block.id].disconnect();
                 }
-                $(block.svgPath_).removeClass('breakpoint');})
+                $(block.svgPath_).removeClass('breakpoint');
+            })
         }
     }
 
     function updateDebugMode(mode) {
         debugMode = mode;
-        if (interpreters !== null){
+        if (interpreters !== null) {
             for (var i = 0; i < numRobots; i++) {
                 interpreters[i].setDebugMode(mode);
             }
@@ -1205,60 +1204,65 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
 
 
     }
+
     exports.updateDebugMode = updateDebugMode;
-    
-    function  addBreakPoint(block) {
+
+    function addBreakPoint(block) {
         breakpoints.push(block.id);
     }
+
     exports.addBreakPoint = addBreakPoint;
 
     function removeBreakPoint(block) {
-        for (var i = 0; i< breakpoints.length; i++){
-            if (breakpoints[i] === block.id){
+        for (var i = 0; i < breakpoints.length; i++) {
+            if (breakpoints[i] === block.id) {
                 breakpoints.splice(i, 1);
             }
         }
-        if(!breakpoints.length > 0){
-            if (interpreters !== null){
-                for (var i =0; i< numRobots; i++){
+        if (!breakpoints.length > 0) {
+            if (interpreters !== null) {
+                for (var i = 0; i < numRobots; i++) {
                     interpreters[i].removeEvent(CONST.DEBUG_BREAKPOINT);
                 }
             }
         }
     }
+
     exports.removeBreakPoint = removeBreakPoint;
 
-    function interpreterAddEvent(mode){
+    function interpreterAddEvent(mode) {
         updateBreakpointEvent();
-        if (interpreters !== null){
-            for (var i =0; i< numRobots; i++){
+        if (interpreters !== null) {
+            for (var i = 0; i < numRobots; i++) {
                 interpreters[i].addEvent(mode);
             }
         }
     }
+
     exports.interpreterAddEvent = interpreterAddEvent;
 
-    function endDebugging(){
-        if (interpreters !== null){
-            for (var i =0; i< numRobots; i++){
+    function endDebugging() {
+        if (interpreters !== null) {
+            for (var i = 0; i < numRobots; i++) {
                 interpreters[i].setDebugMode(false);
                 interpreters[i].breakPoints = [];
             }
         }
         breakpoints = [];
-        debugMode =false;
+        debugMode = false;
         updateBreakpointEvent();
     }
+
     exports.endDebugging = endDebugging;
 
     function getSimVariables() {
-        if (interpreters !== null){
+        if (interpreters !== null) {
             return interpreters[0].getVariables();
-        }
-        else{
+        } else {
             return {};
         }
     }
+
     exports.getSimVariables = getSimVariables;
 });
 

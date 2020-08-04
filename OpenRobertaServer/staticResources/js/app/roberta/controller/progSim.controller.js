@@ -128,44 +128,43 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
             SIM.resetPose();
         }, 'simResetPose clicked');
 
-        $('#debugMode').onWrap('click',function (event) {
-            if ($('#debugMode').attr('data-original-title') === Blockly.Msg.MENU_DEBUG_START_TOOLTIP){
+        $('#debugMode').onWrap('click', function (event) {
+            if ($('#debugMode').attr('data-original-title') === Blockly.Msg.MENU_DEBUG_START_TOOLTIP) {
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_STOP_TOOLTIP);
                 $('#simControlBreakPoint,#simControlStepOver,#simControlStepInto,#simVariables').show();
                 SIM.updateDebugMode(true);
 
-            }
-            else {
+            } else {
                 $('#debugMode').attr('data-original-title', Blockly.Msg.MENU_DEBUG_START_TOOLTIP);
                 $('#simControlBreakPoint,#simControlStepOver,#simControlStepInto,#simVariables').hide();
                 SIM.endDebugging();
             }
 
-        },'debugMode clicked');
+        }, 'debugMode clicked');
 
 
-        $('#simControlBreakPoint').onWrap('click', function(event){
+        $('#simControlBreakPoint').onWrap('click', function (event) {
             toggleSimEvent(CONST.DEBUG_BREAKPOINT);
-        },'simControlBreakPoint clicked');
+        }, 'simControlBreakPoint clicked');
 
-        $('#simControlStepInto').onWrap('click', function(event){
+        $('#simControlStepInto').onWrap('click', function (event) {
             toggleSimEvent(CONST.DEBUG_STEP_INTO);
 
-        },'simControlStepInto clicked');
+        }, 'simControlStepInto clicked');
 
-        $('#simControlStepOver').onWrap('click', function(event){
+        $('#simControlStepOver').onWrap('click', function (event) {
             toggleSimEvent(CONST.DEBUG_STEP_OVER);
-        },'simControlStepOver clicked');
+        }, 'simControlStepOver clicked');
 
-        $('#simVariables').onWrap('click', function(event) {
+        $('#simVariables').onWrap('click', function (event) {
             $("#simVariablesModal").modal("toggle");
             var position = $("#simDiv").position();
             position.top += 12;
             $("#simVariablesModal").css({
-                top : position.top,
-                right : 12,
-                left : 'initial',
-                bottom : 'inherit'
+                top: position.top,
+                right: 12,
+                left: 'initial',
+                bottom: 'inherit'
             });
             $('#simVariablesModal').draggable();
 
@@ -222,7 +221,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
         }
     }
 
-    function toggleSimEvent(event){
+    function toggleSimEvent(event) {
         if ($('#simControl').hasClass('typcn-media-play-outline')) {
             var xmlProgram = Blockly.Xml.workspaceToDom(blocklyWorkspace);
             var xmlTextProgram = Blockly.Xml.domToText(xmlProgram);
@@ -234,7 +233,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
             PROGRAM.runInSim(GUISTATE_C.getProgramName(), configName, xmlTextProgram, xmlConfigText, language, function (result) {
                 if (result.rc == "ok") {
 
-                    setTimeout(function() {
+                    setTimeout(function () {
                         SIM.setPause(false);
                         SIM.interpreterAddEvent(event);
                     }, 500);
@@ -246,8 +245,7 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
 
             });
 
-        }
-        else {
+        } else {
             SIM.setPause(false);
             SIM.interpreterAddEvent(event);
         }

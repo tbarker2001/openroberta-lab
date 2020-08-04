@@ -76,51 +76,52 @@ export class Interpreter {
 		return this.r;
 	}
 
-	/** Returns the map of interpreters variables */
-    public getVariables(){
+    /** Returns the map of interpreters variables */
+    public getVariables() {
         return this.s.getVariables();
     }
 
     /** Removes all highlights from currently executing blocks*/
-    public removeHighlights(){
+    public removeHighlights() {
         this.s.removeHighlights([]);
     }
 
     /** Sets the debug mode*/
-    public setDebugMode(mode){
+    public setDebugMode(mode) {
         const s = this.s;
         s.setDebugMode(mode)
         if (mode) {
             stackmachineJsHelper.getJqueryObject("#blockly").addClass("debug");
             s.addHighlights(this.breakPoints);
-        }
-        else{
+        } else {
             s.removeHighlights(this.breakPoints);
             stackmachineJsHelper.getJqueryObject("#blockly").removeClass("debug");
         }
     }
 
     /** sets relevant event value to true */
-    public addEvent(mode){
+    public addEvent(mode) {
         this.events[mode] = true;
     }
 
     /** sets relevant event value to false */
-    public removeEvent(mode){
+    public removeEvent(mode) {
         this.events[mode] = false;
     }
 
     /** Returns true if the operation is a possible breakpoint*/
-    private isPossibleBreakPoint(op){
-        if (op.hasOwnProperty(C.BLOCK_ID)){
-            if (op[C.BLOCK_ID] !== this.previousBlockId){
+    private isPossibleBreakPoint(op) {
+        if (op.hasOwnProperty(C.BLOCK_ID)) {
+            if (op[C.BLOCK_ID] !== this.previousBlockId) {
                 switch (op[C.OPCODE]) {
                     case C.INITIATE_BLOCK:
                     case C.REPEAT_STMT_CONTINUATION:
                     case C.REPEAT_STMT:
                     case C.METHOD_CALL_VOID:
-                    case C.METHOD_CALL_RETURN:return true;
-                    default :return false;
+                    case C.METHOD_CALL_RETURN:
+                        return true;
+                    default :
+                        return false;
                 }
             }
         }
@@ -133,10 +134,11 @@ export class Interpreter {
             if (this.previousBlockId == null || op[C.BLOCK_ID] !== this.previousBlockId) {
                 switch (op[C.OPCODE]) {
                     case C.INITIATE_BLOCK: {
-                        switch (op[C.OP]){
+                        switch (op[C.OP]) {
                             case C.EXPR:
                             case C.GET_SAMPLE:
-                            case C.VAR_DECLARATION: return false;
+                            case C.VAR_DECLARATION:
+                                return false;
 
                         }
                         return true;
@@ -144,7 +146,8 @@ export class Interpreter {
                     case C.REPEAT_STMT:
                     case C.REPEAT_STMT_CONTINUATION:
                     case C.METHOD_CALL_VOID:
-                    case C.METHOD_CALL_RETURN:return true;
+                    case C.METHOD_CALL_RETURN:
+                        return true;
                     default : {
                         return false;
                     }
@@ -155,15 +158,17 @@ export class Interpreter {
     }
 
     /** Returns true if the operation is a possible block where stepOver should stop*/
-    private isPossibleStepOver(op){
+    private isPossibleStepOver(op) {
         if (op.hasOwnProperty(C.BLOCK_ID)) {
             switch (op[C.OPCODE]) {
                 case C.METHOD_CALL_VOID:
-                case C.METHOD_CALL_RETURN:return true;
+                case C.METHOD_CALL_RETURN:
+                    return true;
                 case C.INITIATE_BLOCK: {
-                    switch (op[C.OP]){
+                    switch (op[C.OP]) {
                         case C.METHOD_CALL_VOID:
-                        case C.METHOD_CALL_RETURN:return true;
+                        case C.METHOD_CALL_RETURN:
+                            return true;
                     }
                     return false;
                 }
@@ -220,17 +225,17 @@ export class Interpreter {
      * -BreakPoint will continue execution until the next breakpoint is reached or the program exits.
 
      */
-    private evalOperation( maxRunTime: number ) {
+    private evalOperation(maxRunTime: number) {
         const s = this.s;
         const n = this.r;
 
-        while ( maxRunTime >= new Date().getTime() && !n.getBlocking()) {
+        while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
             let op = s.getOp();
-            let result =  this.evalSingleOperation(s,n,op);
+            let result = this.evalSingleOperation(s, n, op);
 
             if (s.getDebugMode()) {
-                
-                if (this.events[C.DEBUG_BREAKPOINT]){
+
+                if (this.events[C.DEBUG_BREAKPOINT]) {
                     if (this.isPossibleBreakPoint(op)) {
                         for (let i = 0; i < this.breakPoints.length; i++) {
                             if (op[C.BLOCK_ID] === this.breakPoints[i]) {
@@ -242,28 +247,26 @@ export class Interpreter {
                         }
                     }
                 }
-                
-                if (this.events[C.DEBUG_STEP_INTO]){
-                    if (this.isPossibleStepInto(op)){
+
+                if (this.events[C.DEBUG_STEP_INTO]) {
+                    if (this.isPossibleStepInto(op)) {
                         stackmachineJsHelper.setSimBreak();
                         this.previousBlockId = op[C.BLOCK_ID];
                         this.events[C.DEBUG_STEP_INTO] = false;
                         return result;
                     }
                 }
-                
-                if (this.events[C.DEBUG_STEP_OVER]){
-                    if (this.stepBlock !== null && !s.beingExecuted(this.stepBlock) && this.isPossibleStepInto(op)){
+
+                if (this.events[C.DEBUG_STEP_OVER]) {
+                    if (this.stepBlock !== null && !s.beingExecuted(this.stepBlock) && this.isPossibleStepInto(op)) {
                         stackmachineJsHelper.setSimBreak();
                         this.previousBlockId = op[C.BLOCK_ID];
                         this.events[C.DEBUG_STEP_OVER] = false;
                         this.stepBlock = null;
                         return result;
-                    }
-                    else if (this.stepBlock === null && this.isPossibleStepOver(op)){
+                    } else if (this.stepBlock === null && this.isPossibleStepOver(op)) {
                         this.stepBlock = op;
-                    }
-                    else if (this.stepBlock === null && this.isPossibleStepInto(op)){
+                    } else if (this.stepBlock === null && this.isPossibleStepInto(op)) {
                         stackmachineJsHelper.setSimBreak();
                         this.previousBlockId = op[C.BLOCK_ID];
                         this.events[C.DEBUG_STEP_OVER] = false;
@@ -276,11 +279,10 @@ export class Interpreter {
 
             this.previousBlockId = op[C.BLOCK_ID];
 
-
             if (result > 0) {
                 return result;
             }
-            if ( this.terminated ) {
+            if (this.terminated) {
                 // termination either requested by the client or by executing 'stop' or after last statement
                 n.close();
                 this.callbackOnTermination()

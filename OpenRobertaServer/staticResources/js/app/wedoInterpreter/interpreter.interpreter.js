@@ -104,8 +104,10 @@
                         case C.REPEAT_STMT_CONTINUATION:
                         case C.REPEAT_STMT:
                         case C.METHOD_CALL_VOID:
-                        case C.METHOD_CALL_RETURN: return true;
-                        default: return false;
+                        case C.METHOD_CALL_RETURN:
+                            return true;
+                        default:
+                            return false;
                     }
                 }
             }
@@ -120,14 +122,16 @@
                             switch (op[C.OP]) {
                                 case C.EXPR:
                                 case C.GET_SAMPLE:
-                                case C.VAR_DECLARATION: return false;
+                                case C.VAR_DECLARATION:
+                                    return false;
                             }
                             return true;
                         }
                         case C.REPEAT_STMT:
                         case C.REPEAT_STMT_CONTINUATION:
                         case C.METHOD_CALL_VOID:
-                        case C.METHOD_CALL_RETURN: return true;
+                        case C.METHOD_CALL_RETURN:
+                            return true;
                         default: {
                             return false;
                         }
@@ -141,11 +145,13 @@
             if (op.hasOwnProperty(C.BLOCK_ID)) {
                 switch (op[C.OPCODE]) {
                     case C.METHOD_CALL_VOID:
-                    case C.METHOD_CALL_RETURN: return true;
+                    case C.METHOD_CALL_RETURN:
+                        return true;
                     case C.INITIATE_BLOCK: {
                         switch (op[C.OP]) {
                             case C.METHOD_CALL_VOID:
-                            case C.METHOD_CALL_RETURN: return true;
+                            case C.METHOD_CALL_RETURN:
+                                return true;
                         }
                         return false;
                     }

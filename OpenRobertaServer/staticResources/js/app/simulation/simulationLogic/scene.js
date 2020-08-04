@@ -121,16 +121,15 @@ define(['simulation.simulation', 'simulation.math', 'util', 'interpreter.constan
         }
     };
 
-    Scene.prototype.drawVariables = function (){
+    Scene.prototype.drawVariables = function () {
         $("#variableValue").html("");
         var variables = SIM.getSimVariables()
-        if (Object.keys(variables).length > 0){
+        if (Object.keys(variables).length > 0) {
             for (var v in variables) {
-                var value  = variables[v][0];
-                addVariableValue(v,value);
+                var value = variables[v][0];
+                addVariableValue(v, value);
             }
-        }
-        else{
+        } else {
             $('#variableValue').append('<div><label> No variables instantiated</label></div>')
         }
     }
@@ -856,7 +855,8 @@ define(['simulation.simulation', 'simulation.math', 'util', 'interpreter.constan
         var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
         return (!f && 'not a function') || (s && s[1] || 'anonymous');
     }
-    function addVariableValue(name,value) {
+
+    function addVariableValue(name, value) {
         switch (typeof value) {
             case "number": {
                 $("#variableValue").append('<div><label>' + name + ' :  </label><span> ' + UTIL.round(value, 0) + '</span></div>');
@@ -872,12 +872,12 @@ define(['simulation.simulation', 'simulation.math', 'util', 'interpreter.constan
             }
             case "object": {
                 for (var i = 0; i < value.length; i++) {
-                    addVariableValue(name + " [" + String(i)+"]", value[i]);
+                    addVariableValue(name + " [" + String(i) + "]", value[i]);
                 }
                 break;
             }
         }
-    };
+    }
 
     return Scene;
 });

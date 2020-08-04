@@ -31,9 +31,11 @@
             this.debugMode = false;
             // p( 'storeCode with state reset' );
         }
+        /** returns the boolean debugMode */
         State.prototype.getDebugMode = function () {
             return this.debugMode;
         };
+        /** updates the boolean debugMode */
         State.prototype.setDebugMode = function (mode) {
             this.debugMode = mode;
         };
