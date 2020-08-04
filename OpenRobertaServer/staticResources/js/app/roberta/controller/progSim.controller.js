@@ -145,21 +145,16 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
 
 
         $('#simControlBreakPoint').onWrap('click', function(event){
-            SIM.setPause(false);
-            SIM.interpreterAddEvent(CONST.DEBUG_BREAKPOINT);
-            $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
+            toggleSimEvent(CONST.DEBUG_BREAKPOINT);
         },'simControlBreakPoint clicked');
 
         $('#simControlStepInto').onWrap('click', function(event){
-            SIM.setPause(false);
-            SIM.interpreterAddEvent(CONST.DEBUG_STEP_INTO);
-            $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
+            toggleSimEvent(CONST.DEBUG_STEP_INTO);
+
         },'simControlStepInto clicked');
 
         $('#simControlStepOver').onWrap('click', function(event){
-            SIM.setPause(false);
-            SIM.interpreterAddEvent(CONST.DEBUG_STEP_OVER);
-            $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
+            toggleSimEvent(CONST.DEBUG_STEP_OVER);
         },'simControlStepOver clicked');
 
         $('#simVariables').onWrap('click', function(event) {
@@ -224,6 +219,36 @@ define([ 'exports', 'message', 'log', 'util', 'simulation.simulation','simulatio
                 }
                 PROG_C.reloadProgram(result);
             });
+        }
+    }
+
+    function toggleSimEvent(event){
+        if ($('#simControl').hasClass('typcn-media-play-outline')) {
+            var xmlProgram = Blockly.Xml.workspaceToDom(blocklyWorkspace);
+            var xmlTextProgram = Blockly.Xml.domToText(xmlProgram);
+            var isNamedConfig = !GUISTATE_C.isConfigurationStandard() && !GUISTATE_C.isConfigurationAnonymous();
+            var configName = isNamedConfig ? GUISTATE_C.getConfigurationName() : undefined;
+            var xmlConfigText = GUISTATE_C.isConfigurationAnonymous() ? GUISTATE_C.getConfigurationXML() : undefined;
+            var language = GUISTATE_C.getLanguage();
+
+            PROGRAM.runInSim(GUISTATE_C.getProgramName(), configName, xmlTextProgram, xmlConfigText, language, function (result) {
+                if (result.rc == "ok") {
+
+                    setTimeout(function() {
+                        SIM.setPause(false);
+                    }, 500);
+                    SIM.init([result], true, GUISTATE_C.getRobotGroup())
+                }
+
+                SIM.interpreterAddEvent(event);
+                $('#simControl').removeClass('typcn-media-play-outline').addClass('typcn-media-stop');
+
+            });
+
+        }
+        else {
+            SIM.setPause(false);
+            SIM.interpreterAddEvent(event);
         }
     }
 
