@@ -211,7 +211,9 @@
             var n = this.r;
             while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
                 var op = s.getOp();
-                var result = this.evalSingleOperation(s, n, op);
+                var results = this.evalSingleOperation(s, n, op);
+                var result = results[0];
+                var stop_1 = results[1];
                 if (s.getDebugMode()) {
                     if (this.events[C.DEBUG_BREAKPOINT]) {
                         if (this.isPossibleBreakPoint(op)) {
@@ -253,7 +255,7 @@
                     }
                 }
                 this.previousBlockId = op[C.BLOCK_ID];
-                if (result > 0) {
+                if (result > 0 || stop_1) {
                     return result;
                 }
                 if (this.terminated) {
@@ -289,7 +291,7 @@
                     }
                     case C.CLEAR_DISPLAY_ACTION: {
                         n.clearDisplay();
-                        return 0;
+                        return [0, true];
                     }
                     case C.CREATE_DEBUG_ACTION: {
                         U.debug('NYI');
@@ -360,7 +362,7 @@
                             }
                         }
                         n.motorOnAction(name_2, port, duration, speed);
-                        return duration ? duration : 0;
+                        return [duration ? duration : 0, true];
                     }
                     case C.DRIVE_ACTION: {
                         var speedOnly = stmt[C.SPEED_ONLY];
@@ -369,7 +371,7 @@
                         var name_3 = stmt[C.NAME];
                         var direction = stmt[C.DRIVE_DIRECTION];
                         var duration = n.driveAction(name_3, direction, speed, distance);
-                        return duration;
+                        return [duration, true];
                     }
                     case C.TURN_ACTION: {
                         var speedOnly = stmt[C.SPEED_ONLY];
@@ -378,7 +380,7 @@
                         var name_4 = stmt[C.NAME];
                         var direction = stmt[C.TURN_DIRECTION];
                         var duration = n.turnAction(name_4, direction, speed, angle);
-                        return duration;
+                        return [duration, true];
                     }
                     case C.CURVE_ACTION: {
                         var speedOnly = stmt[C.SPEED_ONLY];
@@ -388,12 +390,12 @@
                         var name_5 = stmt[C.NAME];
                         var direction = stmt[C.DRIVE_DIRECTION];
                         var duration = n.curveAction(name_5, direction, speedL, speedR, distance);
-                        return duration;
+                        return [duration, true];
                     }
                     case C.STOP_DRIVE:
                         var name_6 = stmt[C.NAME];
                         n.driveStop(name_6);
-                        return 0;
+                        return [0, true];
                     case C.BOTH_MOTORS_ON_ACTION: {
                         var duration = s.pop();
                         var speedB = s.pop();
@@ -402,18 +404,18 @@
                         var portB = stmt[C.PORT_B];
                         n.motorOnAction(portA, portA, duration, speedA);
                         n.motorOnAction(portB, portB, duration, speedB);
-                        return duration;
+                        return [duration, true];
                     }
                     case C.MOTOR_STOP: {
                         n.motorStopAction(stmt[C.NAME], stmt[C.PORT]);
-                        return 0;
+                        return [0, true];
                     }
                     case C.MOTOR_SET_POWER: {
                         var speed = s.pop();
                         var name_7 = stmt[C.NAME];
                         var port = stmt[C.PORT];
                         n.setMotorSpeed(name_7, port, speed);
-                        return 0;
+                        return [0, true];
                     }
                     case C.MOTOR_GET_POWER: {
                         var port = stmt[C.PORT];
@@ -464,9 +466,9 @@
                             var x = s.pop();
                             var y = s.pop();
                             n.showTextActionPosition(text, x, y);
-                            return 0;
+                            return [0, true];
                         }
-                        return n.showTextAction(text, stmt[C.MODE]);
+                        return [n.showTextAction(text, stmt[C.MODE]), true];
                     }
                     case C.SHOW_IMAGE_ACTION: {
                         var image = void 0;
@@ -476,11 +478,11 @@
                         else {
                             image = s.pop();
                         }
-                        return n.showImageAction(image, stmt[C.MODE]);
+                        return [n.showImageAction(image, stmt[C.MODE]), true];
                     }
                     case C.DISPLAY_SET_BRIGHTNESS_ACTION: {
                         var b = s.pop();
-                        return n.displaySetBrightnessAction(b);
+                        return [n.displaySetBrightnessAction(b), true];
                     }
                     case C.IMAGE_SHIFT_ACTION: {
                         var nShift = s.pop();
@@ -492,7 +494,7 @@
                         var b = s.pop();
                         var y = s.pop();
                         var x = s.pop();
-                        return n.displaySetPixelBrightnessAction(x, y, b);
+                        return [n.displaySetPixelBrightnessAction(x, y, b), true];
                     }
                     case C.DISPLAY_GET_PIXEL_BRIGHTNESS_ACTION: {
                         var y = s.pop();
@@ -502,10 +504,10 @@
                     }
                     case C.LIGHT_ACTION:
                         n.lightAction(stmt[C.MODE], stmt[C.COLOR]);
-                        return 0;
+                        return [0, true];
                     case C.STATUS_LIGHT_ACTION:
                         n.statusLightOffAction(stmt[C.NAME], stmt[C.PORT]);
-                        return 0;
+                        return [0, true];
                     case C.STOP:
                         U.debug("PROGRAM TERMINATED. stop op");
                         this.terminated = true;
@@ -525,20 +527,20 @@
                         break;
                     case C.ENCODER_SENSOR_RESET:
                         n.encoderReset(stmt[C.PORT]);
-                        return 0;
+                        return [0, true];
                     case C.GYRO_SENSOR_RESET:
                         n.gyroReset(stmt[C.PORT]);
-                        return 0;
+                        return [0, true];
                     case C.TONE_ACTION: {
                         var duration = s.pop();
                         var frequency = s.pop();
-                        return n.toneAction(stmt[C.NAME], frequency, duration);
+                        return [n.toneAction(stmt[C.NAME], frequency, duration), true];
                     }
                     case C.PLAY_FILE_ACTION:
-                        return n.playFileAction(stmt[C.FILE]);
+                        return [n.playFileAction(stmt[C.FILE]), true];
                     case C.SET_VOLUME_ACTION:
                         n.setVolumeAction(s.pop());
-                        return 0;
+                        return [0, true];
                     case C.GET_VOLUME:
                         n.getVolumeAction(s);
                         break;
@@ -549,7 +551,7 @@
                         var pitch = s.pop();
                         var speed = s.pop();
                         var text = s.pop();
-                        return n.sayTextAction(text, speed, pitch);
+                        return [n.sayTextAction(text, speed, pitch), true];
                     }
                     case C.VAR_DECLARATION: {
                         var name_9 = stmt[C.NAME];
@@ -563,14 +565,14 @@
                     }
                     case C.WAIT_TIME_STMT: {
                         var time = s.pop();
-                        return time; // wait for handler being called
+                        return [time, true]; // wait for handler being called
                     }
                     case C.WRITE_PIN_ACTION: {
                         var value = s.pop();
                         var mode = stmt[C.MODE];
                         var pin = stmt[C.PIN];
                         n.writePinAction(pin, mode, value);
-                        return 0;
+                        return [0, true];
                     }
                     case C.LIST_OPERATION: {
                         var op = stmt[C.OP];
@@ -628,7 +630,7 @@
                         U.dbcException("invalid stmt op: " + opCode);
                 }
             }
-            return 0;
+            return [0, false];
         };
         /**
          *  called from @see evalSingleOperation() to evaluate all kinds of expressions

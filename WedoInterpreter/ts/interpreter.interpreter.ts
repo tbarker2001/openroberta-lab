@@ -231,7 +231,9 @@ export class Interpreter {
 
         while (maxRunTime >= new Date().getTime() && !n.getBlocking()) {
             let op = s.getOp();
-            let result = this.evalSingleOperation(s, n, op);
+            let results = this.evalSingleOperation(s, n, op);
+            let result = results[0];
+            let stop = results[1];
 
             if (s.getDebugMode()) {
 
@@ -279,7 +281,7 @@ export class Interpreter {
 
             this.previousBlockId = op[C.BLOCK_ID];
 
-            if (result > 0) {
+            if (result > 0|| stop) {
                 return result;
             }
             if (this.terminated) {
@@ -316,7 +318,7 @@ export class Interpreter {
                 }
                 case C.CLEAR_DISPLAY_ACTION: {
                     n.clearDisplay();
-                    return 0;
+                    return [0,true];
                 }
                 case C.CREATE_DEBUG_ACTION: {
                     U.debug( 'NYI' );
@@ -386,7 +388,7 @@ export class Interpreter {
                         }
                     }
                     n.motorOnAction( name, port, duration, speed );
-                    return duration ? duration : 0;
+                    return [duration ? duration : 0,true];
                 }
                 case C.DRIVE_ACTION: {
                     const speedOnly = stmt[C.SPEED_ONLY];
@@ -395,7 +397,7 @@ export class Interpreter {
                     const name = stmt[C.NAME];
                     const direction = stmt[C.DRIVE_DIRECTION];
                     const duration = n.driveAction( name, direction, speed, distance );
-                    return duration;
+                    return [duration,true];
                 }
                 case C.TURN_ACTION: {
                     const speedOnly = stmt[C.SPEED_ONLY];
@@ -404,7 +406,7 @@ export class Interpreter {
                     const name = stmt[C.NAME];
                     const direction = stmt[C.TURN_DIRECTION];
                     const duration = n.turnAction( name, direction, speed, angle );
-                    return duration;
+                    return [duration,true];
                 }
                 case C.CURVE_ACTION: {
                     const speedOnly = stmt[C.SPEED_ONLY];
@@ -414,12 +416,12 @@ export class Interpreter {
                     const name = stmt[C.NAME];
                     const direction = stmt[C.DRIVE_DIRECTION];
                     const duration = n.curveAction( name, direction, speedL, speedR, distance );
-                    return duration;
+                    return [duration,true];
                 }
                 case C.STOP_DRIVE:
                     const name = stmt[C.NAME];
                     n.driveStop( name );
-                    return 0;
+                    return [0,true];
                 case C.BOTH_MOTORS_ON_ACTION: {
                     const duration = s.pop();
                     const speedB = s.pop();
@@ -428,18 +430,18 @@ export class Interpreter {
                     const portB = stmt[C.PORT_B];
                     n.motorOnAction( portA, portA, duration, speedA );
                     n.motorOnAction( portB, portB, duration, speedB );
-                    return duration;
+                    return [duration,true];
                 }
                 case C.MOTOR_STOP: {
                     n.motorStopAction( stmt[C.NAME], stmt[C.PORT] );
-                    return 0;
+                    return [0,true];
                 }
                 case C.MOTOR_SET_POWER: {
                     const speed = s.pop();
                     const name = stmt[C.NAME];
                     const port = stmt[C.PORT];
                     n.setMotorSpeed( name, port, speed );
-                    return 0;
+                    return [0,true];
                 }
                 case C.MOTOR_GET_POWER: {
                     const port = stmt[C.PORT];
@@ -487,10 +489,9 @@ export class Interpreter {
                         const x = s.pop();
                         const y = s.pop();
                         n.showTextActionPosition( text, x, y );
-                        return 0;
+                        return [0,true];
                     }
-
-                    return n.showTextAction( text, stmt[C.MODE] );
+                    return [n.showTextAction( text, stmt[C.MODE] ),true];
                 }
                 case C.SHOW_IMAGE_ACTION: {
                     let image;
@@ -499,11 +500,11 @@ export class Interpreter {
                     } else {
                         image = s.pop();
                     }
-                    return n.showImageAction( image, stmt[C.MODE] );
+                    return [n.showImageAction( image, stmt[C.MODE] ),true];
                 }
                 case C.DISPLAY_SET_BRIGHTNESS_ACTION: {
                     const b = s.pop();
-                    return n.displaySetBrightnessAction( b );
+                    return [n.displaySetBrightnessAction( b ),true];
                 }
 
                 case C.IMAGE_SHIFT_ACTION: {
@@ -517,7 +518,8 @@ export class Interpreter {
                     const b = s.pop();
                     const y = s.pop();
                     const x = s.pop();
-                    return n.displaySetPixelBrightnessAction( x, y, b );
+                    return [n.displaySetPixelBrightnessAction( x, y, b ),true];
+
                 }
                 case C.DISPLAY_GET_PIXEL_BRIGHTNESS_ACTION: {
                     const y = s.pop();
@@ -527,10 +529,10 @@ export class Interpreter {
                 }
                 case C.LIGHT_ACTION:
                     n.lightAction( stmt[C.MODE], stmt[C.COLOR] );
-                    return 0;
+                    return [0,true];
                 case C.STATUS_LIGHT_ACTION:
                     n.statusLightOffAction( stmt[C.NAME], stmt[C.PORT] )
-                    return 0;
+                    return [0,true];
                 case C.STOP:
                     U.debug( "PROGRAM TERMINATED. stop op" );
                     this.terminated = true;
@@ -550,20 +552,20 @@ export class Interpreter {
                     break;
                 case C.ENCODER_SENSOR_RESET:
                     n.encoderReset( stmt[C.PORT] );
-                    return 0;
+                    return [0,true];
                 case C.GYRO_SENSOR_RESET:
                     n.gyroReset( stmt[C.PORT] );
-                    return 0;
+                    return [0,true];
                 case C.TONE_ACTION: {
                     const duration = s.pop();
                     const frequency = s.pop();
-                    return n.toneAction( stmt[C.NAME], frequency, duration );
+                    return [n.toneAction( stmt[C.NAME], frequency, duration ),true];
                 }
                 case C.PLAY_FILE_ACTION:
-                    return n.playFileAction( stmt[C.FILE] );
+                    return [n.playFileAction( stmt[C.FILE] ),true];
                 case C.SET_VOLUME_ACTION:
                     n.setVolumeAction( s.pop() );
-                    return 0;
+                    return [0,true];
                 case C.GET_VOLUME:
                     n.getVolumeAction( s );
                     break;
@@ -574,7 +576,7 @@ export class Interpreter {
                     const pitch = s.pop();
                     const speed = s.pop();
                     const text = s.pop();
-                    return n.sayTextAction( text, speed, pitch )
+                    return [n.sayTextAction( text, speed, pitch ),true];
                 }
                 case C.VAR_DECLARATION: {
                     const name = stmt[C.NAME];
@@ -588,14 +590,14 @@ export class Interpreter {
                 }
                 case C.WAIT_TIME_STMT: {
                     const time = s.pop();
-                    return time; // wait for handler being called
+                    return [time,true]; // wait for handler being called
                 }
                 case C.WRITE_PIN_ACTION: {
                     const value = s.pop();
                     const mode = stmt[C.MODE];
                     const pin = stmt[C.PIN];
                     n.writePinAction( pin, mode, value );
-                    return 0;
+                    return [0,true];
                 }
                 case C.LIST_OPERATION: {
                     const op = stmt[C.OP];
@@ -651,7 +653,7 @@ export class Interpreter {
                     U.dbcException( "invalid stmt op: " + opCode );
             }
         }
-        return 0;
+        return [0,false];
 }
 
     /**
