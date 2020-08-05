@@ -1164,16 +1164,27 @@ define(['exports', 'simulation.scene', 'simulation.math', 'program.controller', 
 
                     var observer = new MutationObserver(function (mutations) {
                         mutations.forEach((mutation) => {
-                            if ($(block.svgGroup_).hasClass('blocklySelected')) {
-                                if ($(block.svgPath_).hasClass('breakpoint')) {
-                                    removeBreakPoint(block);
-                                    $(block.svgPath_).removeClass('breakpoint');
-                                } else if ($(block.svgPath_).hasClass('selectedBreakpoint')) {
-                                    removeBreakPoint(block);
-                                    $(block.svgPath_).removeClass('selectedBreakpoint').addClass('highlight');
-                                } else {
-                                    addBreakPoint(block);
-                                    $(block.svgPath_).addClass('breakpoint');
+                            if ($(block.svgGroup_).hasClass('blocklyDisabled')) {
+                                removeBreakPoint(block);
+                                $(block.svgPath_).removeClass('breakpoint').removeClass('selectedBreakpoint');
+                            }
+                            else{
+                                if ($(block.svgGroup_).hasClass('blocklySelected')) {
+                                    if ($(block.svgPath_).hasClass('breakpoint')) {
+                                        removeBreakPoint(block);
+                                        $(block.svgPath_).removeClass('breakpoint');
+                                    } else if ($(block.svgPath_).hasClass('selectedBreakpoint')) {
+                                        removeBreakPoint(block);
+                                        $(block.svgPath_).removeClass('selectedBreakpoint').addClass('highlight');
+                                    } else {
+                                        addBreakPoint(block);
+                                        if ($(block.svgPath_).hasClass('highlight')){
+                                            $(block.svgPath_).addClass('selectedBreakpoint')
+                                        }
+                                        else{
+                                            $(block.svgPath_).addClass('breakpoint');
+                                        }
+                                    }
                                 }
                             }
                         });

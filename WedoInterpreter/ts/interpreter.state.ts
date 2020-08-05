@@ -183,6 +183,36 @@ export class State {
     }
 
     /**
+     * helper: get a value from the stack. Do not discard the value
+     *
+     * . @param i the i'th value (starting from 0) is requested
+     */
+    private get(i: number) {
+        if (this.stack.length === 0) {
+            U.dbcException('get failed with empty stack');
+        }
+        return this.stack[this.stack.length - 1 - i];
+    }
+
+    /**
+     * for early error detection: assert, that a name given (for a binding) is valid
+     */
+    private checkValidName(name) {
+        if (name === undefined || name === null) {
+            U.dbcException('invalid name');
+        }
+    }
+
+    /**
+     * for early error detection: assert, that a value given (for a binding) is valid
+     */
+    private checkValidValue(value) {
+        if (value === undefined || value === null) {
+            U.dbcException('bindVar value invalid');
+        }
+    }
+
+    /**
      * push the actual array of operations to the stack. 'ops' becomes the new actual array of operation.
      * The pc of the frozen array of operations is decremented by 1. This operation is typically called by
      * 'compound' statements as repeat, if, wait, but also for function calls.
@@ -277,7 +307,7 @@ export class State {
         }
         if (stmt.hasOwnProperty(C.BLOCK_ID)) {
             let block = stackmachineJsHelper.getBlockById(stmt[C.BLOCK_ID]);
-            if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID])) {
+            if (!this.currentBlocks.hasOwnProperty(stmt[C.BLOCK_ID]) && block !== null) {
                 if (this.debugMode) {
                     if (stackmachineJsHelper.getJqueryObject(block.svgPath_).hasClass("breakpoint")) {
                         stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("breakpoint").addClass("selectedBreakpoint");
@@ -314,8 +344,11 @@ export class State {
             stackmachineJsHelper.getJqueryObject(this.currentBlocks[id].block.svgPath_).addClass("highlight");
         }
         breakPoints.forEach(function (id) {
+
             let block = stackmachineJsHelper.getBlockById(id)
-            stackmachineJsHelper.getJqueryObject(block.svgPath_).addClass("breakpoint");
+            if (block !== null) {
+                stackmachineJsHelper.getJqueryObject(block.svgPath_).addClass("breakpoint");
+            }
         });
 
     }
@@ -332,37 +365,11 @@ export class State {
         }
         breakPoints.forEach(function (id) {
             let block = stackmachineJsHelper.getBlockById(id)
-            stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("breakpoint").removeClass("selectedBreakpoint");
+            if (block !== null) {
+                stackmachineJsHelper.getJqueryObject(block.svgPath_).removeClass("breakpoint").removeClass("selectedBreakpoint");
+            }
+
         });
     }
 
-    /**
-     * helper: get a value from the stack. Do not discard the value
-     *
-     * . @param i the i'th value (starting from 0) is requested
-     */
-    private get(i: number) {
-        if (this.stack.length === 0) {
-            U.dbcException('get failed with empty stack');
-        }
-        return this.stack[this.stack.length - 1 - i];
-    }
-
-    /**
-     * for early error detection: assert, that a name given (for a binding) is valid
-     */
-    private checkValidName(name) {
-        if (name === undefined || name === null) {
-            U.dbcException('invalid name');
-        }
-    }
-
-    /**
-     * for early error detection: assert, that a value given (for a binding) is valid
-     */
-    private checkValidValue(value) {
-        if (value === undefined || value === null) {
-            U.dbcException('bindVar value invalid');
-        }
-    }
 }
